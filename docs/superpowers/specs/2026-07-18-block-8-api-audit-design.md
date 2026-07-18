@@ -40,7 +40,7 @@ code (they mostly will, but template-interpolated paths like
 `` `/books/${id}/reviews` `` complicate exact matching), and it adds CI
 surface (a new script to maintain, a new failure mode to debug) for a
 one-time-at-the-end audit. A hand-updated table is simpler, self-documents
-*why* an endpoint is used (which page/flow), and the manual-update
+_why_ an endpoint is used (which page/flow), and the manual-update
 discipline is cheap since it's one row added per new `lib/api/` function —
 already required by the parent spec's per-block checklist item 6 ("Update
 Block 8's running endpoint-usage log with every endpoint consumed this
@@ -51,10 +51,10 @@ so a missed manual update is a caught-late problem, not a silent one.
 
 **Log table shape** (`docs/api-audit/endpoint-usage.md`):
 
-| Endpoint | Method | Used by (block / page or hook) | `lib/api/` fn | Notes |
-|---|---|---|---|---|
-| `/api/v1/auth/login` | POST | Block 1 — `app/(auth)/login` | `lib/api/auth.ts#login` | via BFF route |
-| ... | | | | |
+| Endpoint             | Method | Used by (block / page or hook) | `lib/api/` fn           | Notes         |
+| -------------------- | ------ | ------------------------------ | ----------------------- | ------------- |
+| `/api/v1/auth/login` | POST   | Block 1 — `app/(auth)/login`   | `lib/api/auth.ts#login` | via BFF route |
+| ...                  |        |                                |                         |               |
 
 **Update discipline:**
 
@@ -143,28 +143,28 @@ covering block:
 
 ### Block 1 — Auth & Session (`auth`, `users`) — 20 endpoints
 
-| Endpoint | Method | Status |
-|---|---|---|
-| `/api/v1/auth/register` | POST | planned |
-| `/api/v1/auth/login` | POST | planned |
-| `/api/v1/auth/refresh` | POST | planned |
-| `/api/v1/auth/logout` | POST | planned |
-| `/api/v1/auth/me` | GET | planned |
-| `/api/v1/auth/verify/request` | POST | planned |
-| `/api/v1/auth/verify/confirm` | POST | planned |
-| `/api/v1/users/me` | GET | planned |
-| `/api/v1/users/me` | PATCH | planned |
-| `/api/v1/users/me/password` | POST | planned |
-| `/api/v1/users/me/deactivate` | POST | planned |
-| `/api/v1/users/me/delete` | POST | planned |
-| `/api/v1/users/me/delete/cancel` | POST | planned |
-| `/api/v1/users/{username}` | GET | planned |
-| `/api/v1/users/{user_id}/reviews` | GET | planned — *straddles Block 1 (users) / Block 3 (reviews); confirm owner* |
-| `/api/v1/users/me/export/all.json` | GET | planned — *not mentioned in Block 1 spec's UI surface; confirm in scope* |
-| `/api/v1/users/me/export/library.csv` | GET | planned — *not mentioned in Block 1 spec; confirm in scope* |
-| `/api/v1/users/me/import/bookshelf` | POST | planned — *not mentioned in Block 1 spec; confirm in scope* |
-| `/api/v1/users/me/import/csv` | POST | planned — *not mentioned in Block 1 spec; confirm in scope* |
-| `/api/v1/users/me/import/goodreads` | POST | planned — *not mentioned in Block 1 spec; confirm in scope* |
+| Endpoint                              | Method | Status                                                                   |
+| ------------------------------------- | ------ | ------------------------------------------------------------------------ |
+| `/api/v1/auth/register`               | POST   | planned                                                                  |
+| `/api/v1/auth/login`                  | POST   | planned                                                                  |
+| `/api/v1/auth/refresh`                | POST   | planned                                                                  |
+| `/api/v1/auth/logout`                 | POST   | planned                                                                  |
+| `/api/v1/auth/me`                     | GET    | planned                                                                  |
+| `/api/v1/auth/verify/request`         | POST   | planned                                                                  |
+| `/api/v1/auth/verify/confirm`         | POST   | planned                                                                  |
+| `/api/v1/users/me`                    | GET    | planned                                                                  |
+| `/api/v1/users/me`                    | PATCH  | planned                                                                  |
+| `/api/v1/users/me/password`           | POST   | planned                                                                  |
+| `/api/v1/users/me/deactivate`         | POST   | planned                                                                  |
+| `/api/v1/users/me/delete`             | POST   | planned                                                                  |
+| `/api/v1/users/me/delete/cancel`      | POST   | planned                                                                  |
+| `/api/v1/users/{username}`            | GET    | planned                                                                  |
+| `/api/v1/users/{user_id}/reviews`     | GET    | planned — _straddles Block 1 (users) / Block 3 (reviews); confirm owner_ |
+| `/api/v1/users/me/export/all.json`    | GET    | planned — _not mentioned in Block 1 spec's UI surface; confirm in scope_ |
+| `/api/v1/users/me/export/library.csv` | GET    | planned — _not mentioned in Block 1 spec; confirm in scope_              |
+| `/api/v1/users/me/import/bookshelf`   | POST   | planned — _not mentioned in Block 1 spec; confirm in scope_              |
+| `/api/v1/users/me/import/csv`         | POST   | planned — _not mentioned in Block 1 spec; confirm in scope_              |
+| `/api/v1/users/me/import/goodreads`   | POST   | planned — _not mentioned in Block 1 spec; confirm in scope_              |
 
 Block 1's own spec (read 2026-07-18) only documents 12 of these
 (register/login/refresh/logout/me/verify ×2/users-me GET+PATCH/password/
@@ -176,85 +176,85 @@ another block, or are a genuine gap.
 
 ### Block 2 — Catalog (`books`, `releases`, `contributors`, `external`) — 27 endpoints
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/books/` | |
-| `POST /api/v1/books/` | |
-| `GET /api/v1/books/by-isbn/{isbn}` | |
-| `GET /api/v1/books/{book_id}` | |
-| `PATCH /api/v1/books/{book_id}` | |
-| `DELETE /api/v1/books/{book_id}` | |
-| `POST /api/v1/books/{book_id}/contributors` | |
-| `DELETE /api/v1/books/{book_id}/contributors/{contributor_id}` | |
-| `GET /api/v1/books/{book_id}/history` | |
-| `GET /api/v1/books/{book_id}/history/{version}` | |
-| `GET /api/v1/books/{book_id}/reviews` | *straddles Block 2/3 — confirm owner* |
-| `POST /api/v1/books/{source_id}/merge-into/{target_id}` | |
-| `POST /api/v1/releases/` | |
-| `GET /api/v1/releases/{release_id}` | |
-| `PATCH /api/v1/releases/{release_id}` | |
-| `POST /api/v1/releases/{release_id}/contributors` | |
-| `DELETE /api/v1/releases/{release_id}/contributors/{contributor_id}` | |
-| `GET /api/v1/releases/{release_id}/history` | |
-| `GET /api/v1/releases/{release_id}/history/{version}` | |
-| `GET /api/v1/releases/{release_id}/reviews` | *straddles Block 2/3* |
-| `GET /api/v1/contributors/` | |
-| `POST /api/v1/contributors/` | |
-| `GET /api/v1/contributors/{contributor_id}` | |
-| `PATCH /api/v1/contributors/{contributor_id}` | |
-| `GET /api/v1/contributors/{contributor_id}/books` | |
-| `GET /api/v1/contributors/{contributor_id}/history` | |
-| `GET /api/v1/contributors/{contributor_id}/history/{version}` | |
-| `POST /api/v1/external/import` | |
-| `GET /api/v1/external/search` | |
+| Endpoint                                                             | Method                                |
+| -------------------------------------------------------------------- | ------------------------------------- |
+| `GET /api/v1/books/`                                                 |                                       |
+| `POST /api/v1/books/`                                                |                                       |
+| `GET /api/v1/books/by-isbn/{isbn}`                                   |                                       |
+| `GET /api/v1/books/{book_id}`                                        |                                       |
+| `PATCH /api/v1/books/{book_id}`                                      |                                       |
+| `DELETE /api/v1/books/{book_id}`                                     |                                       |
+| `POST /api/v1/books/{book_id}/contributors`                          |                                       |
+| `DELETE /api/v1/books/{book_id}/contributors/{contributor_id}`       |                                       |
+| `GET /api/v1/books/{book_id}/history`                                |                                       |
+| `GET /api/v1/books/{book_id}/history/{version}`                      |                                       |
+| `GET /api/v1/books/{book_id}/reviews`                                | _straddles Block 2/3 — confirm owner_ |
+| `POST /api/v1/books/{source_id}/merge-into/{target_id}`              |                                       |
+| `POST /api/v1/releases/`                                             |                                       |
+| `GET /api/v1/releases/{release_id}`                                  |                                       |
+| `PATCH /api/v1/releases/{release_id}`                                |                                       |
+| `POST /api/v1/releases/{release_id}/contributors`                    |                                       |
+| `DELETE /api/v1/releases/{release_id}/contributors/{contributor_id}` |                                       |
+| `GET /api/v1/releases/{release_id}/history`                          |                                       |
+| `GET /api/v1/releases/{release_id}/history/{version}`                |                                       |
+| `GET /api/v1/releases/{release_id}/reviews`                          | _straddles Block 2/3_                 |
+| `GET /api/v1/contributors/`                                          |                                       |
+| `POST /api/v1/contributors/`                                         |                                       |
+| `GET /api/v1/contributors/{contributor_id}`                          |                                       |
+| `PATCH /api/v1/contributors/{contributor_id}`                        |                                       |
+| `GET /api/v1/contributors/{contributor_id}/books`                    |                                       |
+| `GET /api/v1/contributors/{contributor_id}/history`                  |                                       |
+| `GET /api/v1/contributors/{contributor_id}/history/{version}`        |                                       |
+| `POST /api/v1/external/import`                                       |                                       |
+| `GET /api/v1/external/search`                                        |                                       |
 
 All status `planned`.
 
 ### Block 3 — Collections & Reviews (`collections`, `reviews`, `statuses`, `share`) — 24 endpoints
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/collections/` | |
-| `POST /api/v1/collections/` | |
-| `GET /api/v1/collections/{collection_id}` | |
-| `PATCH /api/v1/collections/{collection_id}` | |
-| `DELETE /api/v1/collections/{collection_id}` | |
-| `POST /api/v1/collections/{collection_id}/items` | |
-| `PATCH /api/v1/collections/{collection_id}/items/{item_id}` | |
-| `DELETE /api/v1/collections/{collection_id}/items/{item_id}` | |
-| `POST /api/v1/collections/{collection_id}/reorder` | |
-| `POST /api/v1/reviews/` | |
-| `GET /api/v1/reviews/{review_id}` | |
-| `PATCH /api/v1/reviews/{review_id}` | |
-| `DELETE /api/v1/reviews/{review_id}` | |
-| `GET /api/v1/me/statuses/` | |
-| `POST /api/v1/me/statuses/` | |
-| `PATCH /api/v1/me/statuses/{status_id}` | |
-| `DELETE /api/v1/me/statuses/{status_id}` | |
-| `POST /api/v1/me/statuses/{status_id}/lend` | |
-| `POST /api/v1/me/statuses/{status_id}/return` | |
-| `GET /api/v1/me/library` | |
-| `GET /api/v1/me/wishlist` | |
-| `GET /api/v1/me/borrowed` | |
-| `GET /api/v1/me/lent-out` | |
-| `POST /api/v1/share/book/{book_id}` | |
-| `POST /api/v1/share/collection/{collection_id}` | |
+| Endpoint                                                     | Method |
+| ------------------------------------------------------------ | ------ |
+| `GET /api/v1/collections/`                                   |        |
+| `POST /api/v1/collections/`                                  |        |
+| `GET /api/v1/collections/{collection_id}`                    |        |
+| `PATCH /api/v1/collections/{collection_id}`                  |        |
+| `DELETE /api/v1/collections/{collection_id}`                 |        |
+| `POST /api/v1/collections/{collection_id}/items`             |        |
+| `PATCH /api/v1/collections/{collection_id}/items/{item_id}`  |        |
+| `DELETE /api/v1/collections/{collection_id}/items/{item_id}` |        |
+| `POST /api/v1/collections/{collection_id}/reorder`           |        |
+| `POST /api/v1/reviews/`                                      |        |
+| `GET /api/v1/reviews/{review_id}`                            |        |
+| `PATCH /api/v1/reviews/{review_id}`                          |        |
+| `DELETE /api/v1/reviews/{review_id}`                         |        |
+| `GET /api/v1/me/statuses/`                                   |        |
+| `POST /api/v1/me/statuses/`                                  |        |
+| `PATCH /api/v1/me/statuses/{status_id}`                      |        |
+| `DELETE /api/v1/me/statuses/{status_id}`                     |        |
+| `POST /api/v1/me/statuses/{status_id}/lend`                  |        |
+| `POST /api/v1/me/statuses/{status_id}/return`                |        |
+| `GET /api/v1/me/library`                                     |        |
+| `GET /api/v1/me/wishlist`                                    |        |
+| `GET /api/v1/me/borrowed`                                    |        |
+| `GET /api/v1/me/lent-out`                                    |        |
+| `POST /api/v1/share/book/{book_id}`                          |        |
+| `POST /api/v1/share/collection/{collection_id}`              |        |
 
 (24 listed, one more than initial estimate — `share` adds 2.) All `planned`.
 
 ### Block 4 — Reading (`reading`, `reading-sessions`) — 7 endpoints
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/me/reading/active` | |
-| `GET /api/v1/me/reading/sessions` | |
-| `PATCH /api/v1/me/reading/sessions/{session_id}` | |
-| `DELETE /api/v1/me/reading/sessions/{session_id}` | |
-| `POST /api/v1/me/reading/start` | |
-| `POST /api/v1/me/reading/stop` | |
-| `GET /api/v1/me/reading/stats` | |
-| `GET /api/v1/me/reading/streak` | |
-| `GET /api/v1/me/reading/timeline` | |
+| Endpoint                                          | Method |
+| ------------------------------------------------- | ------ |
+| `GET /api/v1/me/reading/active`                   |        |
+| `GET /api/v1/me/reading/sessions`                 |        |
+| `PATCH /api/v1/me/reading/sessions/{session_id}`  |        |
+| `DELETE /api/v1/me/reading/sessions/{session_id}` |        |
+| `POST /api/v1/me/reading/start`                   |        |
+| `POST /api/v1/me/reading/stop`                    |        |
+| `GET /api/v1/me/reading/stats`                    |        |
+| `GET /api/v1/me/reading/streak`                   |        |
+| `GET /api/v1/me/reading/timeline`                 |        |
 
 (9 rows — parent spec lists `reading_sessions`/`reading_stats`; live API
 splits stats into stats/streak/timeline, 3 separate endpoints.) All
@@ -262,34 +262,34 @@ splits stats into stats/streak/timeline, 3 separate endpoints.) All
 
 ### Block 5 — Social (`friends`) — 10 endpoints
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/friends/` | |
-| `POST /api/v1/friends/requests` | |
-| `GET /api/v1/friends/requests/incoming` | |
-| `GET /api/v1/friends/requests/outgoing` | |
-| `POST /api/v1/friends/requests/{friendship_id}/accept` | |
-| `POST /api/v1/friends/requests/{friendship_id}/decline` | |
-| `DELETE /api/v1/friends/{user_id}` | |
-| `POST /api/v1/friends/{user_id}/block` | |
-| `DELETE /api/v1/friends/{user_id}/block` | |
-| `GET /api/v1/friends/{user_id}/collections` | |
-| `GET /api/v1/friends/{user_id}/library` | |
+| Endpoint                                                | Method |
+| ------------------------------------------------------- | ------ |
+| `GET /api/v1/friends/`                                  |        |
+| `POST /api/v1/friends/requests`                         |        |
+| `GET /api/v1/friends/requests/incoming`                 |        |
+| `GET /api/v1/friends/requests/outgoing`                 |        |
+| `POST /api/v1/friends/requests/{friendship_id}/accept`  |        |
+| `POST /api/v1/friends/requests/{friendship_id}/decline` |        |
+| `DELETE /api/v1/friends/{user_id}`                      |        |
+| `POST /api/v1/friends/{user_id}/block`                  |        |
+| `DELETE /api/v1/friends/{user_id}/block`                |        |
+| `GET /api/v1/friends/{user_id}/collections`             |        |
+| `GET /api/v1/friends/{user_id}/library`                 |        |
 
 (11 endpoints, one more than initial estimate.) All `planned`.
 
 ### Block 6 — AI & Chat (`ai`, `chat`) — 8 endpoints
 
-| Endpoint | Method | Notes |
-|---|---|---|
-| `POST /api/v1/ai/recommend` | | OpenAPI summary says "Coming soon" — verify it's actually implemented (not a stub) before Block 6 begins |
-| `POST /api/v1/ai/summary` | | same "Coming soon" caveat |
-| `POST /api/v1/ai/tag-suggest` | | same "Coming soon" caveat |
-| `POST /api/v1/chat/threads` | | |
-| `GET /api/v1/chat/threads/` | | |
-| `GET /api/v1/chat/threads/{thread_id}/messages` | | |
-| `POST /api/v1/chat/threads/{thread_id}/messages` | | |
-| `POST /api/v1/chat/threads/{thread_id}/read` | | |
+| Endpoint                                         | Method | Notes                                                                                                    |
+| ------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------- |
+| `POST /api/v1/ai/recommend`                      |        | OpenAPI summary says "Coming soon" — verify it's actually implemented (not a stub) before Block 6 begins |
+| `POST /api/v1/ai/summary`                        |        | same "Coming soon" caveat                                                                                |
+| `POST /api/v1/ai/tag-suggest`                    |        | same "Coming soon" caveat                                                                                |
+| `POST /api/v1/chat/threads`                      |        |                                                                                                          |
+| `GET /api/v1/chat/threads/`                      |        |                                                                                                          |
+| `GET /api/v1/chat/threads/{thread_id}/messages`  |        |                                                                                                          |
+| `POST /api/v1/chat/threads/{thread_id}/messages` |        |                                                                                                          |
+| `POST /api/v1/chat/threads/{thread_id}/read`     |        |                                                                                                          |
 
 All `planned`. The three `ai/*` endpoints' OpenAPI summaries literally read
 "Coming soon" — Block 6 should verify these return real responses, not
@@ -298,20 +298,20 @@ stubbed, that's a note for Block 8's gap list, not a silent skip.
 
 ### Block 7 — Admin (`admin`) — 11 endpoints
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/admin/audit-logs/` | |
-| `GET /api/v1/admin/contributions/` | |
-| `GET /api/v1/admin/contributions/{contribution_id}/diff` | |
-| `POST /api/v1/admin/contributions/{contribution_id}/approve` | |
-| `POST /api/v1/admin/contributions/{contribution_id}/reject` | |
-| `POST /api/v1/admin/contributions/{contribution_id}/claim` | |
-| `GET /api/v1/admin/users/` | |
-| `POST /api/v1/admin/users/{user_id}/activate` | |
-| `POST /api/v1/admin/users/{user_id}/deactivate` | |
-| `POST /api/v1/admin/users/{user_id}/promote` | |
-| `POST /api/v1/admin/users/{user_id}/demote` | |
-| `POST /api/v1/admin/users/{user_id}/password-reset` | |
+| Endpoint                                                     | Method |
+| ------------------------------------------------------------ | ------ |
+| `GET /api/v1/admin/audit-logs/`                              |        |
+| `GET /api/v1/admin/contributions/`                           |        |
+| `GET /api/v1/admin/contributions/{contribution_id}/diff`     |        |
+| `POST /api/v1/admin/contributions/{contribution_id}/approve` |        |
+| `POST /api/v1/admin/contributions/{contribution_id}/reject`  |        |
+| `POST /api/v1/admin/contributions/{contribution_id}/claim`   |        |
+| `GET /api/v1/admin/users/`                                   |        |
+| `POST /api/v1/admin/users/{user_id}/activate`                |        |
+| `POST /api/v1/admin/users/{user_id}/deactivate`              |        |
+| `POST /api/v1/admin/users/{user_id}/promote`                 |        |
+| `POST /api/v1/admin/users/{user_id}/demote`                  |        |
+| `POST /api/v1/admin/users/{user_id}/password-reset`          |        |
 
 (12 endpoints.) All `planned`.
 
@@ -326,56 +326,56 @@ missed domain that should have been folded into an existing block.
 **`health` (4 endpoints) — infra probes, not user-facing UI. Likely
 unused-by-UI by design, not a gap:**
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/health/` | |
-| `GET /api/v1/health/live` | |
-| `GET /api/v1/health/ready` | |
-| `GET /api/v1/health/version` | |
+| Endpoint                     | Method |
+| ---------------------------- | ------ |
+| `GET /api/v1/health/`        |        |
+| `GET /api/v1/health/live`    |        |
+| `GET /api/v1/health/ready`   |        |
+| `GET /api/v1/health/version` |        |
 
 **`integrations` (3 endpoints) — Google Drive OAuth connect/callback/revoke.
 No block currently covers this; likely relevant to Block 1 (account/profile
 settings) or a UI settings surface not yet spec'd:**
 
-| Endpoint | Method |
-|---|---|
-| `GET /api/v1/integrations/google/connect` | |
-| `GET /api/v1/integrations/google/callback` | |
-| `DELETE /api/v1/integrations/google` | |
+| Endpoint                                   | Method |
+| ------------------------------------------ | ------ |
+| `GET /api/v1/integrations/google/connect`  |        |
+| `GET /api/v1/integrations/google/callback` |        |
+| `DELETE /api/v1/integrations/google`       |        |
 
 **`users` backup/export/import sub-routes (6 endpoints) — same "no
 obvious block owner" issue as above, closely related to `integrations`
 (Google Drive backup/restore uses the same OAuth connection):**
 
-| Endpoint | Method |
-|---|---|
-| `POST /api/v1/users/me/backup/google-drive` | |
-| `GET /api/v1/users/me/backup/google-drive/history` | |
-| `POST /api/v1/users/me/backup/google-drive/restore` | |
-| `GET /api/v1/users/me/export/all.json` | |
-| `GET /api/v1/users/me/export/library.csv` | |
-| `POST /api/v1/users/me/import/bookshelf` | |
-| `POST /api/v1/users/me/import/csv` | |
-| `POST /api/v1/users/me/import/goodreads` | |
+| Endpoint                                            | Method |
+| --------------------------------------------------- | ------ |
+| `POST /api/v1/users/me/backup/google-drive`         |        |
+| `GET /api/v1/users/me/backup/google-drive/history`  |        |
+| `POST /api/v1/users/me/backup/google-drive/restore` |        |
+| `GET /api/v1/users/me/export/all.json`              |        |
+| `GET /api/v1/users/me/export/library.csv`           |        |
+| `POST /api/v1/users/me/import/bookshelf`            |        |
+| `POST /api/v1/users/me/import/csv`                  |        |
+| `POST /api/v1/users/me/import/goodreads`            |        |
 
 **`contributions` public router (6 endpoints) — user-facing contribution
 CRUD (propose an edit to a book/release/contributor), distinct from
 `admin/contributions` (moderation queue, Block 7). No block currently
-covers the *authoring* side of contributions:**
+covers the _authoring_ side of contributions:**
 
-| Endpoint | Method |
-|---|---|
-| `POST /api/v1/contributions/` | |
-| `GET /api/v1/contributions/me/contributions` | |
-| `GET /api/v1/contributions/{contribution_id}` | |
-| `PATCH /api/v1/contributions/{contribution_id}` | |
-| `DELETE /api/v1/contributions/{contribution_id}` | |
-| `POST /api/v1/contributions/{contribution_id}/submit` | |
+| Endpoint                                              | Method |
+| ----------------------------------------------------- | ------ |
+| `POST /api/v1/contributions/`                         |        |
+| `GET /api/v1/contributions/me/contributions`          |        |
+| `GET /api/v1/contributions/{contribution_id}`         |        |
+| `PATCH /api/v1/contributions/{contribution_id}`       |        |
+| `DELETE /api/v1/contributions/{contribution_id}`      |        |
+| `POST /api/v1/contributions/{contribution_id}/submit` |        |
 
 This is the single biggest gap in the current block-to-router mapping: the
-parent spec's Block 2 (Catalog) covers *reading* books/releases/
-contributors, and Block 7 covers *moderating* contributions, but nothing
-currently owns the UI for a regular user *proposing* an edit (the
+parent spec's Block 2 (Catalog) covers _reading_ books/releases/
+contributors, and Block 7 covers _moderating_ contributions, but nothing
+currently owns the UI for a regular user _proposing_ an edit (the
 `contributions` router, not `admin_contributions`). Recommend either
 folding this into Block 2 (natural home: "suggest an edit" from a book
 detail page) or calling it out explicitly if Block 2's spec (already
@@ -386,8 +386,7 @@ Block 2 picked this up.
 (20+27+24+9+11+8+12 = 111) + unmapped (4+3+8+6 = 21) = 132; the 2-endpoint
 discrepancy is from the `/api/v1/books/{...}/reviews` and
 `/api/v1/releases/{...}/reviews` rows being counted once each above but
-flagged as straddling two blocks — not double-counted in the true total of
-130.
+flagged as straddling two blocks — not double-counted in the true total of 130.
 
 ## Open Questions for Block 8 (carry forward, don't resolve now)
 
@@ -404,7 +403,7 @@ flagged as straddling two blocks — not double-counted in the true total of
   defect.
 - `GET /api/v1/users/{user_id}/reviews` and the two `.../reviews` sub-routes
   under books/releases: which block's `lib/api/` file actually implements
-  the client call matters more than which block's *pages* display the
+  the client call matters more than which block's _pages_ display the
   data — Block 8's log should record the owning `lib/api/<domain>.ts` file,
   not just the page, to disambiguate.
 
@@ -412,7 +411,7 @@ flagged as straddling two blocks — not double-counted in the true total of
 
 - Any actual API-side changes (removing dead endpoints, adding missing
   ones) — that's the follow-up cleanup pass in `bookworm-hole-api`, a
-  separate repo/project, only *initiated* (via the summary issue) by this
+  separate repo/project, only _initiated_ (via the summary issue) by this
   block.
 - Re-litigating Blocks 1-7's UI scope — Block 8 audits what was built, it
   doesn't redesign it.

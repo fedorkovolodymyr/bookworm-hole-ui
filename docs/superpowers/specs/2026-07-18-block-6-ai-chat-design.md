@@ -22,25 +22,25 @@ correct status codes. No bugs found — no API Blocker section needed for
 this block. See notes below the table for two live-tested behaviors worth
 flagging to consumers of this spec (not bugs, but non-obvious).
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/ai/recommend` | POST | `RecommendRequest {user_id, n?: int (1-100, default 10)}` | `RecommendResponse {book_ids: string[]}` — **live-tested: currently `501 {"detail": "AI recommendation feature is not implemented yet"}`, matches "Coming soon" OpenAPI description** |
-| `/api/v1/ai/summary` | POST | `SummaryRequest {text}` | `SummaryResponse {summary}` — **live-tested: currently `501 {"detail": "AI summary feature is not implemented yet"}`** |
-| `/api/v1/ai/tag-suggest` | POST | `TagSuggestRequest {book_id}` | `TagSuggestResponse {tags: string[]}` — **live-tested: currently `501 {"detail": "AI tag suggestion feature is not implemented yet"}`** |
-| `/api/v1/chat/threads` | POST | `StartChatThreadSchema {recipient_id: uuid}` | `ChatThreadResponse {id, user_a_id, user_b_id, last_message_at, created_at}` — get-or-create; live-tested `401 {"detail": "You can only message your friends"}` when `recipient_id` is not a friend |
-| `/api/v1/chat/threads/` | GET | — (bearer) | `ChatThreadWithLastMessageResponse[]` (adds `last_message: ChatMessageResponse \| null` to `ChatThreadResponse`'s fields) — list of all threads for the current user, live-tested returns `[]` then populated list after thread creation |
-| `/api/v1/chat/threads/{thread_id}/messages` | GET | query `before?: uuid, limit?: int (1-100, default 50)` | `ChatMessageResponse[] {id, thread_id, sender_id, body, attachment_book_id, attachment_collection_id, read_at, created_at}` — cursor-paginated (`before` = message id cursor), `404` if thread doesn't exist/belong to user |
-| `/api/v1/chat/threads/{thread_id}/messages` | POST | `SendChatMessageSchema {body, attachment_book_id?: uuid, attachment_collection_id?: uuid}` | `ChatMessageResponse` (same shape), `404` if thread not found |
-| `/api/v1/chat/threads/{thread_id}/read` | POST | — (bearer) | `204`, `404` if thread not found |
+| Endpoint                                    | Method | Request                                                                                    | Response                                                                                                                                                                                                                                 |
+| ------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/ai/recommend`                      | POST   | `RecommendRequest {user_id, n?: int (1-100, default 10)}`                                  | `RecommendResponse {book_ids: string[]}` — **live-tested: currently `501 {"detail": "AI recommendation feature is not implemented yet"}`, matches "Coming soon" OpenAPI description**                                                    |
+| `/api/v1/ai/summary`                        | POST   | `SummaryRequest {text}`                                                                    | `SummaryResponse {summary}` — **live-tested: currently `501 {"detail": "AI summary feature is not implemented yet"}`**                                                                                                                   |
+| `/api/v1/ai/tag-suggest`                    | POST   | `TagSuggestRequest {book_id}`                                                              | `TagSuggestResponse {tags: string[]}` — **live-tested: currently `501 {"detail": "AI tag suggestion feature is not implemented yet"}`**                                                                                                  |
+| `/api/v1/chat/threads`                      | POST   | `StartChatThreadSchema {recipient_id: uuid}`                                               | `ChatThreadResponse {id, user_a_id, user_b_id, last_message_at, created_at}` — get-or-create; live-tested `401 {"detail": "You can only message your friends"}` when `recipient_id` is not a friend                                      |
+| `/api/v1/chat/threads/`                     | GET    | — (bearer)                                                                                 | `ChatThreadWithLastMessageResponse[]` (adds `last_message: ChatMessageResponse \| null` to `ChatThreadResponse`'s fields) — list of all threads for the current user, live-tested returns `[]` then populated list after thread creation |
+| `/api/v1/chat/threads/{thread_id}/messages` | GET    | query `before?: uuid, limit?: int (1-100, default 50)`                                     | `ChatMessageResponse[] {id, thread_id, sender_id, body, attachment_book_id, attachment_collection_id, read_at, created_at}` — cursor-paginated (`before` = message id cursor), `404` if thread doesn't exist/belong to user              |
+| `/api/v1/chat/threads/{thread_id}/messages` | POST   | `SendChatMessageSchema {body, attachment_book_id?: uuid, attachment_collection_id?: uuid}` | `ChatMessageResponse` (same shape), `404` if thread not found                                                                                                                                                                            |
+| `/api/v1/chat/threads/{thread_id}/read`     | POST   | — (bearer)                                                                                 | `204`, `404` if thread not found                                                                                                                                                                                                         |
 
 ### Live-tested notes (not bugs, but worth documenting for implementers)
 
 - **`/chat/threads` vs `/chat/threads/` is not a routing bug.** These are
   two distinct, intentionally-registered paths: `POST /api/v1/chat/threads`
   (no trailing slash) is "start/get-or-create a thread", `GET
-  /api/v1/chat/threads/` (trailing slash) is "list my threads". Confirmed
+/api/v1/chat/threads/` (trailing slash) is "list my threads". Confirmed
   live: `GET /api/v1/chat/threads` (no slash) returns `405 Method Not
-  Allowed` (that path only has POST registered — FastAPI does not
+Allowed` (that path only has POST registered — FastAPI does not
   auto-redirect here since it's a different route object, not a
   redirect-slash mismatch), while `GET /api/v1/chat/threads/` (with slash)
   returns `200 []`. The UI's `lib/api/chat.ts` must call the exact path per
@@ -48,7 +48,7 @@ flagging to consumers of this spec (not bugs, but non-obvious).
   interchangeable or that one 404s.
 - **`GET .../messages` appears to auto-mark returned messages as read.**
   Live test: after user1 sent a message, user2's `GET
-  /chat/threads/{id}/messages` call returned the message with `read_at`
+/chat/threads/{id}/messages` call returned the message with `read_at`
   already populated, before the explicit `POST .../read` call was made.
   The explicit `read` endpoint is still useful for marking a thread read
   without fetching messages (e.g. from a thread-list "mark all read"

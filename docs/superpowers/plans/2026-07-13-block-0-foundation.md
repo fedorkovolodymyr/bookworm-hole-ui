@@ -86,10 +86,12 @@ Rationale: `lib/api/` and `hooks/` directories are created empty (with a `.gitke
 ## Task 1: Scaffold Next.js App with TypeScript, Tailwind, pnpm
 
 **Files:**
+
 - Create: entire base Next.js project (via `create-next-app`) at repo root — `package.json`, `tsconfig.json`, `next.config.ts`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `tailwind.config.ts`, `postcss.config.mjs`, `.eslintrc.json`, `.gitignore`
 - Modify: `tsconfig.json` (enable strict mode explicitly if not default)
 
 **Interfaces:**
+
 - Produces: a running Next.js dev server on `localhost:3000`, `app/layout.tsx` exporting default `RootLayout({ children })`, Tailwind classes usable in any `.tsx` under `app/` and `components/`.
 
 - [ ] **Step 1: Run create-next-app with pnpm**
@@ -140,11 +142,13 @@ git commit -m "feat: scaffold Next.js app with TypeScript, Tailwind, pnpm"
 ## Task 2: ESLint + Prettier Configuration
 
 **Files:**
+
 - Modify: `.eslintrc.json` (or `eslint.config.mjs` if create-next-app emitted flat config)
 - Create: `.prettierrc`, `.prettierignore`
 - Modify: `package.json` (add `format`, `format:check`, `lint` scripts)
 
 **Interfaces:**
+
 - Produces: `pnpm lint` (ESLint check), `pnpm format` (Prettier write), `pnpm format:check` (Prettier check, used by CI).
 
 - [ ] **Step 1: Install Prettier and the Tailwind class-sorting plugin**
@@ -217,11 +221,13 @@ git commit -m "chore: configure ESLint and Prettier"
 ## Task 3: Design Tokens (Colors, Typography, Spacing, Radii, Shadows) in Tailwind + CSS Variables
 
 **Files:**
+
 - Modify: `app/globals.css`
 - Modify: `tailwind.config.ts`
 - Test: `tests/design-tokens.test.ts`
 
 **Interfaces:**
+
 - Produces: CSS variables `--background`, `--foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--destructive-foreground`, `--success`, `--success-foreground`, `--warning`, `--warning-foreground`, `--border`, `--input`, `--ring`, `--radius` defined in `:root` and `.dark`; Tailwind theme keys `colors.{background,foreground,primary,secondary,muted,accent,destructive,success,warning,border,input,ring}` (each with a `DEFAULT` and `foreground` sub-key where applicable), `borderRadius.{sm,md,lg}` derived from `--radius`.
 - Consumes: nothing (first design-system task).
 
@@ -375,11 +381,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
-  content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
-  ],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -453,10 +455,12 @@ git commit -m "feat: add design tokens (color, radius) as CSS variables in light
 ## Task 4: Vitest + React Testing Library Setup
 
 **Files:**
+
 - Create: `vitest.config.ts`, `tests/setup.ts`
 - Modify: `package.json` (add `test`, `test:watch` scripts, add devDependencies)
 
 **Interfaces:**
+
 - Produces: `pnpm test` runs Vitest once in CI mode; `tests/setup.ts` registers `@testing-library/jest-dom` matchers globally, imported via `vitest.config.ts`'s `setupFiles`.
 - Consumes: nothing new (Task 3's test already ran under a default Vitest config — this task formalizes it).
 
@@ -525,7 +529,7 @@ describe("Home", () => {
 - [ ] **Step 6: Run test to verify it fails**
 
 Run: `pnpm test`
-Expected: FAIL — `@testing-library/jest-dom/vitest` matchers not yet wired without step 3, or `Home` import fails if Task 1's `app/page.tsx` doesn't match. Confirm the failure is only "not yet run" style (missing setup), not a real bug. If Task 1/3 already complete, this may actually pass on first run — if so, skip to Step 7 but verify by temporarily renaming the heading text and re-running to confirm the test *can* fail (regression-detection sanity check), then rename it back.
+Expected: FAIL — `@testing-library/jest-dom/vitest` matchers not yet wired without step 3, or `Home` import fails if Task 1's `app/page.tsx` doesn't match. Confirm the failure is only "not yet run" style (missing setup), not a real bug. If Task 1/3 already complete, this may actually pass on first run — if so, skip to Step 7 but verify by temporarily renaming the heading text and re-running to confirm the test _can_ fail (regression-detection sanity check), then rename it back.
 
 - [ ] **Step 7: Run test to verify it passes**
 
@@ -544,12 +548,14 @@ git commit -m "test: configure Vitest and React Testing Library"
 ## Task 5: Install shadcn/ui CLI and Generate Base Components
 
 **Files:**
+
 - Create: `components.json` (shadcn CLI config)
 - Create: `lib/utils.ts`
 - Create: `components/ui/button.tsx`, `components/ui/input.tsx`, `components/ui/textarea.tsx`, `components/ui/select.tsx`, `components/ui/checkbox.tsx`, `components/ui/card.tsx`, `components/ui/dialog.tsx`, `components/ui/dropdown-menu.tsx`, `components/ui/avatar.tsx`, `components/ui/badge.tsx`, `components/ui/toast.tsx`, `components/ui/toaster.tsx`, `components/ui/use-toast.ts`, `components/ui/tabs.tsx`, `components/ui/skeleton.tsx`, `components/ui/pagination.tsx`
 - Test: `components/ui/button.test.tsx` (representative — full per-component test coverage is Task 7)
 
 **Interfaces:**
+
 - Produces: `cn(...)` utility from `lib/utils.ts` (`cn(...inputs: ClassValue[]) => string`), and each `components/ui/*.tsx` exporting its named component(s) per shadcn's standard API (e.g. `Button`, `buttonVariants` from `button.tsx`; `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` from `card.tsx`).
 - Consumes: design tokens from Task 3 (`bg-primary`, `text-primary-foreground`, etc.), Tailwind config's `borderRadius` scale.
 
@@ -640,10 +646,12 @@ git commit -m "feat: add shadcn/ui base component kit"
 ## Task 6: Storybook Setup
 
 **Files:**
+
 - Create: `.storybook/main.ts`, `.storybook/preview.tsx`
 - Modify: `package.json` (add `storybook`, `build-storybook` scripts)
 
 **Interfaces:**
+
 - Produces: `pnpm storybook` launches Storybook dev server on port 6006; `.storybook/preview.tsx` exports a `decorators` array that wraps every story in the same `ThemeProvider` used by `app/layout.tsx` (created in Task 8), so dark-mode stories render correctly; a global "background" toolbar to preview light/dark.
 - Consumes: `app/globals.css` (Task 3) for token styling inside story iframes.
 
@@ -702,9 +710,11 @@ git commit -m "chore: set up Storybook"
 ## Task 7: Storybook Stories for Every Base Component
 
 **Files:**
+
 - Create: `components/ui/button.stories.tsx`, `components/ui/input.stories.tsx`, `components/ui/textarea.stories.tsx`, `components/ui/select.stories.tsx`, `components/ui/checkbox.stories.tsx`, `components/ui/card.stories.tsx`, `components/ui/dialog.stories.tsx`, `components/ui/dropdown-menu.stories.tsx`, `components/ui/avatar.stories.tsx`, `components/ui/badge.stories.tsx`, `components/ui/toast.stories.tsx`, `components/ui/tabs.stories.tsx`, `components/ui/skeleton.stories.tsx`, `components/ui/pagination.stories.tsx`
 
 **Interfaces:**
+
 - Consumes: each component export from its sibling `.tsx` file (Task 5).
 - Produces: nothing consumed by later tasks — these are leaf deliverables (Storybook's own build just needs each file to export a default `Meta` and one-or-more named `StoryObj` exports).
 
@@ -808,13 +818,7 @@ export const Disabled: Story = {
 ```tsx
 // components/ui/select.stories.tsx
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 
 const meta: Meta<typeof Select> = {
   title: "UI/Select",
@@ -885,14 +889,7 @@ export const Disabled: Story = {
 ```tsx
 // components/ui/card.stories.tsx
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card";
 import { Button } from "./button";
 
 const meta: Meta<typeof Card> = {
@@ -911,7 +908,7 @@ export const Default: Story = {
         <CardDescription>J.R.R. Tolkien</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">First volume of The Lord of the Rings.</p>
+        <p className="text-muted-foreground text-sm">First volume of The Lord of the Rings.</p>
       </CardContent>
       <CardFooter>
         <Button>Add to collection</Button>
@@ -1221,12 +1218,14 @@ git commit -m "docs: add Storybook stories for every base component"
 ## Task 8: Theme Provider (Light/Dark Mode)
 
 **Files:**
+
 - Create: `lib/providers/theme-provider.tsx`
 - Create: `components/layout/theme-toggle.tsx`
 - Modify: `app/layout.tsx`
 - Test: `components/layout/theme-toggle.test.tsx`
 
 **Interfaces:**
+
 - Produces: `ThemeProvider` component (wraps `next-themes`'s `ThemeProvider`, `attribute="class"`, `defaultTheme="system"`, `enableSystem`), `ThemeToggle` component exporting default function using `useTheme()` from `next-themes` to flip between `"light"`/`"dark"`.
 - Consumes: `Button` from `components/ui/button.tsx` (Task 5), `.dark` CSS variable overrides from Task 3.
 
@@ -1359,11 +1358,13 @@ git commit -m "feat: add light/dark theme provider and toggle"
 ## Task 9: TanStack Query Provider
 
 **Files:**
+
 - Create: `lib/providers/query-provider.tsx`
 - Modify: `app/layout.tsx`
 - Test: `lib/providers/query-provider.test.tsx`
 
 **Interfaces:**
+
 - Produces: `QueryProvider` component wrapping `@tanstack/react-query`'s `QueryClientProvider` with a `QueryClient` instance created once per component mount (via `useState` lazy initializer, to avoid sharing state across requests in SSR).
 - Consumes: nothing new.
 
@@ -1484,12 +1485,14 @@ git commit -m "feat: add TanStack Query provider"
 ## Task 10: App Shell (Header/Nav) with Responsive Layout
 
 **Files:**
+
 - Create: `components/layout/header.tsx`
 - Create: `app/(app)/layout.tsx`
 - Create: `app/(auth)/layout.tsx`
 - Test: `components/layout/header.test.tsx`
 
 **Interfaces:**
+
 - Produces: `Header` component rendering the app logo/name, primary nav links (`Books`, `Collections`, `Reading`, `Friends`, `Chat` — placeholders pointing at `#` until their Blocks exist), a `ThemeToggle`, and an auth-state-aware slot (placeholder "Log in" button — full session wiring is Block 1). `AppLayout` (from `app/(app)/layout.tsx`) renders `<Header />` followed by `{children}` in a responsive container (`max-w-6xl mx-auto px-4`). `AuthLayout` (from `app/(auth)/layout.tsx`) renders a centered minimal container with no nav, for login/register pages in Block 1.
 - Consumes: `ThemeToggle` (Task 8), `Button` (Task 5).
 
@@ -1543,7 +1546,7 @@ const NAV_LINKS = [
 
 export function Header() {
   return (
-    <header className="border-b border-border">
+    <header className="border-border border-b">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="text-lg font-semibold">
           Bookworm Hole
@@ -1554,7 +1557,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-sm"
             >
               {link.label}
             </Link>
@@ -1641,11 +1644,13 @@ git commit -m "feat: add app shell header and route-group layouts"
 ## Task 11: Empty lib/api, lib/auth, hooks Directories with Placeholder READMEs
 
 **Files:**
+
 - Create: `lib/api/README.md`
 - Create: `lib/auth/README.md`
 - Create: `hooks/README.md`
 
 **Interfaces:**
+
 - Produces: nothing consumed by code — these are directory placeholders so Block 1 has an established location to add files into, and so `git` tracks otherwise-empty directories.
 
 - [ ] **Step 1: Write lib/api/README.md**
@@ -1687,10 +1692,12 @@ git commit -m "chore: scaffold lib/api, lib/auth, hooks directories"
 ## Task 12: Environment Variable Template
 
 **Files:**
+
 - Create: `.env.example`
 - Modify: `.gitignore` (confirm `.env*.local` and `.env` are ignored — `create-next-app` already ignores these by default; verify)
 
 **Interfaces:**
+
 - Produces: documented env vars `NEXT_PUBLIC_API_BASE_URL`, `API_BASE_URL` (server-side BFF calls), `SESSION_COOKIE_NAME`, `SESSION_COOKIE_SECRET` — consumed by Block 1's `lib/api/` axios client and `lib/auth/` middleware.
 
 - [ ] **Step 1: Write .env.example**
@@ -1732,9 +1739,11 @@ git commit -m "docs: add .env.example for API base URL and session config"
 ## Task 13: GitHub Actions CI Pipeline
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 **Interfaces:**
+
 - Produces: a CI workflow triggered on `push` and `pull_request` to any branch, running four jobs in sequence-equivalent order (lint, type-check, test, build) using pnpm with cached dependencies.
 
 - [ ] **Step 1: Add a type-check script to package.json**
@@ -1845,9 +1854,11 @@ Then check the Actions tab on GitHub (or `gh run watch` if the `gh` CLI is authe
 ## Task 14: README
 
 **Files:**
+
 - Create/Modify: `README.md`
 
 **Interfaces:**
+
 - Produces: nothing consumed by code — developer-facing setup doc.
 
 - [ ] **Step 1: Write README.md**
@@ -1865,7 +1876,7 @@ for the full architecture and delivery-block plan.
 
 \`\`\`bash
 pnpm install
-cp .env.example .env.local  # fill in values
+cp .env.example .env.local # fill in values
 pnpm dev
 \`\`\`
 
@@ -1874,16 +1885,16 @@ http://localhost:8000 (see that repo's README).
 
 ## Scripts
 
-| Script | Purpose |
-|---|---|
-| `pnpm dev` | Start the Next.js dev server |
-| `pnpm build` | Production build |
-| `pnpm lint` | ESLint |
-| `pnpm format` / `pnpm format:check` | Prettier write / check |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm test` / `pnpm test:watch` | Vitest (RTL) |
-| `pnpm storybook` | Storybook dev server on :6006 |
-| `pnpm build-storybook` | Static Storybook build |
+| Script                              | Purpose                       |
+| ----------------------------------- | ----------------------------- |
+| `pnpm dev`                          | Start the Next.js dev server  |
+| `pnpm build`                        | Production build              |
+| `pnpm lint`                         | ESLint                        |
+| `pnpm format` / `pnpm format:check` | Prettier write / check        |
+| `pnpm typecheck`                    | `tsc --noEmit`                |
+| `pnpm test` / `pnpm test:watch`     | Vitest (RTL)                  |
+| `pnpm storybook`                    | Storybook dev server on :6006 |
+| `pnpm build-storybook`              | Static Storybook build        |
 
 ## Project Structure
 

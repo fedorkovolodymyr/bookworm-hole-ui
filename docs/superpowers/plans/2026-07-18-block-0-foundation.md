@@ -74,11 +74,13 @@ Rationale: shadcn's toast component is deprecated in favor of `sonner` in curren
 ## Task 1: Prettier + Lint Scripts
 
 **Files:**
+
 - Create: `.prettierrc.json`
 - Create: `.prettierignore`
 - Modify: `package.json` (add `format`, `format:check`, `typecheck` scripts)
 
 **Interfaces:**
+
 - Produces: `pnpm format`, `pnpm format:check`, `pnpm typecheck` commands usable by every later task and by CI (Task 9).
 
 - [ ] **Step 1: Install Prettier and Tailwind class-sorting plugin**
@@ -123,13 +125,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   prettierConfig,
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    "storybook-static/**",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "storybook-static/**"]),
 ]);
 
 export default eslintConfig;
@@ -170,11 +166,13 @@ git commit -m "chore: add Prettier and typecheck script"
 ## Task 2: Vitest + React Testing Library Setup
 
 **Files:**
+
 - Create: `vitest.config.ts`
 - Create: `tests/setup.ts`
 - Modify: `package.json` (add `test` script)
 
 **Interfaces:**
+
 - Produces: `pnpm test` (runs Vitest once), jsdom environment, `@testing-library/jest-dom` matchers available globally in every `*.test.tsx` written in later tasks.
 
 - [ ] **Step 1: Install Vitest, RTL, jsdom, jest-dom**
@@ -262,11 +260,13 @@ git commit -m "chore: add Vitest and React Testing Library"
 ## Task 3: Playwright Scaffold (No Tests Yet)
 
 **Files:**
+
 - Create: `playwright.config.ts`
 - Create: `e2e/.gitkeep`
 - Modify: `.gitignore` (add Playwright artifacts)
 
 **Interfaces:**
+
 - Produces: `pnpm exec playwright test` runnable (0 tests found is expected/correct outcome this block). Block 1 adds the first real spec into `e2e/`.
 
 - [ ] **Step 1: Install Playwright**
@@ -339,10 +339,12 @@ git commit -m "chore: scaffold Playwright (no tests yet)"
 ## Task 4: Design Tokens in app/globals.css
 
 **Files:**
+
 - Modify: `app/globals.css`
 - Test: `tests/design-tokens.test.ts`
 
 **Interfaces:**
+
 - Produces: CSS variables `--background`, `--foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`, `--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--destructive-foreground`, `--success`, `--success-foreground`, `--warning`, `--warning-foreground`, `--border`, `--input`, `--ring`, `--radius` in `:root` (light) and `.dark` (manual dark override class); Tailwind v4 `@theme inline` mappings `--color-background`, `--color-foreground`, `--color-primary`, `--color-primary-foreground`, `--color-secondary`, `--color-secondary-foreground`, `--color-muted`, `--color-muted-foreground`, `--color-accent`, `--color-accent-foreground`, `--color-destructive`, `--color-destructive-foreground`, `--color-success`, `--color-success-foreground`, `--color-warning`, `--color-warning-foreground`, `--color-border`, `--color-input`, `--color-ring`, `--radius-sm`, `--radius-md`, `--radius-lg`.
 - Consumes: nothing (first design-system task).
 
@@ -567,10 +569,12 @@ git commit -m "feat: add design tokens (color, radius) with light/dark support"
 ## Task 5: shadcn/ui CLI Init + lib/utils.ts
 
 **Files:**
+
 - Create: `components.json`
 - Create: `lib/utils.ts`
 
 **Interfaces:**
+
 - Produces: `cn(...)` utility exported from `lib/utils.ts`, used by every component in Tasks 6–7.
 - Consumes: design tokens from Task 4 (shadcn CLI reads `app/globals.css` and `components.json` to know where to place generated files).
 
@@ -632,10 +636,12 @@ git commit -m "chore: init shadcn/ui CLI"
 ## Task 6: Generate shadcn/ui Components (Batch 1 — Button, Input, Textarea, Select, Checkbox, Card)
 
 **Files:**
+
 - Create: `components/ui/button.tsx`, `components/ui/input.tsx`, `components/ui/textarea.tsx`, `components/ui/select.tsx`, `components/ui/checkbox.tsx`, `components/ui/card.tsx`
 - Create: matching `.stories.tsx` and `.test.tsx` for each
 
 **Interfaces:**
+
 - Consumes: `cn()` from `lib/utils.ts` (Task 5).
 - Produces: `Button` (props: `variant: "default"|"destructive"|"outline"|"secondary"|"ghost"|"link"`, `size: "default"|"sm"|"lg"|"icon"`, `disabled?: boolean`), `Input`, `Textarea`, `Select`/`SelectTrigger`/`SelectContent`/`SelectItem`, `Checkbox`, `Card`/`CardHeader`/`CardTitle`/`CardDescription`/`CardContent`/`CardFooter` — all exported for use by later components and Block 1+ pages.
 
@@ -1020,10 +1026,12 @@ git commit -m "feat: add Button, Input, Textarea, Select, Checkbox, Card compone
 ## Task 7: Generate shadcn/ui Components (Batch 2 — Dialog, Dropdown Menu, Avatar, Badge, Sonner/Toast, Tabs, Skeleton, Pagination)
 
 **Files:**
+
 - Create: `components/ui/dialog.tsx`, `components/ui/dropdown-menu.tsx`, `components/ui/avatar.tsx`, `components/ui/badge.tsx`, `components/ui/sonner.tsx`, `components/ui/tabs.tsx`, `components/ui/skeleton.tsx`, `components/ui/pagination.tsx`
 - Create: matching `.stories.tsx` and `.test.tsx` for each
 
 **Interfaces:**
+
 - Consumes: `cn()` from `lib/utils.ts` (Task 5), `Button` from Task 6 (Pagination story uses it).
 - Produces: `Dialog`/`DialogTrigger`/`DialogContent`/`DialogHeader`/`DialogTitle`/`DialogDescription`/`DialogFooter`, `DropdownMenu`/`DropdownMenuTrigger`/`DropdownMenuContent`/`DropdownMenuItem`, `Avatar`/`AvatarImage`/`AvatarFallback`, `Badge` (props: `variant: "default"|"secondary"|"destructive"|"outline"`), `Toaster` + `toast()` from `sonner`, `Tabs`/`TabsList`/`TabsTrigger`/`TabsContent`, `Skeleton`, `Pagination`/`PaginationContent`/`PaginationItem`/`PaginationLink`/`PaginationPrevious`/`PaginationNext` — for use by Block 1+ pages.
 
@@ -1157,7 +1165,12 @@ Create `components/ui/dropdown-menu.test.tsx`:
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
 
 describe("DropdownMenu", () => {
   it("shows items after trigger is clicked", async () => {
@@ -1529,6 +1542,7 @@ git commit -m "feat: add Dialog, DropdownMenu, Avatar, Badge, Toast, Tabs, Skele
 ## Task 8: App Shell — ThemeProvider, ThemeToggle, Header, AppShell
 
 **Files:**
+
 - Create: `lib/theme-provider.tsx`
 - Create: `components/shell/theme-toggle.tsx`, `components/shell/theme-toggle.stories.tsx`, `components/shell/theme-toggle.test.tsx`
 - Create: `components/shell/header.tsx`, `components/shell/header.stories.tsx`, `components/shell/header.test.tsx`
@@ -1536,6 +1550,7 @@ git commit -m "feat: add Dialog, DropdownMenu, Avatar, Badge, Toast, Tabs, Skele
 - Modify: `app/layout.tsx` (wrap children in `ThemeProvider`)
 
 **Interfaces:**
+
 - Consumes: `Button` (Task 6), `Avatar`/`AvatarFallback` (Task 7), `cn()` (Task 5), design tokens `.dark` class (Task 4).
 - Produces: `ThemeProvider` (wraps app, manages `.dark` class on `<html>`), `ThemeToggle` (button component, no props, toggles theme), `Header` (props: none — static placeholder nav + "Sign in" button + `ThemeToggle`), `AppShell` (props: `children: React.ReactNode` — renders `Header` + responsive content wrapper). `app/layout.tsx`'s `RootLayout` wraps `{children}` in `<ThemeProvider>`.
 
@@ -1850,11 +1865,13 @@ git commit -m "feat: add app shell (ThemeProvider, ThemeToggle, Header, AppShell
 ## Task 9: Storybook Setup
 
 **Files:**
+
 - Create: `.storybook/main.ts`
 - Create: `.storybook/preview.ts`
 - Modify: `package.json` (add `storybook`, `build-storybook` scripts)
 
 **Interfaces:**
+
 - Produces: `pnpm storybook` (dev server on port 6006), `pnpm build-storybook` (static build) — renders every `.stories.tsx` created in Tasks 6–8.
 - Consumes: `app/globals.css` (Task 4) for token/Tailwind styles inside Storybook's iframe.
 
@@ -1903,9 +1920,11 @@ git commit -m "chore: add Storybook"
 ## Task 10: GitHub Actions CI
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 **Interfaces:**
+
 - Produces: CI pipeline triggered on every PR to `main`, running `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` in order; PR merge is blocked if any step fails (assuming branch protection is configured in GitHub settings — out of scope to configure here, note it for the user).
 
 - [ ] **Step 1: Write .github/workflows/ci.yml**

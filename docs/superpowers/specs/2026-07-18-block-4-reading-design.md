@@ -19,9 +19,9 @@ data-dependent:
 
 - `get_streak` (repo line ~109): the `streak_lengths` CTE's
   `GROUP BY` clause doesn't account for the `MAX(session_date) as
-  max_date` column correctly — Postgres raises `GroupingError: column
-  "streak_lengths.max_date" must appear in the GROUP BY clause or be used
-  in an aggregate function`.
+max_date` column correctly — Postgres raises `GroupingError: column
+"streak_lengths.max_date" must appear in the GROUP BY clause or be used
+in an aggregate function`.
 - `get_timeline` (repo line ~155): the query casts bound parameters
   inline as `:from_date::date` / `:to_date::date` inside
   `generate_series(...)`, which asyncpg's SQL parser cannot handle —
@@ -40,22 +40,23 @@ the live endpoints (or merged) until unblocked.
 
 ## Real API surface (verified against running OpenAPI schema; live-tested where noted)
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/me/reading/active` | GET | — (bearer) | `ReadingSessionResponse[]` — sessions with `ended_at: null`. **Verified live: 200, `[]`.** |
-| `/api/v1/me/reading/sessions` | GET | Query `release_id?` (uuid, filter) | `ReadingSessionResponse[]`. **Verified live: 200, `[]`.** |
-| `/api/v1/me/reading/sessions/{session_id}` | PATCH | `UpdateReadingSessionSchema {started_at?, ended_at?, position_start?, position_end?, position_unit?, pages_read?, notes?}` (all optional, for correcting a logged session) | `ReadingSessionResponse` |
-| `/api/v1/me/reading/sessions/{session_id}` | DELETE | — (bearer) | 204 |
-| `/api/v1/me/reading/start` | POST | `CreateReadingSessionSchema {release_id, position_start?, position_unit?}` | 201 `ReadingSessionResponse` |
-| `/api/v1/me/reading/stop` | POST | `StopReadingSessionSchema {release_id, position_end?, notes?}` | 200 `ReadingSessionResponse` (sets `ended_at`, computes `pages_read`) |
-| `/api/v1/me/reading/stats` | GET | Query `period?` (`Period` enum: `week`\|`month`\|`year`\|`all`, default `month`) | `ReadingStatsResponse {total_minutes, total_sessions, unique_books, total_pages}`. **Verified live: 200, `{"total_minutes":0,"total_sessions":0,"unique_books":0,"total_pages":0}` for a fresh user.** |
-| `/api/v1/me/reading/streak` | GET | — (bearer) | `StreakResponse {current_streak_days, longest_streak_days}`. **Verified live: 500 — see API Blocker.** |
-| `/api/v1/me/reading/timeline` | GET | Query `from_date`, `to_date` (both required, `date-time`) | `TimelineResponse {items: TimelineEntry[]}`, `TimelineEntry {date (YYYY-MM-DD string), total_minutes, sessions, pages_read}`. **Verified live: 500 — see API Blocker.** |
+| Endpoint                                   | Method | Request                                                                                                                                                                    | Response                                                                                                                                                                                               |
+| ------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/api/v1/me/reading/active`                | GET    | — (bearer)                                                                                                                                                                 | `ReadingSessionResponse[]` — sessions with `ended_at: null`. **Verified live: 200, `[]`.**                                                                                                             |
+| `/api/v1/me/reading/sessions`              | GET    | Query `release_id?` (uuid, filter)                                                                                                                                         | `ReadingSessionResponse[]`. **Verified live: 200, `[]`.**                                                                                                                                              |
+| `/api/v1/me/reading/sessions/{session_id}` | PATCH  | `UpdateReadingSessionSchema {started_at?, ended_at?, position_start?, position_end?, position_unit?, pages_read?, notes?}` (all optional, for correcting a logged session) | `ReadingSessionResponse`                                                                                                                                                                               |
+| `/api/v1/me/reading/sessions/{session_id}` | DELETE | — (bearer)                                                                                                                                                                 | 204                                                                                                                                                                                                    |
+| `/api/v1/me/reading/start`                 | POST   | `CreateReadingSessionSchema {release_id, position_start?, position_unit?}`                                                                                                 | 201 `ReadingSessionResponse`                                                                                                                                                                           |
+| `/api/v1/me/reading/stop`                  | POST   | `StopReadingSessionSchema {release_id, position_end?, notes?}`                                                                                                             | 200 `ReadingSessionResponse` (sets `ended_at`, computes `pages_read`)                                                                                                                                  |
+| `/api/v1/me/reading/stats`                 | GET    | Query `period?` (`Period` enum: `week`\|`month`\|`year`\|`all`, default `month`)                                                                                           | `ReadingStatsResponse {total_minutes, total_sessions, unique_books, total_pages}`. **Verified live: 200, `{"total_minutes":0,"total_sessions":0,"unique_books":0,"total_pages":0}` for a fresh user.** |
+| `/api/v1/me/reading/streak`                | GET    | — (bearer)                                                                                                                                                                 | `StreakResponse {current_streak_days, longest_streak_days}`. **Verified live: 500 — see API Blocker.**                                                                                                 |
+| `/api/v1/me/reading/timeline`              | GET    | Query `from_date`, `to_date` (both required, `date-time`)                                                                                                                  | `TimelineResponse {items: TimelineEntry[]}`, `TimelineEntry {date (YYYY-MM-DD string), total_minutes, sessions, pages_read}`. **Verified live: 500 — see API Blocker.**                                |
 
 Notes on shapes:
+
 - `ReadingSessionResponse` fields: `id, user_id, release_id, started_at,
-  ended_at, position_start, position_end, position_unit, pages_read,
-  notes, created_at, updated_at`. `position_unit` is a nullable enum
+ended_at, position_start, position_end, position_unit, pages_read,
+notes, created_at, updated_at`. `position_unit` is a nullable enum
   `PositionUnit` (`page`\|`percent`\|`location`\|`timestamp`) — the app
   must pick the right unit per release's format (e.g. ebook percent vs.
   print page vs. audiobook timestamp).
@@ -71,13 +72,14 @@ Notes on shapes:
   array (multiple concurrent sessions across different releases are
   possible — e.g. reading two books at once).
 - 422 `HTTPValidationError {detail: ValidationError[]}` (`{loc, msg,
-  type}`) on any bad query/body param, consistent with the rest of the
+type}`) on any bad query/body param, consistent with the rest of the
   API.
 
 ## Live verification performed
 
 Registered a fresh test user (`POST /auth/register`), used the returned
 `access_token` as a bearer token, then:
+
 - `GET /me/reading/active` → 200, `[]`.
 - `GET /me/reading/sessions` → 200, `[]`.
 - `GET /me/reading/stats` (default `period=month`) → 200, all-zero
@@ -139,7 +141,7 @@ seed/fixture exists.
   small form for ending position + optional notes, calling `stopSession`.
 - **Session history:** `app/(app)/reading/page.tsx` lists past sessions
   (`SessionHistoryList`), each showing release, duration (`ended_at -
-  started_at`), pages read, notes. Each item has an edit action (opens a
+started_at`), pages read, notes. Each item has an edit action (opens a
   form pre-filled from `UpdateReadingSessionSchema` fields — useful for
   correcting a forgotten stop time or position) and a delete action
   (confirm `Dialog`, Block 0's kit).

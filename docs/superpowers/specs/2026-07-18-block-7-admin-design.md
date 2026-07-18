@@ -27,14 +27,14 @@ is effectively "what regular users submitted, now queued for review."
 
 ### Users
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/admin/users/` | GET | Query params: `skip` (int, default 0), `limit` (int, default 10), `email?`, `username?`, `is_active?` (bool), `is_admin?` (bool) | `Page_AdminUserResponse_ {items: AdminUserResponse[], total, limit, offset}` |
-| `/api/v1/admin/users/{user_id}/activate` | POST | — (path: `user_id` uuid) | `AdminUserResponse` |
-| `/api/v1/admin/users/{user_id}/deactivate` | POST | — (path: `user_id` uuid) | `AdminUserResponse` |
-| `/api/v1/admin/users/{user_id}/promote` | POST | — (path: `user_id` uuid) | `AdminUserResponse` |
-| `/api/v1/admin/users/{user_id}/demote` | POST | — (path: `user_id` uuid) | `AdminUserResponse` |
-| `/api/v1/admin/users/{user_id}/password-reset` | POST | — (path: `user_id` uuid) | `PasswordResetTokenResponse {reset_token}` |
+| Endpoint                                       | Method | Request                                                                                                                          | Response                                                                     |
+| ---------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `/api/v1/admin/users/`                         | GET    | Query params: `skip` (int, default 0), `limit` (int, default 10), `email?`, `username?`, `is_active?` (bool), `is_admin?` (bool) | `Page_AdminUserResponse_ {items: AdminUserResponse[], total, limit, offset}` |
+| `/api/v1/admin/users/{user_id}/activate`       | POST   | — (path: `user_id` uuid)                                                                                                         | `AdminUserResponse`                                                          |
+| `/api/v1/admin/users/{user_id}/deactivate`     | POST   | — (path: `user_id` uuid)                                                                                                         | `AdminUserResponse`                                                          |
+| `/api/v1/admin/users/{user_id}/promote`        | POST   | — (path: `user_id` uuid)                                                                                                         | `AdminUserResponse`                                                          |
+| `/api/v1/admin/users/{user_id}/demote`         | POST   | — (path: `user_id` uuid)                                                                                                         | `AdminUserResponse`                                                          |
+| `/api/v1/admin/users/{user_id}/password-reset` | POST   | — (path: `user_id` uuid)                                                                                                         | `PasswordResetTokenResponse {reset_token}`                                   |
 
 `AdminUserResponse {id, email, username, display_name, is_active, is_admin}`
 — narrower than Block 1's `UserResponse`/`UserProfileResponse` (no
@@ -53,9 +53,9 @@ consideration.
 
 ### Audit Logs
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/admin/audit-logs/` | GET | Query params: `skip` (int, default 0), `limit` (int, default 10), `actor_id?` (uuid), `action?` (`AuditAction` enum), `target_type?` (`AuditTargetType` enum), `start_date?` (date-time), `end_date?` (date-time) | `Page_AuditLogResponse_ {items: AuditLogResponse[], total, limit, offset}` |
+| Endpoint                    | Method | Request                                                                                                                                                                                                           | Response                                                                   |
+| --------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `/api/v1/admin/audit-logs/` | GET    | Query params: `skip` (int, default 0), `limit` (int, default 10), `actor_id?` (uuid), `action?` (`AuditAction` enum), `target_type?` (`AuditTargetType` enum), `start_date?` (date-time), `end_date?` (date-time) | `Page_AuditLogResponse_ {items: AuditLogResponse[], total, limit, offset}` |
 
 `AuditAction` enum: `approve_contribution`, `reject_contribution`,
 `claim_contribution`, `activate_user`, `deactivate_user`, `promote_user`,
@@ -70,13 +70,13 @@ audit_metadata (free-form object), ip_address (nullable), created_at}`.
 
 ### Contribution Moderation Queue
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/admin/contributions/` | GET | Query params: `status?` (`ContributionStatus` enum, default `submitted`), `skip` (int, default 0), `limit` (int, 1-100, default 10) | `Page_AdminContributionResponse_ {items: AdminContributionResponse[], total, limit, offset}` |
-| `/api/v1/admin/contributions/{contribution_id}/claim` | POST | — (path: `contribution_id` uuid) | `AdminContributionResponse` |
-| `/api/v1/admin/contributions/{contribution_id}/diff` | GET | — (path: `contribution_id` uuid) | `ContributionDiffResponse {proposed: object, current: object \| null, warnings: string[]}` |
-| `/api/v1/admin/contributions/{contribution_id}/approve` | POST | — (path: `contribution_id` uuid) | `AdminContributionResponse` |
-| `/api/v1/admin/contributions/{contribution_id}/reject` | POST | `RejectContributionSchema {notes: string}` (required) | `AdminContributionResponse` |
+| Endpoint                                                | Method | Request                                                                                                                             | Response                                                                                     |
+| ------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `/api/v1/admin/contributions/`                          | GET    | Query params: `status?` (`ContributionStatus` enum, default `submitted`), `skip` (int, default 0), `limit` (int, 1-100, default 10) | `Page_AdminContributionResponse_ {items: AdminContributionResponse[], total, limit, offset}` |
+| `/api/v1/admin/contributions/{contribution_id}/claim`   | POST   | — (path: `contribution_id` uuid)                                                                                                    | `AdminContributionResponse`                                                                  |
+| `/api/v1/admin/contributions/{contribution_id}/diff`    | GET    | — (path: `contribution_id` uuid)                                                                                                    | `ContributionDiffResponse {proposed: object, current: object \| null, warnings: string[]}`   |
+| `/api/v1/admin/contributions/{contribution_id}/approve` | POST   | — (path: `contribution_id` uuid)                                                                                                    | `AdminContributionResponse`                                                                  |
+| `/api/v1/admin/contributions/{contribution_id}/reject`  | POST   | `RejectContributionSchema {notes: string}` (required)                                                                               | `AdminContributionResponse`                                                                  |
 
 `ContributionStatus` enum: `draft`, `submitted`, `under_review`, `approved`,
 `rejected`, `merged`. The admin queue defaults to `submitted` — the
@@ -108,12 +108,12 @@ toast, since it's an expected race in a multi-admin queue.
 
 ### Pairing with the non-admin `contributions` router (context only, not built here)
 
-| Endpoint | Method | Notes |
-|---|---|---|
-| `/api/v1/contributions/` | POST | Regular user proposes an edit — `CreateContributionSchema {kind, target_id?, payload}` → `ContributionResponse` (201). Owned by Block 2. |
-| `/api/v1/contributions/me/contributions` | GET | User's own contribution history. Owned by Block 2. |
-| `/api/v1/contributions/{contribution_id}` | GET/PATCH/DELETE | View/edit/withdraw own draft. Owned by Block 2. |
-| `/api/v1/contributions/{contribution_id}/submit` | POST | Draft → `submitted`, making it appear in this block's moderation queue. Owned by Block 2. |
+| Endpoint                                         | Method           | Notes                                                                                                                                    |
+| ------------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/contributions/`                         | POST             | Regular user proposes an edit — `CreateContributionSchema {kind, target_id?, payload}` → `ContributionResponse` (201). Owned by Block 2. |
+| `/api/v1/contributions/me/contributions`         | GET              | User's own contribution history. Owned by Block 2.                                                                                       |
+| `/api/v1/contributions/{contribution_id}`        | GET/PATCH/DELETE | View/edit/withdraw own draft. Owned by Block 2.                                                                                          |
+| `/api/v1/contributions/{contribution_id}/submit` | POST             | Draft → `submitted`, making it appear in this block's moderation queue. Owned by Block 2.                                                |
 
 `ContributionResponse` (submitter-facing) and `AdminContributionResponse`
 (reviewer-facing) carry identical fields except the admin variant adds
@@ -142,7 +142,7 @@ Extends Block 1's middleware — does not reinvent auth:
      full user fetch, to stay fast), do the `is_admin` check in
      `app/(app)/admin/layout.tsx` as a Server Component using
      `lib/api/server-client.ts` (Block 1) to call `GET /auth/me`/`GET
-     /users/me`, and `redirect("/")` from there if `!is_admin`. This is
+/users/me`, and `redirect("/")` from there if `!is_admin`. This is
      simpler to reason about (co-located with the admin routes) at the
      cost of one extra request per admin-route navigation — acceptable
      given this is a low-traffic internal surface.
@@ -173,7 +173,7 @@ Extends Block 1's middleware — does not reinvent auth:
   success).
 - `hooks/useAdminAuditLogs.ts` — `useAdminAuditLogs(filters)` query.
 - `hooks/useAdminContributions.ts` — `useAdminContributions(status,
-  pagination)` query, `useContributionDiff(id)` query,
+pagination)` query, `useContributionDiff(id)` query,
   `useClaimContribution`/`useApproveContribution`/`useRejectContribution`
   mutations (invalidate `["admin", "contributions"]` on success/409).
 - `components/admin/` — `UserTable`, `UserRowActions` (activate/deactivate/
