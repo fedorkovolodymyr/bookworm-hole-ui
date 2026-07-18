@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ThemeToggle } from "./theme-toggle";
 import { ThemeProvider } from "@/lib/theme-provider";
 
