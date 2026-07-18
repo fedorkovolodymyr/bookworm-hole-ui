@@ -8,21 +8,17 @@ verification, profile view/edit, change password, deactivate/delete account.
 Establishes the BFF cookie-auth pattern (`lib/api/`, `lib/auth/`,
 `hooks/`) every later block reuses.
 
-## API Blocker
+## API Blocker (resolved)
 
 `POST /auth/register` (and by extension `/auth/login`, `/auth/me`,
-`/users/me`) currently 500s on a fresh docker-compose DB — `user` table is
-missing column `friends_can_see_library` that the ORM model selects on
-every query. Filed as
-[fedorkovolodymyr/bookworm-hole-api#138](https://github.com/fedorkovolodymyr/bookworm-hole-api/issues/138).
-
-**This blocks live end-to-end verification of the whole block.** The
-implementation plan proceeds regardless (UI code against the documented
-OpenAPI contract, which is internally consistent), but:
-- Tests that hit the real API instead of a mock will fail until #138 lands.
-- Any PR for this block must include an "API Blocker" section linking
-  #138 and must not be merged until #138 is closed AND the register/login/
-  me/profile flows are re-verified end-to-end against the fixed API.
+`/users/me`) 500'd on a fresh docker-compose DB — `user` table was missing
+column `friends_can_see_library` that the ORM model selects on every
+query. Filed as
+[fedorkovolodymyr/bookworm-hole-api#138](https://github.com/fedorkovolodymyr/bookworm-hole-api/issues/138),
+now fixed and closed — re-verified 2026-07-18: register (201), login
+(200), `users/me` (200) all return correct schemas against the updated
+API. No longer a blocker; implementation and e2e tests can run against
+the live API.
 
 ## Real API surface (verified against running OpenAPI schema, supersedes original spec wording)
 
@@ -113,9 +109,8 @@ Cookie wrapping is entirely the UI's BFF responsibility (per Block 0 spec).
   calls the right mutation. Mock BFF routes with `msw`.
 - Hook tests: mocked API success + error branches for each mutation/query.
 - Playwright: one happy-path e2e — register → land on authenticated shell
-  → log out → log back in. **This e2e cannot pass until API#138 is
-  fixed** — plan calls this out explicitly rather than skipping/mocking
-  it away.
+  → log out → log back in, against the live API (API#138 fixed, no
+  longer blocked).
 - `middleware.ts` covered by a Vitest test simulating cookie presence/
   absence and refresh success/failure branches.
 
