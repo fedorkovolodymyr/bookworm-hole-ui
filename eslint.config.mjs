@@ -11,7 +11,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   prettierConfig,
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "storybook-static/**"]),
-  ...storybook.configs["flat/recommended"]
+  ...storybook.configs["flat/recommended"],
 ]);
 
 export default eslintConfig;
