@@ -33,5 +33,6 @@ describe("Select", () => {
     const option = await screen.findByText("Option A");
     await userEvent.click(option);
     expect(screen.getByRole("combobox")).toHaveTextContent("a");
+    expect(screen.getByRole("combobox")).not.toHaveTextContent("Pick one");
   });
 });
