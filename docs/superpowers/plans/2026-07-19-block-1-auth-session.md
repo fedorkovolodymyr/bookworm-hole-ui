@@ -3494,7 +3494,17 @@ git commit -m "test: add Playwright e2e happy path for register/logout/login"
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Run the full gate**
+- [ ] **Step 1: Check for duplicated logic across the branch**
+
+Task 8's review caught a helper function (`isAxiosError`) copy-pasted identically into 9 route files before extraction to `lib/api/errors.ts`. Before the final gate, scan the whole branch's diff for the same pattern — small helper functions, type guards, or constants repeated verbatim across files instead of imported from one place.
+
+```bash
+git diff main...block-1-auth-session -- '*.ts' '*.tsx' | grep -E "^\+.*function [a-zA-Z]+\(" | sort | uniq -c | sort -rn | head -20
+```
+
+Expected: no function signature appears more than once (aside from same-named methods with genuinely different bodies, e.g. React component internals). If a duplicate turns up, extract it to a shared module (following the `lib/api/errors.ts` precedent) and re-run the affected tests before proceeding.
+
+- [ ] **Step 2: Run the full gate**
 
 ```bash
 pnpm lint
@@ -3506,7 +3516,7 @@ pnpm format:check
 
 Expected: all commands exit 0.
 
-- [ ] **Step 2: Fix any failures, re-run the gate, and once clean, push and open the PR**
+- [ ] **Step 3: Fix any failures, re-run the gate, and once clean, push and open the PR**
 
 ```bash
 git push -u origin block-1-auth-session
