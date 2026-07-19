@@ -65,6 +65,30 @@ Cookie wrapping is entirely the UI's BFF responsibility (per Block 0 spec).
 - Response interceptor (client-side axios instance calling BFF routes):
   on 401, one silent retry via refresh, else redirect to `/login`.
 
+## CSRF Protection (addendum, 2026-07-19)
+
+`SameSite=Lax` alone doesn't stop CSRF on cross-site `POST`/`PATCH` requests
+issued via forms or fetch with credentials from another origin (`Lax` only
+blocks cross-site sub-requests, not top-level navigations/simple `POST`s in
+older browser behavior, and offers no defense-in-depth if a future flow
+needs `SameSite=None`, e.g. an OAuth redirect). Add a double-submit CSRF
+token as a second layer:
+
+- On login/register, the BFF also sets a `csrf_token` cookie: random value,
+  **not** httpOnly (client JS must read it), `SameSite=Lax`, `Secure` (prod),
+  same lifetime as the access-token cookie.
+- `lib/api/client.ts`'s request interceptor reads `csrf_token` from
+  `document.cookie` and attaches it as `X-CSRF-Token` on every mutating
+  request (`POST`/`PATCH`/`DELETE`) to a BFF route.
+- Each BFF route handler that mutates state (login excluded — no session
+  yet; register excluded — same; everything past that: logout, refresh,
+  profile PATCH, password change, deactivate, delete, delete/cancel, verify
+  actions) compares the `X-CSRF-Token` header against the `csrf_token`
+  cookie value on the incoming request; mismatch or missing → 403 before
+  proxying to the real API.
+- No server-side session store needed — the check is a direct
+  cookie-vs-header string comparison (standard double-submit pattern).
+
 ## UI Surface
 
 - `app/(auth)/login/page.tsx` — email + password form, link to register,
@@ -83,7 +107,7 @@ Cookie wrapping is entirely the UI's BFF responsibility (per Block 0 spec).
   `users/me/delete/cancel`.
 - Deactivate account: a distinct, less-destructive action next to delete
   (confirm dialog, calls `users/me/deactivate`).
-- Header (Block 0's `components/layout/header.tsx`) gains real auth state:
+- Header (Block 0's `components/shell/header.tsx`) gains real auth state:
   replace the placeholder "Log in" button with a user menu (avatar +
   dropdown: Profile, Log out) when a session exists.
 
