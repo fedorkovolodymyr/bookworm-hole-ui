@@ -1,8 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/shell/theme-toggle";
+import { useMe } from "@/hooks/useMe";
+import { useLogout } from "@/hooks/useAuth";
 
 export function Header() {
+  const { data: me } = useMe();
+  const logout = useLogout();
+
   return (
     <header className="border-border flex h-16 items-center justify-between border-b px-4 sm:px-6">
       <Link href="/" className="text-lg font-semibold">
@@ -18,7 +32,28 @@ export function Header() {
       </nav>
       <div className="flex items-center gap-2">
         <ThemeToggle />
-        <Button size="sm">Sign in</Button>
+        {me ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Avatar className="size-6">
+                    <AvatarFallback>{me.display_name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  {me.display_name}
+                </Button>
+              }
+            />
+            <DropdownMenuContent>
+              <DropdownMenuItem render={<Link href="/profile" />}>Profile</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout.mutate()}>Log out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button size="sm" render={<Link href="/login" />}>
+            Sign in
+          </Button>
+        )}
       </div>
     </header>
   );
