@@ -12,6 +12,21 @@ export async function POST(request: NextRequest) {
 
   const accessToken = getAccessToken(request);
   const client = createServerApiClient(accessToken);
-  await client.post("/auth/verify/request");
-  return new NextResponse(null, { status: 202 });
+
+  try {
+    await client.post("/auth/verify/request");
+    return new NextResponse(null, { status: 202 });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return NextResponse.json(
+        error.response?.data ?? { detail: "Verification request failed" },
+        { status: error.response?.status ?? 500 },
+      );
+    }
+    throw error;
+  }
+}
+
+function isAxiosError(error: unknown): error is { response?: { data?: unknown; status?: number } } {
+  return typeof error === "object" && error !== null && "response" in error;
 }
