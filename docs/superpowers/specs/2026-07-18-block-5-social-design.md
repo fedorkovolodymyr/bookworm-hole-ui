@@ -10,7 +10,7 @@ friend's/public user's profile (their public collections and reviews).
 Builds on Block 1's BFF cookie-auth pattern and `lib/api/`/`hooks/`
 conventions; does not redefine collection/library/review UI components
 themselves (Block 3 owns those) — this block only adds the friend-scoped
-*read* views that reuse Block 3's presentational components against
+_read_ views that reuse Block 3's presentational components against
 friend-scoped endpoints.
 
 ## Real API surface (verified against running OpenAPI schema and live-tested against the running API)
@@ -23,21 +23,21 @@ response matched its documented OpenAPI schema exactly, with correct status
 codes (201/200/204/422 as documented). No bugs found — no API Blocker
 section needed for this block.
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/friends/` | GET | — (bearer) | `FriendResponse[] {user_id, username, display_name, avatar_url, since}` |
-| `/api/v1/friends/requests` | POST | `SendFriendRequestSchema {username}` | 201 `FriendRequestResponse {id, requester_id, addressee_id, status: FriendshipStatus, created_at, responded_at}` |
-| `/api/v1/friends/requests/incoming` | GET | — (bearer) | `FriendRequestResponse[]` — requests where current user is `addressee_id` |
-| `/api/v1/friends/requests/outgoing` | GET | — (bearer) | `FriendRequestResponse[]` — requests where current user is `requester_id` |
-| `/api/v1/friends/requests/{friendship_id}/accept` | POST | — (bearer) | 200 `FriendRequestResponse` (`status: "accepted"`, `responded_at` set) |
-| `/api/v1/friends/requests/{friendship_id}/decline` | POST | — (bearer) | 200 `FriendRequestResponse` (`status: "declined"`, `responded_at` set) |
-| `/api/v1/friends/{user_id}` | DELETE | — (bearer) | 204 — unfriend |
-| `/api/v1/friends/{user_id}/block` | POST | — (bearer) | 201 `FriendRequestResponse` (`status: "blocked"`) |
-| `/api/v1/friends/{user_id}/block` | DELETE | — (bearer) | 204 — unblock |
-| `/api/v1/friends/{user_id}/collections` | GET | query `skip?, limit?` | `Page_CollectionResponse_ {items: CollectionResponse[], total, limit, offset}` — friend-scoped read of that user's collections |
-| `/api/v1/friends/{user_id}/library` | GET | query `skip?, limit?` | `Page_BookStatusResponse_ {items: BookStatusResponse[], total, limit, offset}` — friend-scoped read of that user's library/book statuses |
-| `/api/v1/users/{username}` | GET | path `username`, query `skip?, limit?` | `PublicUserProfileResponse {username, display_name, bio, avatar_url, collections: Page_CollectionResponse_}` |
-| `/api/v1/users/{user_id}/reviews` | GET | query `sort?, skip?, limit?` | `Page_ReviewResponse_ {items: ReviewResponse[], total, limit, offset}` |
+| Endpoint                                           | Method | Request                                | Response                                                                                                                                 |
+| -------------------------------------------------- | ------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/friends/`                                 | GET    | — (bearer)                             | `FriendResponse[] {user_id, username, display_name, avatar_url, since}`                                                                  |
+| `/api/v1/friends/requests`                         | POST   | `SendFriendRequestSchema {username}`   | 201 `FriendRequestResponse {id, requester_id, addressee_id, status: FriendshipStatus, created_at, responded_at}`                         |
+| `/api/v1/friends/requests/incoming`                | GET    | — (bearer)                             | `FriendRequestResponse[]` — requests where current user is `addressee_id`                                                                |
+| `/api/v1/friends/requests/outgoing`                | GET    | — (bearer)                             | `FriendRequestResponse[]` — requests where current user is `requester_id`                                                                |
+| `/api/v1/friends/requests/{friendship_id}/accept`  | POST   | — (bearer)                             | 200 `FriendRequestResponse` (`status: "accepted"`, `responded_at` set)                                                                   |
+| `/api/v1/friends/requests/{friendship_id}/decline` | POST   | — (bearer)                             | 200 `FriendRequestResponse` (`status: "declined"`, `responded_at` set)                                                                   |
+| `/api/v1/friends/{user_id}`                        | DELETE | — (bearer)                             | 204 — unfriend                                                                                                                           |
+| `/api/v1/friends/{user_id}/block`                  | POST   | — (bearer)                             | 201 `FriendRequestResponse` (`status: "blocked"`)                                                                                        |
+| `/api/v1/friends/{user_id}/block`                  | DELETE | — (bearer)                             | 204 — unblock                                                                                                                            |
+| `/api/v1/friends/{user_id}/collections`            | GET    | query `skip?, limit?`                  | `Page_CollectionResponse_ {items: CollectionResponse[], total, limit, offset}` — friend-scoped read of that user's collections           |
+| `/api/v1/friends/{user_id}/library`                | GET    | query `skip?, limit?`                  | `Page_BookStatusResponse_ {items: BookStatusResponse[], total, limit, offset}` — friend-scoped read of that user's library/book statuses |
+| `/api/v1/users/{username}`                         | GET    | path `username`, query `skip?, limit?` | `PublicUserProfileResponse {username, display_name, bio, avatar_url, collections: Page_CollectionResponse_}`                             |
+| `/api/v1/users/{user_id}/reviews`                  | GET    | query `sort?, skip?, limit?`           | `Page_ReviewResponse_ {items: ReviewResponse[], total, limit, offset}`                                                                   |
 
 `FriendshipStatus` enum: `pending | accepted | declined | blocked`.
 
@@ -180,7 +180,7 @@ Follows Block 0/1 conventions:
 ## Out of Scope (this block)
 
 - Full collection/library/review CRUD UI — owned by Block 3; this block
-  only consumes the friend-scoped *read* endpoints
+  only consumes the friend-scoped _read_ endpoints
   (`friends/{user_id}/collections`, `friends/{user_id}/library`) and the
   public-profile embedded collections, rendering them with Block 3's
   existing presentational components.

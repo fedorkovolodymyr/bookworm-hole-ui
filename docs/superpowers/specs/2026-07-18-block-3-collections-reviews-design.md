@@ -40,28 +40,28 @@ not render the resulting thread.
 
 ### Collections
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/collections/` | POST | `CreateCollectionSchema {name, description?, is_public=false, cover_image_url?}` | 201 `CollectionResponse {id, user_id, name, description, is_public, cover_image_url, sort_order, created_at, updated_at}` |
-| `/api/v1/collections/` | GET | query `skip=0, limit=10 (max 100)` | 200 `Page[CollectionResponse] {items[], total, limit, offset}` |
-| `/api/v1/collections/{collection_id}` | GET | query `items_skip=0, items_limit=10` | 200 `CollectionDetailResponse` — `CollectionResponse` fields + `items: Page[CollectionItemResponse]` |
-| `/api/v1/collections/{collection_id}` | PATCH | `UpdateCollectionSchema {name?, description?, is_public?, cover_image_url?}` (all optional/nullable) | 200 `CollectionResponse` |
-| `/api/v1/collections/{collection_id}` | DELETE | — | 204 |
-| `/api/v1/collections/{collection_id}/items` | POST | `AddCollectionItemSchema {book_id?, release_id?, note?}` — exactly one of `book_id`/`release_id` required (custom validator, see below) | 201 `CollectionItemResponse {id, collection_id, book_id, release_id, position, added_at, note}` |
-| `/api/v1/collections/{collection_id}/items/{item_id}` | PATCH | `UpdateCollectionItemSchema {position?, note?}` | 200 `CollectionItemResponse` |
-| `/api/v1/collections/{collection_id}/items/{item_id}` | DELETE | — | 204 |
-| `/api/v1/collections/{collection_id}/reorder` | POST | `ReorderItemsSchema {item_ids: uuid[]}` (full ordered list of item ids) | 204 |
+| Endpoint                                              | Method | Request                                                                                                                                 | Response                                                                                                                  |
+| ----------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/collections/`                                | POST   | `CreateCollectionSchema {name, description?, is_public=false, cover_image_url?}`                                                        | 201 `CollectionResponse {id, user_id, name, description, is_public, cover_image_url, sort_order, created_at, updated_at}` |
+| `/api/v1/collections/`                                | GET    | query `skip=0, limit=10 (max 100)`                                                                                                      | 200 `Page[CollectionResponse] {items[], total, limit, offset}`                                                            |
+| `/api/v1/collections/{collection_id}`                 | GET    | query `items_skip=0, items_limit=10`                                                                                                    | 200 `CollectionDetailResponse` — `CollectionResponse` fields + `items: Page[CollectionItemResponse]`                      |
+| `/api/v1/collections/{collection_id}`                 | PATCH  | `UpdateCollectionSchema {name?, description?, is_public?, cover_image_url?}` (all optional/nullable)                                    | 200 `CollectionResponse`                                                                                                  |
+| `/api/v1/collections/{collection_id}`                 | DELETE | —                                                                                                                                       | 204                                                                                                                       |
+| `/api/v1/collections/{collection_id}/items`           | POST   | `AddCollectionItemSchema {book_id?, release_id?, note?}` — exactly one of `book_id`/`release_id` required (custom validator, see below) | 201 `CollectionItemResponse {id, collection_id, book_id, release_id, position, added_at, note}`                           |
+| `/api/v1/collections/{collection_id}/items/{item_id}` | PATCH  | `UpdateCollectionItemSchema {position?, note?}`                                                                                         | 200 `CollectionItemResponse`                                                                                              |
+| `/api/v1/collections/{collection_id}/items/{item_id}` | DELETE | —                                                                                                                                       | 204                                                                                                                       |
+| `/api/v1/collections/{collection_id}/reorder`         | POST   | `ReorderItemsSchema {item_ids: uuid[]}` (full ordered list of item ids)                                                                 | 204                                                                                                                       |
 
 ### Reviews
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/reviews/` | POST | `CreateReviewSchema {book_id?, release_id?, rating? (1-5), title?, body?, is_public=true, contains_spoilers=false}` — exactly one of `book_id`/`release_id` required | 201 `ReviewResponse {id, user_id, book_id, release_id, rating, title, body, is_public, contains_spoilers, created_at, updated_at}` |
-| `/api/v1/reviews/{review_id}` | GET | — | 200 `ReviewResponse` |
-| `/api/v1/reviews/{review_id}` | PATCH | `UpdateReviewSchema {rating?, title?, body?, is_public?, contains_spoilers?}` (all optional) | 200 `ReviewResponse` |
-| `/api/v1/reviews/{review_id}` | DELETE | — | 204 |
-| `/api/v1/books/{book_id}/reviews` | GET | (Block 2 territory — reused here for the book-detail review list) | `Page[ReviewResponse]` — see Block 2 spec for full shape |
-| `/api/v1/releases/{release_id}/reviews` | GET | (same, per-release) | `Page[ReviewResponse]` — see Block 2 spec |
+| Endpoint                                | Method | Request                                                                                                                                                              | Response                                                                                                                           |
+| --------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/reviews/`                      | POST   | `CreateReviewSchema {book_id?, release_id?, rating? (1-5), title?, body?, is_public=true, contains_spoilers=false}` — exactly one of `book_id`/`release_id` required | 201 `ReviewResponse {id, user_id, book_id, release_id, rating, title, body, is_public, contains_spoilers, created_at, updated_at}` |
+| `/api/v1/reviews/{review_id}`           | GET    | —                                                                                                                                                                    | 200 `ReviewResponse`                                                                                                               |
+| `/api/v1/reviews/{review_id}`           | PATCH  | `UpdateReviewSchema {rating?, title?, body?, is_public?, contains_spoilers?}` (all optional)                                                                         | 200 `ReviewResponse`                                                                                                               |
+| `/api/v1/reviews/{review_id}`           | DELETE | —                                                                                                                                                                    | 204                                                                                                                                |
+| `/api/v1/books/{book_id}/reviews`       | GET    | (Block 2 territory — reused here for the book-detail review list)                                                                                                    | `Page[ReviewResponse]` — see Block 2 spec for full shape                                                                           |
+| `/api/v1/releases/{release_id}/reviews` | GET    | (same, per-release)                                                                                                                                                  | `Page[ReviewResponse]` — see Block 2 spec                                                                                          |
 
 `book_id`/`release_id` on both `AddCollectionItemSchema` and
 `CreateReviewSchema`/`CreateBookStatusSchema` are individually nullable in
@@ -76,18 +76,18 @@ through.
 
 ### Statuses (personal book status: owned/wishlist/lent/borrowed/etc.)
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/me/statuses/` | POST | `CreateBookStatusSchema {book_id?, release_id?, status: BookStatusKind, notes?}` — exactly one of `book_id`/`release_id` required | 201 `BookStatusResponse` |
-| `/api/v1/me/statuses/` | GET | query `status?: BookStatusKind` (optional filter) | 200 `BookStatusResponse[]` (plain array, **not** paginated — differs from the `me/library`/`wishlist`/`lent-out`/`borrowed` views below, which *are* paginated) |
-| `/api/v1/me/statuses/{status_id}` | PATCH | `UpdateBookStatusSchema {status?, notes?}` | 200 `BookStatusResponse` |
-| `/api/v1/me/statuses/{status_id}` | DELETE | — | 204 |
-| `/api/v1/me/statuses/{status_id}/lend` | POST | `LendBookStatusSchema {lent_to_user_id?, lent_to_name?}` (either a known friend's user id or a free-text name) | 200 `BookStatusResponse` (sets `lent_to_user_id`/`lent_to_name`/`lent_at`, implicitly moves `status` to `lent_out`) |
-| `/api/v1/me/statuses/{status_id}/return` | POST | — | 200 `BookStatusResponse` (sets `returned_at`, clears lend fields) |
-| `/api/v1/me/library` | GET | query `sort: "acquired_at"\|"title" = "acquired_at"`, `skip=0`, `limit=10` | 200 `Page[BookStatusResponse]` |
-| `/api/v1/me/wishlist` | GET | same query params | 200 `Page[BookStatusResponse]` |
-| `/api/v1/me/lent-out` | GET | same query params | 200 `Page[BookStatusResponse]` |
-| `/api/v1/me/borrowed` | GET | same query params | 200 `Page[BookStatusResponse]` |
+| Endpoint                                 | Method | Request                                                                                                                           | Response                                                                                                                                                        |
+| ---------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/me/statuses/`                   | POST   | `CreateBookStatusSchema {book_id?, release_id?, status: BookStatusKind, notes?}` — exactly one of `book_id`/`release_id` required | 201 `BookStatusResponse`                                                                                                                                        |
+| `/api/v1/me/statuses/`                   | GET    | query `status?: BookStatusKind` (optional filter)                                                                                 | 200 `BookStatusResponse[]` (plain array, **not** paginated — differs from the `me/library`/`wishlist`/`lent-out`/`borrowed` views below, which _are_ paginated) |
+| `/api/v1/me/statuses/{status_id}`        | PATCH  | `UpdateBookStatusSchema {status?, notes?}`                                                                                        | 200 `BookStatusResponse`                                                                                                                                        |
+| `/api/v1/me/statuses/{status_id}`        | DELETE | —                                                                                                                                 | 204                                                                                                                                                             |
+| `/api/v1/me/statuses/{status_id}/lend`   | POST   | `LendBookStatusSchema {lent_to_user_id?, lent_to_name?}` (either a known friend's user id or a free-text name)                    | 200 `BookStatusResponse` (sets `lent_to_user_id`/`lent_to_name`/`lent_at`, implicitly moves `status` to `lent_out`)                                             |
+| `/api/v1/me/statuses/{status_id}/return` | POST   | —                                                                                                                                 | 200 `BookStatusResponse` (sets `returned_at`, clears lend fields)                                                                                               |
+| `/api/v1/me/library`                     | GET    | query `sort: "acquired_at"\|"title" = "acquired_at"`, `skip=0`, `limit=10`                                                        | 200 `Page[BookStatusResponse]`                                                                                                                                  |
+| `/api/v1/me/wishlist`                    | GET    | same query params                                                                                                                 | 200 `Page[BookStatusResponse]`                                                                                                                                  |
+| `/api/v1/me/lent-out`                    | GET    | same query params                                                                                                                 | 200 `Page[BookStatusResponse]`                                                                                                                                  |
+| `/api/v1/me/borrowed`                    | GET    | same query params                                                                                                                 | 200 `Page[BookStatusResponse]`                                                                                                                                  |
 
 `BookStatusKind` enum: `owned, wishlist, pre_order, lent_out, borrowed,
 gifted_away, sold, lost`.
@@ -106,17 +106,17 @@ that the base list endpoint lacks).
 
 ### Share
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/share/book/{book_id}` | POST | `ShareBookSchema {friend_id: uuid, message: string}` | 200 `ChatMessageResponse {id, thread_id, sender_id, body, attachment_book_id, attachment_collection_id, read_at, created_at}` |
-| `/api/v1/share/collection/{collection_id}` | POST | `ShareCollectionSchema {friend_id: uuid, message: string}` | 200 `ChatMessageResponse` (same shape, `attachment_collection_id` set instead) |
+| Endpoint                                   | Method | Request                                                    | Response                                                                                                                      |
+| ------------------------------------------ | ------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/share/book/{book_id}`             | POST   | `ShareBookSchema {friend_id: uuid, message: string}`       | 200 `ChatMessageResponse {id, thread_id, sender_id, body, attachment_book_id, attachment_collection_id, read_at, created_at}` |
+| `/api/v1/share/collection/{collection_id}` | POST   | `ShareCollectionSchema {friend_id: uuid, message: string}` | 200 `ChatMessageResponse` (same shape, `attachment_collection_id` set instead)                                                |
 
 ### Friends' collections/library (read-only social viewing)
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/friends/{user_id}/collections` | GET | query `skip=0, limit=10` | 200 `Page[CollectionResponse]` — only that friend's `is_public` collections are expected to be visible (enforced server-side; not separately documented in the schema, verify at implementation time) |
-| `/api/v1/friends/{user_id}/library` | GET | query `skip=0, limit=10` | 200 `Page[BookStatusResponse]` |
+| Endpoint                                | Method | Request                  | Response                                                                                                                                                                                              |
+| --------------------------------------- | ------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/v1/friends/{user_id}/collections` | GET    | query `skip=0, limit=10` | 200 `Page[CollectionResponse]` — only that friend's `is_public` collections are expected to be visible (enforced server-side; not separately documented in the schema, verify at implementation time) |
+| `/api/v1/friends/{user_id}/library`     | GET    | query `skip=0, limit=10` | 200 `Page[BookStatusResponse]`                                                                                                                                                                        |
 
 These two are technically friend-scoped reads (Block 5 owns the `friends`
 router's relationship CRUD), but they're the natural "view a friend's
@@ -251,7 +251,7 @@ Block 5's friend-request management UI.
   Block 2's catalog has seed data to attach items/reviews/statuses to.
 - Live API verification performed for this spec (2026-07-18): registered a
   fresh test user, then exercised `POST/GET/PATCH/DELETE
-  /api/v1/collections/` and `/collections/{id}` end-to-end (create → list
+/api/v1/collections/` and `/collections/{id}` end-to-end (create → list
   → update → detail → delete, all 2xx, response shapes matched the
   documented schemas exactly) and confirmed the "exactly one of book_id or
   release_id" 422 validator on both `POST /reviews/` and

@@ -22,21 +22,21 @@ the live API.
 
 ## Real API surface (verified against running OpenAPI schema, supersedes original spec wording)
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| `/api/v1/auth/register` | POST | `RegisterSchema {email, username, password, display_name}` | `RegisterResponse {user: UserResponse, access_token, refresh_token, token_type}` |
-| `/api/v1/auth/login` | POST | `LoginSchema {email, password}` | `RegisterResponse` (same shape) |
-| `/api/v1/auth/refresh` | POST | `RefreshRequestSchema {refresh_token}` | `TokenResponse {access_token, refresh_token, token_type}` |
-| `/api/v1/auth/logout` | POST | `RefreshRequestSchema {refresh_token}` | 204 |
-| `/api/v1/auth/me` | GET | — (bearer) | `UserResponse {id, email, username, display_name, is_active, is_admin, email_verified_at}` |
-| `/api/v1/auth/verify/request` | POST | — (bearer) | 204 — sends verification email |
-| `/api/v1/auth/verify/confirm` | POST | `VerifyEmailConfirmSchema {token}` | `UserResponse` |
-| `/api/v1/users/me` | GET | — (bearer) | `UserProfileResponse` (adds `bio`, `avatar_url`, `locale`, `timezone`, `deletion_scheduled_at` to `UserResponse` fields) |
-| `/api/v1/users/me` | PATCH | `UpdateUserSchema {display_name?, bio?, avatar_url?, locale?, timezone?}` (all nullable/optional) | `UserProfileResponse` |
-| `/api/v1/users/me/password` | POST | `ChangePasswordSchema {current_password, new_password}` | 204 |
-| `/api/v1/users/me/deactivate` | POST | — (bearer) | `UserProfileResponse` |
-| `/api/v1/users/me/delete` | POST | — (bearer) | `UserProfileResponse` (sets `deletion_scheduled_at`) |
-| `/api/v1/users/me/delete/cancel` | POST | — (bearer) | `UserProfileResponse` (clears `deletion_scheduled_at`) |
+| Endpoint                         | Method | Request                                                                                           | Response                                                                                                                 |
+| -------------------------------- | ------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `/api/v1/auth/register`          | POST   | `RegisterSchema {email, username, password, display_name}`                                        | `RegisterResponse {user: UserResponse, access_token, refresh_token, token_type}`                                         |
+| `/api/v1/auth/login`             | POST   | `LoginSchema {email, password}`                                                                   | `RegisterResponse` (same shape)                                                                                          |
+| `/api/v1/auth/refresh`           | POST   | `RefreshRequestSchema {refresh_token}`                                                            | `TokenResponse {access_token, refresh_token, token_type}`                                                                |
+| `/api/v1/auth/logout`            | POST   | `RefreshRequestSchema {refresh_token}`                                                            | 204                                                                                                                      |
+| `/api/v1/auth/me`                | GET    | — (bearer)                                                                                        | `UserResponse {id, email, username, display_name, is_active, is_admin, email_verified_at}`                               |
+| `/api/v1/auth/verify/request`    | POST   | — (bearer)                                                                                        | 204 — sends verification email                                                                                           |
+| `/api/v1/auth/verify/confirm`    | POST   | `VerifyEmailConfirmSchema {token}`                                                                | `UserResponse`                                                                                                           |
+| `/api/v1/users/me`               | GET    | — (bearer)                                                                                        | `UserProfileResponse` (adds `bio`, `avatar_url`, `locale`, `timezone`, `deletion_scheduled_at` to `UserResponse` fields) |
+| `/api/v1/users/me`               | PATCH  | `UpdateUserSchema {display_name?, bio?, avatar_url?, locale?, timezone?}` (all nullable/optional) | `UserProfileResponse`                                                                                                    |
+| `/api/v1/users/me/password`      | POST   | `ChangePasswordSchema {current_password, new_password}`                                           | 204                                                                                                                      |
+| `/api/v1/users/me/deactivate`    | POST   | — (bearer)                                                                                        | `UserProfileResponse`                                                                                                    |
+| `/api/v1/users/me/delete`        | POST   | — (bearer)                                                                                        | `UserProfileResponse` (sets `deletion_scheduled_at`)                                                                     |
+| `/api/v1/users/me/delete/cancel` | POST   | — (bearer)                                                                                        | `UserProfileResponse` (clears `deletion_scheduled_at`)                                                                   |
 
 The API itself is stateless bearer-token auth — it does not set cookies.
 Cookie wrapping is entirely the UI's BFF responsibility (per Block 0 spec).
@@ -57,7 +57,7 @@ Cookie wrapping is entirely the UI's BFF responsibility (per Block 0 spec).
   route handler; on success, sets new cookies and continues; on failure,
   redirects to `/login`.
 - `lib/api/client.ts` — axios instance, `baseURL` = internal BFF routes
-  (`/api/auth/...`) for auth actions from client components; a *separate*
+  (`/api/auth/...`) for auth actions from client components; a _separate_
   server-only axios instance (`lib/api/server-client.ts`) with
   `Authorization: Bearer <token from cookie>` for route handlers/Server
   Components calling the real API directly (profile GET/PATCH, password

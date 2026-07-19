@@ -43,3 +43,12 @@ next-env.d.ts
 
 # claude AI
 /.superpowers
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+*storybook.log
+storybook-static

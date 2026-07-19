@@ -35,7 +35,9 @@ gh issue create \
 
 ## Repro
 ```
+
 curl -X POST http://localhost:8000/api/v1/... -d '...'
+
 ```
 
 ## Observed
@@ -47,6 +49,7 @@ field Y never applied/generated>
 
 ## Traceback
 ```
+
 <relevant docker logs lines>
 ```
 EOF
@@ -60,6 +63,7 @@ Capture the returned issue URL and number — needed for step 4.
 
 ```markdown
 ## API Blocker
+
 Blocked on fedorkovolodymyr/bookworm-hole-api#<N> — <one-line symptom>.
 Do not merge this PR until that issue is closed AND the affected flow has
 been re-verified end-to-end against the fixed API.

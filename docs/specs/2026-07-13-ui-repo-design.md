@@ -6,17 +6,17 @@ New standalone frontend repo (`bookworm-hole-ui`) for `bookworm-hole-api`, deplo
 
 ## Stack
 
-| Concern | Choice | Why |
-|---|---|---|
-| Framework | Next.js (App Router) | SSR/SEO for public catalog pages, file-based routing, native Vercel deploy, middleware for route protection |
-| Styling | Tailwind CSS | Utility-first, fast iteration, easy design tokens |
-| Component kit | shadcn/ui (Radix primitives) | Components are copied into the repo, not an npm dependency — swapping/customizing later means editing owned code, not fighting a library API |
-| Data/cache | TanStack Query + axios | Server-state caching, revalidation, request dedup over REST |
-| Auth | Next.js middleware + httpOnly cookie via BFF route | Token never touches `localStorage`/JS — avoids XSS token theft; middleware gates protected routes server-side |
-| Component workshop | Storybook | Every base/domain component ships a story from day one — isolated visual review, no need to run the full app |
-| Testing | Vitest + React Testing Library (unit/component), Playwright (e2e happy paths) | Fast component tests; a thin e2e layer over critical flows (login, browse, review) |
-| Lint/format | ESLint + Prettier + typescript strict | Mirrors backend's "lint + format must pass" gate |
-| Package manager | pnpm | Fast installs, disk-efficient, Vercel supports natively |
+| Concern            | Choice                                                                        | Why                                                                                                                                          |
+| ------------------ | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework          | Next.js (App Router)                                                          | SSR/SEO for public catalog pages, file-based routing, native Vercel deploy, middleware for route protection                                  |
+| Styling            | Tailwind CSS                                                                  | Utility-first, fast iteration, easy design tokens                                                                                            |
+| Component kit      | shadcn/ui (Radix primitives)                                                  | Components are copied into the repo, not an npm dependency — swapping/customizing later means editing owned code, not fighting a library API |
+| Data/cache         | TanStack Query + axios                                                        | Server-state caching, revalidation, request dedup over REST                                                                                  |
+| Auth               | Next.js middleware + httpOnly cookie via BFF route                            | Token never touches `localStorage`/JS — avoids XSS token theft; middleware gates protected routes server-side                                |
+| Component workshop | Storybook                                                                     | Every base/domain component ships a story from day one — isolated visual review, no need to run the full app                                 |
+| Testing            | Vitest + React Testing Library (unit/component), Playwright (e2e happy paths) | Fast component tests; a thin e2e layer over critical flows (login, browse, review)                                                           |
+| Lint/format        | ESLint + Prettier + typescript strict                                         | Mirrors backend's "lint + format must pass" gate                                                                                             |
+| Package manager    | pnpm                                                                          | Fast installs, disk-efficient, Vercel supports natively                                                                                      |
 
 ## Repo Structure
 
@@ -49,17 +49,17 @@ bookworm-hole-ui/
 
 Each block = its own spec → plan → implementation cycle (per `writing-plans`/`executing-plans`), building on the previous block's shell and API client.
 
-| # | Block | API routers covered | UI surface |
-|---|---|---|---|
-| 0 | Foundation | — | Repo scaffold, CI (lint/format/test/build), design tokens, base component kit, Storybook, app shell/layout |
-| 1 | Auth & Session | `auth`, `users` (me) | Login, register, logout, session refresh, profile view/edit, delete-account flow |
-| 2 | Catalog | `books`, `releases`, `contributors`, `external` | Book search/browse, book detail (releases, contributors), external-source lookup UI |
-| 3 | Collections & Reviews | `collections`, `reviews`, `statuses`, `status_views`, `share` | User collections CRUD, add/remove book to collection, review CRUD, status feed, share links |
-| 4 | Reading | `reading_sessions`, `reading_stats` | Start/stop reading session, session history, stats dashboard (charts) |
-| 5 | Social | `friends` | Friend list, requests, search users |
-| 6 | AI & Chat | `ai`, `chat` | AI recommendations UI, chat interface |
-| 7 | Admin | `admin_users`, `admin_audit_logs`, `admin_contributions` | Admin-only dashboard: user management, audit log viewer, contribution moderation queue |
-| 8 | API Audit | all of the above | Cross-reference every endpoint actually called by the UI against the full API surface; report endpoints to add, change (shape/params), or remove as dead |
+| #   | Block                 | API routers covered                                           | UI surface                                                                                                                                               |
+| --- | --------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | Foundation            | —                                                             | Repo scaffold, CI (lint/format/test/build), design tokens, base component kit, Storybook, app shell/layout                                               |
+| 1   | Auth & Session        | `auth`, `users` (me)                                          | Login, register, logout, session refresh, profile view/edit, delete-account flow                                                                         |
+| 2   | Catalog               | `books`, `releases`, `contributors`, `external`               | Book search/browse, book detail (releases, contributors), external-source lookup UI                                                                      |
+| 3   | Collections & Reviews | `collections`, `reviews`, `statuses`, `status_views`, `share` | User collections CRUD, add/remove book to collection, review CRUD, status feed, share links                                                              |
+| 4   | Reading               | `reading_sessions`, `reading_stats`                           | Start/stop reading session, session history, stats dashboard (charts)                                                                                    |
+| 5   | Social                | `friends`                                                     | Friend list, requests, search users                                                                                                                      |
+| 6   | AI & Chat             | `ai`, `chat`                                                  | AI recommendations UI, chat interface                                                                                                                    |
+| 7   | Admin                 | `admin_users`, `admin_audit_logs`, `admin_contributions`      | Admin-only dashboard: user management, audit log viewer, contribution moderation queue                                                                   |
+| 8   | API Audit             | all of the above                                              | Cross-reference every endpoint actually called by the UI against the full API surface; report endpoints to add, change (shape/params), or remove as dead |
 
 Each block after Block 0 follows the same internal shape:
 

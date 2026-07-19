@@ -26,16 +26,16 @@ This is `bookworm-hole-ui`, the standalone frontend for `bookworm-hole-api` (sib
 
 **Target stack** (per the design spec, being introduced block by block):
 
-| Concern | Choice |
-|---|---|
-| Framework | Next.js App Router, TypeScript |
-| Styling | Tailwind CSS |
-| Components | shadcn/ui (Radix primitives), copied into `components/ui/` — not an npm dependency |
-| Data/cache | TanStack Query + axios |
-| Auth | Next.js middleware + httpOnly cookie via BFF route (token never touches `localStorage`/client JS) |
-| Component workshop | Storybook (every base/domain component ships a story) |
-| Testing | Vitest + React Testing Library (unit/component), Playwright (e2e happy paths) |
-| Package manager | pnpm |
+| Concern            | Choice                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------- |
+| Framework          | Next.js App Router, TypeScript                                                                    |
+| Styling            | Tailwind CSS                                                                                      |
+| Components         | shadcn/ui (Radix primitives), copied into `components/ui/` — not an npm dependency                |
+| Data/cache         | TanStack Query + axios                                                                            |
+| Auth               | Next.js middleware + httpOnly cookie via BFF route (token never touches `localStorage`/client JS) |
+| Component workshop | Storybook (every base/domain component ships a story)                                             |
+| Testing            | Vitest + React Testing Library (unit/component), Playwright (e2e happy paths)                     |
+| Package manager    | pnpm                                                                                              |
 
 **Target repo structure** (populated block by block, not all present yet):
 
@@ -55,17 +55,17 @@ tests/                  # Vitest setup; Playwright in e2e/
 
 **Delivery blocks** (each = its own spec → plan → implementation cycle, building on the previous block's shell/API client):
 
-| # | Block | API routers | UI surface |
-|---|---|---|---|
-| 0 | Foundation | — | Scaffold, CI, design tokens, base component kit, Storybook, app shell |
-| 1 | Auth & Session | `auth`, `users` | Login, register, logout, session refresh, profile, delete-account |
-| 2 | Catalog | `books`, `releases`, `contributors`, `external` | Book search/browse/detail, external-source lookup |
-| 3 | Collections & Reviews | `collections`, `reviews`, `statuses`, `status_views`, `share` | Collections CRUD, reviews, status feed, share links |
-| 4 | Reading | `reading_sessions`, `reading_stats` | Reading sessions, stats dashboard |
-| 5 | Social | `friends` | Friends, requests, search |
-| 6 | AI & Chat | `ai`, `chat` | AI recommendations, chat interface |
-| 7 | Admin | `admin_users`, `admin_audit_logs`, `admin_contributions` | Admin dashboard |
-| 8 | API Audit | all | Cross-reference every endpoint the UI calls against the full API surface; report additions/changes/dead endpoints |
+| #   | Block                 | API routers                                                   | UI surface                                                                                                        |
+| --- | --------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 0   | Foundation            | —                                                             | Scaffold, CI, design tokens, base component kit, Storybook, app shell                                             |
+| 1   | Auth & Session        | `auth`, `users`                                               | Login, register, logout, session refresh, profile, delete-account                                                 |
+| 2   | Catalog               | `books`, `releases`, `contributors`, `external`               | Book search/browse/detail, external-source lookup                                                                 |
+| 3   | Collections & Reviews | `collections`, `reviews`, `statuses`, `status_views`, `share` | Collections CRUD, reviews, status feed, share links                                                               |
+| 4   | Reading               | `reading_sessions`, `reading_stats`                           | Reading sessions, stats dashboard                                                                                 |
+| 5   | Social                | `friends`                                                     | Friends, requests, search                                                                                         |
+| 6   | AI & Chat             | `ai`, `chat`                                                  | AI recommendations, chat interface                                                                                |
+| 7   | Admin                 | `admin_users`, `admin_audit_logs`, `admin_contributions`      | Admin dashboard                                                                                                   |
+| 8   | API Audit             | all                                                           | Cross-reference every endpoint the UI calls against the full API surface; report additions/changes/dead endpoints |
 
 Each block after Block 0 follows the same shape: `lib/api/<domain>.ts` (typed client) → `hooks/use<Domain>.ts` (TanStack Query hooks) → `components/<domain>/` (Storybook-covered) → `app/(app)/<domain>/...` (pages) → tests → update Block 8's running endpoint-usage log.
 
