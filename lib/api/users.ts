@@ -7,9 +7,7 @@ export async function fetchProfile(): Promise<UserProfileResponse> {
   return data;
 }
 
-export async function updateProfile(
-  payload: UpdateProfilePayload,
-): Promise<UserProfileResponse> {
+export async function updateProfile(payload: UpdateProfilePayload): Promise<UserProfileResponse> {
   const { data } = await apiClient.patch("/users/me", payload);
   return data;
 }

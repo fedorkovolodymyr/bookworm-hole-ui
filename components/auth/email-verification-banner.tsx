@@ -3,11 +3,7 @@
 import { useRequestEmailVerification } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 
-export function EmailVerificationBanner({
-  emailVerifiedAt,
-}: {
-  emailVerifiedAt: string | null;
-}) {
+export function EmailVerificationBanner({ emailVerifiedAt }: { emailVerifiedAt: string | null }) {
   const requestVerification = useRequestEmailVerification();
 
   if (emailVerifiedAt) return null;

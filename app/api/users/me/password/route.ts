@@ -21,10 +21,9 @@ export async function POST(request: NextRequest) {
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (isAxiosError(error)) {
-      return NextResponse.json(
-        error.response?.data ?? { detail: "Failed to change password" },
-        { status: error.response?.status ?? 500 },
-      );
+      return NextResponse.json(error.response?.data ?? { detail: "Failed to change password" }, {
+        status: error.response?.status ?? 500,
+      });
     }
     throw error;
   }

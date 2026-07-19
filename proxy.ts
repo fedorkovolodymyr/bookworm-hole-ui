@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PROTECTED_PATHS = ["/profile"];
 
-export function middleware(request: NextRequest) {
-  const isProtected = PROTECTED_PATHS.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  );
+export function proxy(request: NextRequest) {
+  const isProtected = PROTECTED_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
   if (!isProtected) {
     return NextResponse.next();
   }

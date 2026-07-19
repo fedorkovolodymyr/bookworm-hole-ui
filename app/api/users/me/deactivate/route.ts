@@ -19,10 +19,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     if (isAxiosError(error)) {
-      return NextResponse.json(
-        error.response?.data ?? { detail: "Failed to deactivate account" },
-        { status: error.response?.status ?? 500 },
-      );
+      return NextResponse.json(error.response?.data ?? { detail: "Failed to deactivate account" }, {
+        status: error.response?.status ?? 500,
+      });
     }
     throw error;
   }

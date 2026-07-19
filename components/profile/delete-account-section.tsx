@@ -51,8 +51,8 @@ export function DeleteAccountSection({
         <DialogHeader>
           <DialogTitle>Delete your account?</DialogTitle>
           <DialogDescription>
-            Your account will be scheduled for deletion and permanently removed after a 30-day
-            grace period. You can cancel any time before then.
+            Your account will be scheduled for deletion and permanently removed after a 30-day grace
+            period. You can cancel any time before then.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

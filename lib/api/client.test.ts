@@ -8,15 +8,17 @@ vi.mock("js-cookie", () => ({
 
 describe("apiClient", () => {
   beforeEach(() => {
-    (Cookies.get as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      "test-csrf-token",
-    );
+    (Cookies.get as unknown as ReturnType<typeof vi.fn>).mockReturnValue("test-csrf-token");
   });
 
   it("attaches X-CSRF-Token header from cookie on POST requests", async () => {
     const { apiClient } = await import("./client");
     const config = apiClient.interceptors.request as unknown as {
-      handlers: { fulfilled: (c: import("axios").InternalAxiosRequestConfig) => import("axios").InternalAxiosRequestConfig }[];
+      handlers: {
+        fulfilled: (
+          c: import("axios").InternalAxiosRequestConfig,
+        ) => import("axios").InternalAxiosRequestConfig;
+      }[];
     };
     const result = config.handlers[0].fulfilled({
       method: "post",
@@ -28,7 +30,11 @@ describe("apiClient", () => {
   it("does not attach X-CSRF-Token header on GET requests", async () => {
     const { apiClient } = await import("./client");
     const config = apiClient.interceptors.request as unknown as {
-      handlers: { fulfilled: (c: import("axios").InternalAxiosRequestConfig) => import("axios").InternalAxiosRequestConfig }[];
+      handlers: {
+        fulfilled: (
+          c: import("axios").InternalAxiosRequestConfig,
+        ) => import("axios").InternalAxiosRequestConfig;
+      }[];
     };
     const result = config.handlers[0].fulfilled({
       method: "get",

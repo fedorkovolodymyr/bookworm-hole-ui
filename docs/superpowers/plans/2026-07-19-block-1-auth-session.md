@@ -100,10 +100,12 @@ Rationale: `lib/api/client.ts` (browser) and `lib/api/server-client.ts` (server,
 ## Task 1: Install Dependencies, Add `.env.example`
 
 **Files:**
+
 - Modify: `package.json`
 - Create: `.env.example`
 
 **Interfaces:**
+
 - Produces: `axios`, `@tanstack/react-query`, `js-cookie`, `msw` importable by every later task.
 
 - [ ] **Step 1: Install runtime deps**
@@ -137,9 +139,11 @@ git commit -m "chore: add axios, TanStack Query, js-cookie, msw"
 ## Task 2: Shared API Types
 
 **Files:**
+
 - Create: `lib/api/types.ts`
 
 **Interfaces:**
+
 - Produces: `UserResponse`, `UserProfileResponse`, `AuthTokens`, `RegisterPayload`, `LoginPayload`, `UpdateProfilePayload`, `ChangePasswordPayload` — consumed by every task in `lib/api/`, `hooks/`, and `app/api/`.
 
 - [ ] **Step 1: Write types matching the API schemas from the spec**
@@ -223,11 +227,13 @@ git commit -m "feat: add shared auth/user API types"
 ## Task 3: Cookie + CSRF Helpers
 
 **Files:**
+
 - Create: `lib/auth/csrf.ts`
 - Create: `lib/auth/cookies.ts`
 - Test: `lib/auth/csrf.test.ts`
 
 **Interfaces:**
+
 - Produces: `generateCsrfToken(): string`, `verifyCsrfToken(cookieValue: string | undefined, headerValue: string | null): boolean` from `csrf.ts`; `setAuthCookies(response: NextResponse, tokens: AuthTokens): void`, `clearAuthCookies(response: NextResponse): void`, `getAccessToken(request: NextRequest): string | undefined`, `getRefreshToken(request: NextRequest): string | undefined` from `cookies.ts`.
 - Consumes: `AuthTokens` from `lib/api/types.ts` (Task 2).
 
@@ -361,9 +367,11 @@ git commit -m "feat: add CSRF token and auth cookie helpers"
 ## Task 4: Server-Only API Client (Real API)
 
 **Files:**
+
 - Create: `lib/api/server-client.ts`
 
 **Interfaces:**
+
 - Produces: `createServerApiClient(accessToken?: string): AxiosInstance` — consumed by every `app/api/*` route handler (Tasks 6-8).
 - Consumes: nothing new (reads `API_BASE_URL` from `process.env`).
 
@@ -399,10 +407,12 @@ git commit -m "feat: add server-only axios client for real API calls"
 ## Task 5: Browser API Client (BFF)
 
 **Files:**
+
 - Create: `lib/api/client.ts`
 - Test: `lib/api/client.test.ts`
 
 **Interfaces:**
+
 - Produces: default-exported `apiClient: AxiosInstance` — consumed by `lib/api/auth.ts` and `lib/api/users.ts` (Tasks 6-7).
 - Consumes: `js-cookie` (Task 1).
 
@@ -425,7 +435,11 @@ describe("apiClient", () => {
   it("attaches X-CSRF-Token header from cookie on POST requests", async () => {
     const { apiClient } = await import("./client");
     const config = apiClient.interceptors.request as unknown as {
-      handlers: { fulfilled: (c: import("axios").InternalAxiosRequestConfig) => import("axios").InternalAxiosRequestConfig }[];
+      handlers: {
+        fulfilled: (
+          c: import("axios").InternalAxiosRequestConfig,
+        ) => import("axios").InternalAxiosRequestConfig;
+      }[];
     };
     const result = config.handlers[0].fulfilled({
       method: "post",
@@ -437,7 +451,11 @@ describe("apiClient", () => {
   it("does not attach X-CSRF-Token header on GET requests", async () => {
     const { apiClient } = await import("./client");
     const config = apiClient.interceptors.request as unknown as {
-      handlers: { fulfilled: (c: import("axios").InternalAxiosRequestConfig) => import("axios").InternalAxiosRequestConfig }[];
+      handlers: {
+        fulfilled: (
+          c: import("axios").InternalAxiosRequestConfig,
+        ) => import("axios").InternalAxiosRequestConfig;
+      }[];
     };
     const result = config.handlers[0].fulfilled({
       method: "get",
@@ -523,6 +541,7 @@ git commit -m "feat: add browser BFF axios client with CSRF header and 401 retry
 ## Task 6: Auth BFF Routes (register, login, logout, refresh)
 
 **Files:**
+
 - Create: `app/api/auth/register/route.ts`
 - Create: `app/api/auth/login/route.ts`
 - Create: `app/api/auth/logout/route.ts`
@@ -533,6 +552,7 @@ git commit -m "feat: add browser BFF axios client with CSRF header and 401 retry
 - Test: `app/api/auth/refresh/route.test.ts`
 
 **Interfaces:**
+
 - Consumes: `createServerApiClient` (Task 4), `setAuthCookies`/`clearAuthCookies`/`getRefreshToken` (Task 3), `verifyCsrfToken` (Task 3), `RegisterPayload`/`LoginPayload`/`AuthTokens` (Task 2).
 - Produces: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `POST /api/auth/refresh` — consumed by `lib/api/auth.ts` (Task 9) and `middleware.ts` (Task 11).
 
@@ -833,12 +853,14 @@ git commit -m "feat: add BFF auth routes (register, login, logout, refresh)"
 ## Task 7: Auth BFF Routes (email verification)
 
 **Files:**
+
 - Create: `app/api/auth/verify/request/route.ts`
 - Create: `app/api/auth/verify/confirm/route.ts`
 - Test: `app/api/auth/verify/request/route.test.ts`
 - Test: `app/api/auth/verify/confirm/route.test.ts`
 
 **Interfaces:**
+
 - Consumes: `createServerApiClient` (Task 4), `getAccessToken` (Task 3), `verifyCsrfToken` (Task 3).
 - Produces: `POST /api/auth/verify/request`, `POST /api/auth/verify/confirm` — consumed by `lib/api/auth.ts` (Task 9).
 
@@ -919,7 +941,13 @@ import { NextRequest } from "next/server";
 vi.mock("@/lib/api/server-client", () => ({
   createServerApiClient: () => ({
     post: vi.fn().mockResolvedValue({
-      data: { id: "1", email: "a@b.com", username: "a", display_name: "A", email_verified_at: "2026-01-01" },
+      data: {
+        id: "1",
+        email: "a@b.com",
+        username: "a",
+        display_name: "A",
+        email_verified_at: "2026-01-01",
+      },
     }),
   }),
 }));
@@ -984,6 +1012,7 @@ git commit -m "feat: add BFF email verification routes"
 ## Task 8: Users BFF Routes (profile, password, deactivate, delete)
 
 **Files:**
+
 - Create: `app/api/users/me/route.ts`
 - Create: `app/api/users/me/password/route.ts`
 - Create: `app/api/users/me/deactivate/route.ts`
@@ -993,6 +1022,7 @@ git commit -m "feat: add BFF email verification routes"
 - Test: `app/api/users/me/password/route.test.ts`
 
 **Interfaces:**
+
 - Consumes: `createServerApiClient` (Task 4), `getAccessToken` (Task 3), `verifyCsrfToken` (Task 3), `UpdateProfilePayload`/`ChangePasswordPayload`/`UserProfileResponse` (Task 2).
 - Produces: `GET/PATCH /api/users/me`, `POST /api/users/me/password`, `POST /api/users/me/deactivate`, `POST /api/users/me/delete`, `POST /api/users/me/delete/cancel` — consumed by `lib/api/users.ts` (Task 9).
 
@@ -1257,10 +1287,12 @@ git commit -m "feat: add BFF users routes (profile, password, deactivate, delete
 ## Task 9: Typed API Modules
 
 **Files:**
+
 - Create: `lib/api/auth.ts`
 - Create: `lib/api/users.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient` (Task 5), types from `lib/api/types.ts` (Task 2).
 - Produces: `registerUser`, `loginUser`, `logoutUser`, `requestEmailVerification`, `confirmEmailVerification`, `fetchMe` from `auth.ts`; `fetchProfile`, `updateProfile`, `changePassword`, `deactivateAccount`, `scheduleDeletion`, `cancelDeletion` from `users.ts` — consumed by `hooks/useAuth.ts`, `hooks/useMe.ts`, `hooks/useProfile.ts` (Tasks 10-12).
 
@@ -1307,9 +1339,7 @@ export async function fetchProfile(): Promise<UserProfileResponse> {
   return data;
 }
 
-export async function updateProfile(
-  payload: UpdateProfilePayload,
-): Promise<UserProfileResponse> {
+export async function updateProfile(payload: UpdateProfilePayload): Promise<UserProfileResponse> {
   const { data } = await apiClient.patch("/users/me", payload);
   return data;
 }
@@ -1351,11 +1381,13 @@ git commit -m "feat: add typed auth and users API modules"
 ## Task 10: QueryClientProvider Wiring
 
 **Files:**
+
 - Create: `lib/query-client.tsx`
 - Modify: `app/layout.tsx`
 - Test: `lib/query-client.test.tsx`
 
 **Interfaces:**
+
 - Produces: `AppQueryProvider` component — consumed by `app/layout.tsx` and every test that renders a hook-using component.
 
 - [ ] **Step 1: Write failing test**
@@ -1475,11 +1507,13 @@ git commit -m "feat: wire TanStack QueryClientProvider into root layout"
 ## Task 11: msw Test Mocks
 
 **Files:**
+
 - Create: `tests/mocks/handlers.ts`
 - Create: `tests/mocks/server.ts`
 - Modify: `tests/setup.ts`
 
 **Interfaces:**
+
 - Produces: `handlers` array, `server` (msw `SetupServer`) — consumed by every hook test in Tasks 12-13 and every form component test in Tasks 14-16.
 
 - [ ] **Step 1: Implement `tests/mocks/handlers.ts`**
@@ -1520,9 +1554,7 @@ export const handlers = [
     return HttpResponse.json({ ...profile, ...body });
   }),
   http.post("/api/users/me/password", () => new HttpResponse(null, { status: 204 })),
-  http.post("/api/users/me/deactivate", () =>
-    HttpResponse.json({ ...profile, is_active: false }),
-  ),
+  http.post("/api/users/me/deactivate", () => HttpResponse.json({ ...profile, is_active: false })),
   http.post("/api/users/me/delete", () =>
     HttpResponse.json({ ...profile, deletion_scheduled_at: "2026-08-18T00:00:00Z" }),
   ),
@@ -1588,12 +1620,14 @@ git commit -m "test: add msw handlers for BFF auth/users routes"
 ## Task 12: `useAuth` and `useMe` Hooks
 
 **Files:**
+
 - Create: `hooks/useAuth.ts`
 - Create: `hooks/useMe.ts`
 - Test: `hooks/useAuth.test.tsx`
 - Test: `hooks/useMe.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `registerUser`/`loginUser`/`logoutUser`/`requestEmailVerification`/`confirmEmailVerification` (Task 9), `fetchProfile`... no — `useMe` calls `apiClient.get("/auth/me")` conceptually but the spec routes profile reads through `users/me`; use `fetchProfile` from `lib/api/users.ts` for `useMe` since it's the richer shape the header/profile page needs. `AppQueryProvider` (Task 10) for tests.
 - Produces: `useRegister()`, `useLogin()`, `useLogout()`, `useRequestEmailVerification()`, `useConfirmEmailVerification()` from `useAuth.ts`; `useMe()` from `useMe.ts` — consumed by `components/auth/*` (Task 14) and `components/shell/header.tsx` (Task 17).
 
@@ -1750,10 +1784,12 @@ git commit -m "feat: add useAuth and useMe TanStack Query hooks"
 ## Task 13: `useProfile` Hook
 
 **Files:**
+
 - Create: `hooks/useProfile.ts`
 - Test: `hooks/useProfile.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `updateProfile`/`changePassword`/`deactivateAccount`/`scheduleDeletion`/`cancelDeletion` (Task 9).
 - Produces: `useUpdateProfile()`, `useChangePassword()`, `useDeactivateAccount()`, `useScheduleDeletion()`, `useCancelDeletion()` — consumed by `components/profile/*` (Task 15-16).
 
@@ -1881,6 +1917,7 @@ git commit -m "feat: add useProfile TanStack Query hooks"
 ## Task 14: Auth Form Components (Login, Register, Verification Banner)
 
 **Files:**
+
 - Create: `components/auth/login-form.tsx`
 - Create: `components/auth/login-form.stories.tsx`
 - Create: `components/auth/login-form.test.tsx`
@@ -1892,6 +1929,7 @@ git commit -m "feat: add useProfile TanStack Query hooks"
 - Create: `components/auth/email-verification-banner.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useLogin`/`useRegister`/`useRequestEmailVerification` (Task 12), `Button`/`Input`/`Card` from `components/ui/*` (Block 0), `AppQueryProvider` (Task 10) for stories/tests.
 - Produces: `LoginForm`, `RegisterForm`, `EmailVerificationBanner` — consumed by `app/(auth)/login/page.tsx`, `app/(auth)/register/page.tsx`, `app/(app)/profile/page.tsx` (Task 18).
 
@@ -2361,6 +2399,7 @@ git commit -m "feat: add LoginForm, RegisterForm, EmailVerificationBanner compon
 ## Task 15: Profile Form Components (Profile, Change Password)
 
 **Files:**
+
 - Create: `components/profile/profile-form.tsx`
 - Create: `components/profile/profile-form.stories.tsx`
 - Create: `components/profile/profile-form.test.tsx`
@@ -2369,6 +2408,7 @@ git commit -m "feat: add LoginForm, RegisterForm, EmailVerificationBanner compon
 - Create: `components/profile/change-password-form.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useUpdateProfile`/`useChangePassword` (Task 13), `UserProfileResponse` (Task 2), `Button`/`Input`/`Textarea` (Block 0).
 - Produces: `ProfileForm`, `ChangePasswordForm` — consumed by `app/(app)/profile/page.tsx` (Task 18).
 
@@ -2659,11 +2699,13 @@ git commit -m "feat: add ProfileForm and ChangePasswordForm components"
 ## Task 16: Delete Account Section
 
 **Files:**
+
 - Create: `components/profile/delete-account-section.tsx`
 - Create: `components/profile/delete-account-section.stories.tsx`
 - Create: `components/profile/delete-account-section.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useScheduleDeletion`/`useCancelDeletion`/`useDeactivateAccount` (Task 13), `Dialog`/`Button` (Block 0).
 - Produces: `DeleteAccountSection` — consumed by `app/(app)/profile/page.tsx` (Task 18).
 
@@ -2848,11 +2890,13 @@ git commit -m "feat: add DeleteAccountSection with schedule/cancel flow"
 ## Task 17: Header Auth State
 
 **Files:**
+
 - Modify: `components/shell/header.tsx`
 - Modify: `components/shell/header.test.tsx`
 - Modify: `components/shell/header.stories.tsx`
 
 **Interfaces:**
+
 - Consumes: `useMe` (Task 12), `useLogout` (Task 12), `DropdownMenu`/`Avatar` (Block 0).
 - Produces: updated `Header` — consumed by `components/shell/app-shell.tsx` (unchanged) and every page rendering the shell.
 
@@ -3034,10 +3078,12 @@ git commit -m "feat: wire real auth state into Header (user menu vs Sign in)"
 ## Task 18: Middleware
 
 **Files:**
+
 - Create: `middleware.ts`
 - Test: `middleware.test.ts`
 
 **Interfaces:**
+
 - Consumes: nothing from earlier tasks (reads the raw `access_token` cookie directly to keep middleware edge-runtime-safe — no axios import).
 - Produces: route protection for the `(app)` group — required before Task 19's `(app)/layout.tsx` can assume a session exists.
 
@@ -3087,9 +3133,7 @@ import { NextRequest, NextResponse } from "next/server";
 const PROTECTED_PATHS = ["/profile"];
 
 export function middleware(request: NextRequest) {
-  const isProtected = PROTECTED_PATHS.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  );
+  const isProtected = PROTECTED_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
   if (!isProtected) {
     return NextResponse.next();
   }
@@ -3126,12 +3170,14 @@ git commit -m "feat: add middleware gating (app) routes on access_token cookie"
 ## Task 19: Pages — Login, Register, Verify
 
 **Files:**
+
 - Create: `app/(auth)/layout.tsx`
 - Create: `app/(auth)/login/page.tsx`
 - Create: `app/(auth)/register/page.tsx`
 - Create: `app/(auth)/verify/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `LoginForm`/`RegisterForm` (Task 14), `useConfirmEmailVerification` (Task 12).
 - Produces: `/login`, `/register`, `/verify` routes.
 
@@ -3256,11 +3302,13 @@ git commit -m "feat: add login, register, and email verification pages"
 ## Task 20: App Shell Wiring and Profile Page
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Create: `app/(app)/layout.tsx`
 - Create: `app/(app)/profile/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `AppShell` (Block 0), `useMe` (Task 12), `EmailVerificationBanner` (Task 14), `ProfileForm`/`ChangePasswordForm`/`DeleteAccountSection` (Tasks 15-16).
 - Produces: real home page using `AppShell`, `/profile` page.
 
@@ -3436,9 +3484,11 @@ git commit -m "feat: wire AppShell into home page, add authenticated profile pag
 ## Task 21: Playwright E2E Happy Path
 
 **Files:**
+
 - Create: `e2e/auth.spec.ts`
 
 **Interfaces:**
+
 - Consumes: the live dev server (`pnpm dev`) and — per the spec — the real `bookworm-hole-api` (API#138 already resolved, so this is unblocked). Requires `API_BASE_URL` pointed at a running API instance with a clean DB for test isolation.
 
 - [ ] **Step 1: Implement `e2e/auth.spec.ts`**

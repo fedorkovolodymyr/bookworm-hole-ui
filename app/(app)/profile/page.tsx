@@ -4,12 +4,7 @@ import { useMe } from "@/hooks/useMe";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { ChangePasswordForm } from "@/components/profile/change-password-form";
 import { DeleteAccountSection } from "@/components/profile/delete-account-section";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ProfilePage() {
   const { data: profile, isPending } = useMe();

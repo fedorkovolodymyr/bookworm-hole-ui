@@ -2,7 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 const post = vi.fn().mockResolvedValue({
-  data: { id: "1", email: "a@b.com", username: "a", display_name: "A", email_verified_at: "2026-01-01" },
+  data: {
+    id: "1",
+    email: "a@b.com",
+    username: "a",
+    display_name: "A",
+    email_verified_at: "2026-01-01",
+  },
 });
 
 vi.mock("@/lib/api/server-client", () => ({

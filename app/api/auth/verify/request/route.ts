@@ -19,10 +19,9 @@ export async function POST(request: NextRequest) {
     return new NextResponse(null, { status: 202 });
   } catch (error) {
     if (isAxiosError(error)) {
-      return NextResponse.json(
-        error.response?.data ?? { detail: "Verification request failed" },
-        { status: error.response?.status ?? 500 },
-      );
+      return NextResponse.json(error.response?.data ?? { detail: "Verification request failed" }, {
+        status: error.response?.status ?? 500,
+      });
     }
     throw error;
   }

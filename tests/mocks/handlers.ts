@@ -32,9 +32,7 @@ export const handlers = [
     return HttpResponse.json({ ...profile, ...body });
   }),
   http.post("/api/users/me/password", () => new HttpResponse(null, { status: 204 })),
-  http.post("/api/users/me/deactivate", () =>
-    HttpResponse.json({ ...profile, is_active: false }),
-  ),
+  http.post("/api/users/me/deactivate", () => HttpResponse.json({ ...profile, is_active: false })),
   http.post("/api/users/me/delete", () =>
     HttpResponse.json({ ...profile, deletion_scheduled_at: "2026-08-18T00:00:00Z" }),
   ),

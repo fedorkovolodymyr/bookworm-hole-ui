@@ -36,9 +36,7 @@ export function ProfileForm({ profile }: { profile: UserProfileResponse }) {
         </label>
         <Textarea id="profile-bio" value={bio} onChange={(e) => setBio(e.target.value)} />
       </div>
-      {updateProfile.isSuccess && (
-        <p className="text-muted-foreground text-sm">Profile updated.</p>
-      )}
+      {updateProfile.isSuccess && <p className="text-muted-foreground text-sm">Profile updated.</p>}
       <Button type="submit" disabled={updateProfile.isPending} className="self-start">
         {updateProfile.isPending ? "Saving..." : "Save changes"}
       </Button>
