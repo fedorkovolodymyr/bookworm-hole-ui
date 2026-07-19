@@ -1,7 +1,10 @@
+import { AppShell } from "@/components/shell/app-shell";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
+    <AppShell>
       <h1 className="text-2xl font-semibold">Bookworm Hole</h1>
-    </main>
+      <p className="text-muted-foreground mt-2">Track, review, and discover books.</p>
+    </AppShell>
   );
 }
