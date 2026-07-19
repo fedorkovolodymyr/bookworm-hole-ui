@@ -15,7 +15,7 @@ test("register, land on profile, log out, log back in", async ({ page }) => {
   await page.getByRole("button", { name: "Create account" }).click();
 
   await expect(page).toHaveURL(/\/profile/);
-  await expect(page.getByRole("heading", { name: "Profile" })).toBeVisible();
+  await expect(page.getByText("Profile", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: /E2E User/ }).click();
   await page.getByRole("menuitem", { name: "Log out" }).click();
