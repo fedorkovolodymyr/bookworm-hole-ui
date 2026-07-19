@@ -1,4 +1,6 @@
 import "@testing-library/jest-dom/vitest";
+import { afterAll, afterEach, beforeAll } from "vitest";
+import { server } from "./mocks/server";
 
 // jsdom does not implement window.matchMedia. next-themes (and any
 // prefers-color-scheme-aware code) calls it on mount, so polyfill it here
@@ -15,3 +17,7 @@ if (typeof window !== "undefined" && !window.matchMedia) {
     dispatchEvent: () => false,
   });
 }
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
