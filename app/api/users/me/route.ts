@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerApiClient } from "@/lib/api/server-client";
 import { getAccessToken } from "@/lib/auth/cookies";
 import { verifyCsrfToken } from "@/lib/auth/csrf";
+import { isAxiosError } from "@/lib/api/errors";
 import type { UpdateProfilePayload } from "@/lib/api/types";
 
 export async function GET(request: NextRequest) {
@@ -45,8 +46,4 @@ export async function PATCH(request: NextRequest) {
     }
     throw error;
   }
-}
-
-function isAxiosError(error: unknown): error is { response?: { data?: unknown; status?: number } } {
-  return typeof error === "object" && error !== null && "response" in error;
 }

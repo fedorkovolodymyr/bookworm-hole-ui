@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerApiClient } from "@/lib/api/server-client";
+import { isAxiosError } from "@/lib/api/errors";
 
 // No CSRF check here by design: the single-use, out-of-band token from the
 // email link is itself sufficient CSRF protection, and requiring a CSRF
@@ -21,8 +22,4 @@ export async function POST(request: NextRequest) {
     }
     throw error;
   }
-}
-
-function isAxiosError(error: unknown): error is { response?: { data?: unknown; status?: number } } {
-  return typeof error === "object" && error !== null && "response" in error;
 }

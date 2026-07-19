@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerApiClient } from "@/lib/api/server-client";
 import { setAuthCookies } from "@/lib/auth/cookies";
+import { isAxiosError } from "@/lib/api/errors";
 import type { RegisterPayload, UserResponse } from "@/lib/api/types";
 
 export async function POST(request: NextRequest) {
@@ -27,8 +28,4 @@ export async function POST(request: NextRequest) {
     }
     throw error;
   }
-}
-
-function isAxiosError(error: unknown): error is { response?: { data?: unknown; status?: number } } {
-  return typeof error === "object" && error !== null && "response" in error;
 }

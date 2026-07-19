@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerApiClient } from "@/lib/api/server-client";
 import { getAccessToken } from "@/lib/auth/cookies";
 import { verifyCsrfToken } from "@/lib/auth/csrf";
+import { isAxiosError } from "@/lib/api/errors";
 
 export async function POST(request: NextRequest) {
   const csrfCookie = request.cookies.get("csrf_token")?.value;
@@ -25,8 +26,4 @@ export async function POST(request: NextRequest) {
     }
     throw error;
   }
-}
-
-function isAxiosError(error: unknown): error is { response?: { data?: unknown; status?: number } } {
-  return typeof error === "object" && error !== null && "response" in error;
 }
