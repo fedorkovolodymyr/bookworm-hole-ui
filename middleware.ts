@@ -10,6 +10,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Presence-only check for UX/redirect purposes — the API still validates
+  // the token and returns 401 if it's invalid or expired.
   const accessToken = request.cookies.get("access_token")?.value;
   if (!accessToken) {
     const loginUrl = new URL("/login", request.url);
