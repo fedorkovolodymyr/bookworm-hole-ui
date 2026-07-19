@@ -14,7 +14,6 @@ describe("POST /api/auth/verify/confirm", () => {
     const { POST } = await import("./route");
     const request = new NextRequest("http://localhost/api/auth/verify/confirm", {
       method: "POST",
-      headers: { cookie: "csrf_token=abc", "x-csrf-token": "abc" },
       body: JSON.stringify({ token: "verify-token" }),
     });
     const response = await POST(request);
