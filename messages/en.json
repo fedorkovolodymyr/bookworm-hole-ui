@@ -11,5 +11,33 @@
     "language": "Language",
     "english": "English",
     "ukrainian": "Ukrainian"
+  },
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one"
+    },
+    "register": {
+      "title": "Create an account",
+      "email": "Email",
+      "username": "Username",
+      "displayName": "Display name",
+      "password": "Password",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in"
+    },
+    "verify": {
+      "missingToken": "Missing verification token.",
+      "verifying": "Verifying your email...",
+      "invalid": "This verification link is invalid or expired.",
+      "success": "Your email has been verified."
+    }
   }
 }
