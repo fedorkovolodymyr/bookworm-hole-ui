@@ -93,6 +93,17 @@
     },
     "contributor": {
       "noBio": "No biography available."
+    },
+    "pages": {
+      "browseTitle": "Browse books",
+      "loadingBooks": "Loading books...",
+      "noBooksFound": "No books found.",
+      "releasesTitle": "Editions",
+      "reviewsTitle": "Reviews",
+      "loadingBook": "Loading book...",
+      "bookNotFound": "Book not found.",
+      "contributorNotFound": "Contributor not found.",
+      "booksByContributor": "Books"
     }
   }
 }

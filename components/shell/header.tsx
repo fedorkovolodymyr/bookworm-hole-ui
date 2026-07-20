@@ -24,7 +24,7 @@ export function Header() {
         Bookworm Hole
       </Link>
       <nav className="hidden items-center gap-6 sm:flex">
-        <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
+        <Link href="/books" className="text-muted-foreground hover:text-foreground text-sm">
           Browse
         </Link>
         <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">

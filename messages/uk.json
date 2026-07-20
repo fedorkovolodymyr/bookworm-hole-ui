@@ -93,6 +93,17 @@
     },
     "contributor": {
       "noBio": "Біографія відсутня."
+    },
+    "pages": {
+      "browseTitle": "Переглянути книги",
+      "loadingBooks": "Завантаження книг...",
+      "noBooksFound": "Книг не знайдено.",
+      "releasesTitle": "Видання",
+      "reviewsTitle": "Відгуки",
+      "loadingBook": "Завантаження книги...",
+      "bookNotFound": "Книгу не знайдено.",
+      "contributorNotFound": "Автора не знайдено.",
+      "booksByContributor": "Книги"
     }
   }
 }
