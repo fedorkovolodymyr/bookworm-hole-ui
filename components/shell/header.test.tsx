@@ -34,7 +34,12 @@ describe("Header", () => {
     server.use(http.get("/api/users/me", () => HttpResponse.json({}, { status: 401 })));
 
     renderHeader();
-    expect(await screen.findByRole("link", { name: "Sign in" })).toBeInTheDocument();
+    // Base UI's Button forces role="button" with nativeButton={false} (see
+    // components/ui/button.tsx), so the rendered <a href="/login"> is queried
+    // by its button role rather than "link".
+    const signIn = await screen.findByRole("button", { name: "Sign in" });
+    expect(signIn).toBeInTheDocument();
+    expect(signIn).toHaveAttribute("href", "/login");
   });
 
   it("shows a user menu with the display name when a session exists", async () => {

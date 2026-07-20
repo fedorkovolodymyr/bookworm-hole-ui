@@ -26,12 +26,18 @@ export default function AdminContributorEditPage({ params }: { params: Promise<{
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Edit contributor</h1>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" render={<Link href="/admin/catalog/contributors" />}>
+          <Button
+            size="sm"
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/admin/catalog/contributors" />}
+          >
             {t("backToList")}
           </Button>
           <Button
             size="sm"
             variant="outline"
+            nativeButton={false}
             render={<Link href={`/admin/catalog/contributors/${id}/history`} />}
           >
             History

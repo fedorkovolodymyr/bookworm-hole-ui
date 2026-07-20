@@ -38,12 +38,18 @@ export default function AdminBookEditPage({ params }: { params: Promise<{ id: st
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t("editBook")}</h1>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" render={<Link href="/admin/catalog/books" />}>
+          <Button
+            size="sm"
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/admin/catalog/books" />}
+          >
             {t("backToList")}
           </Button>
           <Button
             size="sm"
             variant="outline"
+            nativeButton={false}
             render={<Link href={`/admin/catalog/books/${id}/history`} />}
           >
             History

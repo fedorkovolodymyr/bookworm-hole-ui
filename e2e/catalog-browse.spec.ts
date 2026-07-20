@@ -1,5 +1,5 @@
 // e2e/catalog-browse.spec.ts
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 // NOTE: These tests require pre-seeded catalog data in whatever API the e2e run
 // targets (at least one book, and one book matching/containing "Dune" for the

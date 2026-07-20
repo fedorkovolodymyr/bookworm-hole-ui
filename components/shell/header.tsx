@@ -57,7 +57,7 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button size="sm" render={<Link href="/login" />}>
+          <Button size="sm" nativeButton={false} render={<Link href="/login" />}>
             Sign in
           </Button>
         )}
