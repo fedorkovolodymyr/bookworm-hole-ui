@@ -140,6 +140,34 @@
       "creating": "Створення...",
       "editSubmit": "Зберегти зміни",
       "saving": "Збереження..."
+    },
+    "contributor": {
+      "fullNameLabel": "Повне ім'я",
+      "sortNameLabel": "Ім'я для сортування",
+      "birthYearLabel": "Рік народження",
+      "deathYearLabel": "Рік смерті",
+      "bioLabel": "Біографія",
+      "createSubmit": "Створити автора",
+      "creating": "Створення...",
+      "editSubmit": "Зберегти зміни",
+      "saving": "Збереження..."
+    },
+    "merge": {
+      "trigger": "Об'єднати з іншою книгою",
+      "title": "Об'єднати \"{title}\" з іншою книгою",
+      "targetIdLabel": "ID цільової книги",
+      "confirm": "Об'єднати",
+      "merging": "Об'єднання...",
+      "selfMergeError": "Неможливо об'єднати книгу саму з собою."
+    },
+    "attachContributor": {
+      "trigger": "Додати автора",
+      "title": "Додати автора",
+      "contributorLabel": "Автор",
+      "roleLabel": "Роль",
+      "confirm": "Додати",
+      "adding": "Додавання...",
+      "alreadyExisted": "Цей автор вже має цю роль у книзі."
     }
   }
 }

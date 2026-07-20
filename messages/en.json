@@ -140,6 +140,34 @@
       "creating": "Creating...",
       "editSubmit": "Save changes",
       "saving": "Saving..."
+    },
+    "contributor": {
+      "fullNameLabel": "Full name",
+      "sortNameLabel": "Sort name",
+      "birthYearLabel": "Birth year",
+      "deathYearLabel": "Death year",
+      "bioLabel": "Bio",
+      "createSubmit": "Create contributor",
+      "creating": "Creating...",
+      "editSubmit": "Save changes",
+      "saving": "Saving..."
+    },
+    "merge": {
+      "trigger": "Merge into another book",
+      "title": "Merge \"{title}\" into another book",
+      "targetIdLabel": "Target book ID",
+      "confirm": "Merge",
+      "merging": "Merging...",
+      "selfMergeError": "Cannot merge a book into itself."
+    },
+    "attachContributor": {
+      "trigger": "Add contributor",
+      "title": "Add contributor",
+      "contributorLabel": "Contributor",
+      "roleLabel": "Role",
+      "confirm": "Add",
+      "adding": "Adding...",
+      "alreadyExisted": "This contributor already has this role on the book."
     }
   }
 }
