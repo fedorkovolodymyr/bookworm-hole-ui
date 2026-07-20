@@ -74,6 +74,22 @@
       "titlePlaceholder": "Пошук за назвою",
       "authorPlaceholder": "Пошук за автором",
       "languagePlaceholder": "напр. en"
+    },
+    "release": {
+      "format": {
+        "hardcover": "Тверда палітурка",
+        "paperback": "М'яка палітурка",
+        "ebook": "Електронна книга",
+        "audiobook": "Аудіокнига",
+        "other": "Інше"
+      },
+      "noRating": "Ще немає оцінок",
+      "ratingCount": "{count, plural, =0 {Немає оцінок} one {# оцінка} other {# оцінок}}"
+    },
+    "reviews": {
+      "empty": "Ще немає відгуків.",
+      "spoilerWarning": "Містить спойлери",
+      "loading": "Завантаження відгуків..."
     }
   }
 }

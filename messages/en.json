@@ -74,6 +74,22 @@
       "titlePlaceholder": "Search by title",
       "authorPlaceholder": "Search by author",
       "languagePlaceholder": "e.g. en"
+    },
+    "release": {
+      "format": {
+        "hardcover": "Hardcover",
+        "paperback": "Paperback",
+        "ebook": "Ebook",
+        "audiobook": "Audiobook",
+        "other": "Other"
+      },
+      "noRating": "Not yet rated",
+      "ratingCount": "{count, plural, =0 {No ratings} one {# rating} other {# ratings}}"
+    },
+    "reviews": {
+      "empty": "No reviews yet.",
+      "spoilerWarning": "Contains spoilers",
+      "loading": "Loading reviews..."
     }
   }
 }
