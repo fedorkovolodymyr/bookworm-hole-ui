@@ -44,6 +44,7 @@ export default function AdminContributorsPage() {
                 <Button
                   size="sm"
                   variant="outline"
+                  nativeButton={false}
                   render={<Link href={`/admin/catalog/contributors/${contributor.id}/edit`} />}
                 >
                   {t("edit")}

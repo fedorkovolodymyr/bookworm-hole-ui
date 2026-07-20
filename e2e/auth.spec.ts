@@ -1,5 +1,5 @@
 // e2e/auth.spec.ts
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test("register, land on profile, log out, log back in", async ({ page }) => {
   const uniqueSuffix = Date.now();

@@ -47,6 +47,7 @@ export default function AdminBooksPage() {
                   <Button
                     size="sm"
                     variant="outline"
+                    nativeButton={false}
                     render={<Link href={`/admin/catalog/books/${book.id}/edit`} />}
                   >
                     {t("edit")}

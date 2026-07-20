@@ -30,6 +30,7 @@ export default function AdminBookHistoryPage({ params }: { params: Promise<{ id:
         <Button
           size="sm"
           variant="outline"
+          nativeButton={false}
           render={<Link href={`/admin/catalog/books/${id}/edit`} />}
         >
           Back to edit

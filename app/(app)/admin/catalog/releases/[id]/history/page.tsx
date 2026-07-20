@@ -30,6 +30,7 @@ export default function AdminReleaseHistoryPage({ params }: { params: Promise<{ 
         <Button
           size="sm"
           variant="outline"
+          nativeButton={false}
           render={<Link href={`/admin/catalog/releases/${id}/edit`} />}
         >
           Back to edit
