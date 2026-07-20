@@ -66,6 +66,14 @@
     "book": {
       "noDescription": "Опис відсутній.",
       "publishedYear": "Опубліковано {year}"
+    },
+    "filters": {
+      "titleLabel": "Назва",
+      "authorLabel": "Автор",
+      "languageLabel": "Мова",
+      "titlePlaceholder": "Пошук за назвою",
+      "authorPlaceholder": "Пошук за автором",
+      "languagePlaceholder": "напр. en"
     }
   }
 }

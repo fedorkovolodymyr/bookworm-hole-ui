@@ -66,6 +66,14 @@
     "book": {
       "noDescription": "No description available.",
       "publishedYear": "Published {year}"
+    },
+    "filters": {
+      "titleLabel": "Title",
+      "authorLabel": "Author",
+      "languageLabel": "Language",
+      "titlePlaceholder": "Search by title",
+      "authorPlaceholder": "Search by author",
+      "languagePlaceholder": "e.g. en"
     }
   }
 }
