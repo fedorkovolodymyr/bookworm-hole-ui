@@ -23,4 +23,28 @@ describe("proxy", () => {
     const response = proxy(request);
     expect(response.status).toBe(200);
   });
+
+  it("redirects to /login with a from param when no access_token cookie is present on an admin route", () => {
+    const request = new NextRequest("http://localhost/admin/catalog/books");
+    const response = proxy(request);
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/login");
+    expect(response.headers.get("location")).toContain(
+      `from=${encodeURIComponent("/admin/catalog/books")}`,
+    );
+  });
+
+  it("passes through an admin route when an access_token cookie is present (deeper is_admin check happens server-side)", () => {
+    const request = new NextRequest("http://localhost/admin/catalog/books", {
+      headers: { cookie: "access_token=some-token" },
+    });
+    const response = proxy(request);
+    expect(response.status).toBe(200);
+  });
+
+  it("passes through a public path like /books regardless of cookie state", () => {
+    const request = new NextRequest("http://localhost/books");
+    const response = proxy(request);
+    expect(response.status).toBe(200);
+  });
 });
