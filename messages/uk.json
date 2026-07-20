@@ -179,5 +179,19 @@
       "addRelease": "Додати видання",
       "backToList": "Назад до списку"
     }
+  },
+  "history": {
+    "versionLabel": "Версія {version}",
+    "changeSource": {
+      "admin": "Редагування адміном",
+      "contribution": "Внесок користувача",
+      "external_sync": "Зовнішня синхронізація",
+      "system": "Система"
+    },
+    "empty": "Історія версій відсутня.",
+    "fieldAdded": "додано",
+    "fieldChanged": "змінено",
+    "fieldRemoved": "видалено",
+    "noDiff": "Немає відмінностей між цими версіями."
   }
 }

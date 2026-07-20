@@ -179,5 +179,19 @@
       "addRelease": "Add edition",
       "backToList": "Back to list"
     }
+  },
+  "history": {
+    "versionLabel": "Version {version}",
+    "changeSource": {
+      "admin": "Admin edit",
+      "contribution": "User contribution",
+      "external_sync": "External sync",
+      "system": "System"
+    },
+    "empty": "No version history yet.",
+    "fieldAdded": "added",
+    "fieldChanged": "changed",
+    "fieldRemoved": "removed",
+    "noDiff": "No differences between these versions."
   }
 }
