@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useMe } from "@/hooks/useMe";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { ChangePasswordForm } from "@/components/profile/change-password-form";
@@ -7,17 +8,18 @@ import { DeleteAccountSection } from "@/components/profile/delete-account-sectio
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ProfilePage() {
+  const t = useTranslations("profile");
   const { data: profile, isPending } = useMe();
 
   if (isPending || !profile) {
-    return <p className="text-muted-foreground">Loading profile...</p>;
+    return <p className="text-muted-foreground">{t("loadingProfile")}</p>;
   }
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <CardTitle>{t("title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ProfileForm profile={profile} />
@@ -25,7 +27,7 @@ export default function ProfilePage() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Change password</CardTitle>
+          <CardTitle>{t("changePasswordTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ChangePasswordForm />
@@ -33,7 +35,7 @@ export default function ProfilePage() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Danger zone</CardTitle>
+          <CardTitle>{t("dangerZoneTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <DeleteAccountSection deletionScheduledAt={profile.deletion_scheduled_at} />

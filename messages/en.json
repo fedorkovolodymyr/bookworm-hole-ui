@@ -39,5 +39,27 @@
       "invalid": "This verification link is invalid or expired.",
       "success": "Your email has been verified."
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "loadingProfile": "Loading profile...",
+    "displayName": "Display name",
+    "bio": "Bio",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "updated": "Profile updated.",
+    "changePasswordTitle": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePassword": "Change password",
+    "changing": "Changing...",
+    "changed": "Password changed.",
+    "dangerZoneTitle": "Danger zone",
+    "deleteAccount": "Delete account",
+    "deleteConfirmTitle": "Delete your account?",
+    "deleteConfirmDescription": "Your account will be scheduled for deletion and permanently removed after a 30-day grace period. You can cancel any time before then.",
+    "confirmDeletion": "Confirm deletion",
+    "cancelDeletion": "Cancel deletion",
+    "scheduledDeletionNotice": "Your account is scheduled for deletion on {date}."
   }
 }

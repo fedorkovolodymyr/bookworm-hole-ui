@@ -1,12 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { useChangePassword } from "@/hooks/useProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { extractErrorMessage } from "@/lib/api/errors";
 
 export function ChangePasswordForm() {
+  const t = useTranslations("profile");
   const [currentPassword, setCurrentPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
   const changePassword = useChangePassword();
@@ -28,7 +30,7 @@ export function ChangePasswordForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="current-password" className="text-sm font-medium">
-          Current password
+          {t("currentPassword")}
         </label>
         <Input
           id="current-password"
@@ -40,7 +42,7 @@ export function ChangePasswordForm() {
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="new-password" className="text-sm font-medium">
-          New password
+          {t("newPassword")}
         </label>
         <Input
           id="new-password"
@@ -50,14 +52,12 @@ export function ChangePasswordForm() {
           required
         />
       </div>
-      {changePassword.isSuccess && (
-        <p className="text-muted-foreground text-sm">Password changed.</p>
-      )}
+      {changePassword.isSuccess && <p className="text-muted-foreground text-sm">{t("changed")}</p>}
       {changePassword.isError && (
         <p className="text-destructive text-sm">{extractErrorMessage(changePassword.error)}</p>
       )}
       <Button type="submit" disabled={changePassword.isPending} className="self-start">
-        {changePassword.isPending ? "Changing..." : "Change password"}
+        {changePassword.isPending ? t("changing") : t("changePassword")}
       </Button>
     </form>
   );

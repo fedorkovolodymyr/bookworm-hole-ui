@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { useCancelDeletion, useScheduleDeletion } from "@/hooks/useProfile";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ export function DeleteAccountSection({
 }: {
   deletionScheduledAt: string | null;
 }) {
+  const t = useTranslations("profile");
   const [open, setOpen] = React.useState(false);
   const scheduleDeletion = useScheduleDeletion();
   const cancelDeletion = useCancelDeletion();
@@ -29,8 +31,9 @@ export function DeleteAccountSection({
     return (
       <div className="flex flex-col gap-2">
         <p className="text-sm">
-          Your account is scheduled for deletion on{" "}
-          {new Date(scheduledAt as string).toLocaleDateString()}.
+          {t("scheduledDeletionNotice", {
+            date: new Date(scheduledAt as string).toLocaleDateString(),
+          })}
         </p>
         <Button
           variant="outline"
@@ -38,7 +41,7 @@ export function DeleteAccountSection({
           disabled={cancelDeletion.isPending}
           onClick={() => cancelDeletion.mutate()}
         >
-          Cancel deletion
+          {t("cancelDeletion")}
         </Button>
       </div>
     );
@@ -46,14 +49,11 @@ export function DeleteAccountSection({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="destructive" />}>Delete account</DialogTrigger>
+      <DialogTrigger render={<Button variant="destructive" />}>{t("deleteAccount")}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete your account?</DialogTitle>
-          <DialogDescription>
-            Your account will be scheduled for deletion and permanently removed after a 30-day grace
-            period. You can cancel any time before then.
-          </DialogDescription>
+          <DialogTitle>{t("deleteConfirmTitle")}</DialogTitle>
+          <DialogDescription>{t("deleteConfirmDescription")}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button
@@ -63,7 +63,7 @@ export function DeleteAccountSection({
               scheduleDeletion.mutate(undefined, { onSuccess: () => setOpen(false) });
             }}
           >
-            Confirm deletion
+            {t("confirmDeletion")}
           </Button>
         </DialogFooter>
       </DialogContent>
