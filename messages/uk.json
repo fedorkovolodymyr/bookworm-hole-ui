@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Завантаження...",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "create": "Створити",
+    "confirm": "Підтвердити",
+    "somethingWentWrong": "Щось пішло не так. Спробуйте ще раз.",
+    "language": "Мова",
+    "english": "Англійська",
+    "ukrainian": "Українська"
+  },
+  "auth": {
+    "login": {
+      "title": "Увійти",
+      "email": "Електронна пошта",
+      "password": "Пароль",
+      "submit": "Увійти",
+      "submitting": "Вхід...",
+      "noAccount": "Немає облікового запису?",
+      "createOne": "Створити"
+    },
+    "register": {
+      "title": "Створити обліковий запис",
+      "email": "Електронна пошта",
+      "username": "Ім'я користувача",
+      "displayName": "Відображуване ім'я",
+      "password": "Пароль",
+      "submit": "Створити обліковий запис",
+      "submitting": "Створення облікового запису...",
+      "haveAccount": "Вже маєте обліковий запис?",
+      "logIn": "Увійти"
+    },
+    "verify": {
+      "missingToken": "Відсутній токен підтвердження.",
+      "verifying": "Підтвердження електронної пошти...",
+      "invalid": "Це посилання для підтвердження недійсне або застаріле.",
+      "success": "Вашу електронну пошту підтверджено."
+    }
+  },
+  "profile": {
+    "title": "Профіль",
+    "loadingProfile": "Завантаження профілю...",
+    "displayName": "Відображуване ім'я",
+    "bio": "Про себе",
+    "saveChanges": "Зберегти зміни",
+    "saving": "Збереження...",
+    "updated": "Профіль оновлено.",
+    "changePasswordTitle": "Змінити пароль",
+    "currentPassword": "Поточний пароль",
+    "newPassword": "Новий пароль",
+    "changePassword": "Змінити пароль",
+    "changing": "Зміна...",
+    "changed": "Пароль змінено.",
+    "dangerZoneTitle": "Небезпечна зона",
+    "deleteAccount": "Видалити обліковий запис",
+    "deleteConfirmTitle": "Видалити ваш обліковий запис?",
+    "deleteConfirmDescription": "Ваш обліковий запис буде заплановано до видалення та остаточно видалено після 30-денного пільгового періоду. Ви можете скасувати в будь-який час до цього.",
+    "confirmDeletion": "Підтвердити видалення",
+    "cancelDeletion": "Скасувати видалення",
+    "scheduledDeletionNotice": "Ваш обліковий запис заплановано до видалення {date}."
+  },
+  "catalog": {
+    "book": {
+      "noDescription": "Опис відсутній.",
+      "publishedYear": "Опубліковано {year}"
+    },
+    "filters": {
+      "titleLabel": "Назва",
+      "authorLabel": "Автор",
+      "languageLabel": "Мова",
+      "titlePlaceholder": "Пошук за назвою",
+      "authorPlaceholder": "Пошук за автором",
+      "languagePlaceholder": "напр. en"
+    },
+    "release": {
+      "format": {
+        "hardcover": "Тверда палітурка",
+        "paperback": "М'яка палітурка",
+        "ebook": "Електронна книга",
+        "audiobook": "Аудіокнига",
+        "other": "Інше"
+      },
+      "noRating": "Ще немає оцінок",
+      "ratingCount": "{count, plural, =0 {Немає оцінок} one {# оцінка} other {# оцінок}}"
+    },
+    "reviews": {
+      "empty": "Ще немає відгуків.",
+      "spoilerWarning": "Містить спойлери",
+      "loading": "Завантаження відгуків..."
+    },
+    "contributor": {
+      "noBio": "Біографія відсутня."
+    },
+    "pages": {
+      "browseTitle": "Переглянути книги",
+      "loadingBooks": "Завантаження книг...",
+      "noBooksFound": "Книг не знайдено.",
+      "releasesTitle": "Видання",
+      "reviewsTitle": "Відгуки",
+      "loadingBook": "Завантаження книги...",
+      "bookNotFound": "Книгу не знайдено.",
+      "contributorNotFound": "Автора не знайдено.",
+      "booksByContributor": "Книги"
+    },
+    "external": {
+      "title": "Пошук у зовнішніх джерелах",
+      "searchPlaceholder": "Пошук за назвою, автором або ISBN",
+      "noResults": "Результатів не знайдено.",
+      "partialFailureNotice": "Деякі джерела недоступні: {sources}",
+      "import": "Імпортувати",
+      "importing": "Імпортування...",
+      "imported": "Успішно імпортовано.",
+      "notYetRated": "Ще немає оцінок"
+    },
+    "suggestEdit": {
+      "trigger": "Запропонувати зміну",
+      "newBookTitle": "Запропонувати нову книгу",
+      "editBookTitle": "Запропонувати зміну до цієї книги",
+      "editContributorTitle": "Запропонувати зміну до цього автора",
+      "titleLabel": "Назва",
+      "descriptionLabel": "Опис",
+      "fullNameLabel": "Повне ім'я",
+      "bioLabel": "Біографія",
+      "submit": "Надіслати на розгляд",
+      "submitting": "Надсилання...",
+      "submitted": "Надіслано на розгляд.",
+      "signInRequired": "Увійдіть, щоб запропонувати зміну."
+    },
+    "myContributions": {
+      "navLink": "Мої пропозиції",
+      "title": "Мої пропозиції",
+      "empty": "Ви ще не надсилали пропозицій.",
+      "status": {
+        "draft": "Чернетка",
+        "submitted": "Надіслано",
+        "under_review": "На розгляді",
+        "approved": "Схвалено",
+        "rejected": "Відхилено",
+        "merged": "Об'єднано"
+      }
+    }
+  },
+  "catalogAdmin": {
+    "book": {
+      "titleLabel": "Назва",
+      "originalTitleLabel": "Оригінальна назва",
+      "originalLanguageLabel": "Оригінальна мова",
+      "firstPublicationYearLabel": "Рік першої публікації",
+      "descriptionLabel": "Опис",
+      "createSubmit": "Створити книгу",
+      "creating": "Створення...",
+      "editSubmit": "Зберегти зміни",
+      "saving": "Збереження..."
+    },
+    "release": {
+      "formatLabel": "Формат",
+      "publisherLabel": "Видавець",
+      "publishedYearLabel": "Рік видання",
+      "languageLabel": "Мова",
+      "pageCountLabel": "Кількість сторінок",
+      "durationMinutesLabel": "Тривалість (хв)",
+      "coverImageUrlLabel": "URL обкладинки",
+      "createSubmit": "Створити видання",
+      "creating": "Створення...",
+      "editSubmit": "Зберегти зміни",
+      "saving": "Збереження..."
+    },
+    "contributor": {
+      "fullNameLabel": "Повне ім'я",
+      "sortNameLabel": "Ім'я для сортування",
+      "birthYearLabel": "Рік народження",
+      "deathYearLabel": "Рік смерті",
+      "bioLabel": "Біографія",
+      "createSubmit": "Створити автора",
+      "creating": "Створення...",
+      "editSubmit": "Зберегти зміни",
+      "saving": "Збереження..."
+    },
+    "merge": {
+      "trigger": "Об'єднати з іншою книгою",
+      "title": "Об'єднати \"{title}\" з іншою книгою",
+      "targetIdLabel": "ID цільової книги",
+      "confirm": "Об'єднати",
+      "merging": "Об'єднання...",
+      "selfMergeError": "Неможливо об'єднати книгу саму з собою."
+    },
+    "attachContributor": {
+      "trigger": "Додати автора",
+      "title": "Додати автора",
+      "contributorLabel": "Автор",
+      "roleLabel": "Роль",
+      "confirm": "Додати",
+      "adding": "Додавання...",
+      "alreadyExisted": "Цей автор вже має цю роль у книзі."
+    },
+    "pages": {
+      "manageBooks": "Керування книгами",
+      "newBook": "Нова книга",
+      "editBook": "Редагувати книгу",
+      "edit": "Редагувати",
+      "deleteBook": "Видалити",
+      "confirmDelete": "Видалити цю книгу назавжди?",
+      "addRelease": "Додати видання",
+      "backToList": "Назад до списку"
+    }
+  },
+  "history": {
+    "versionLabel": "Версія {version}",
+    "changeSource": {
+      "admin": "Редагування адміном",
+      "contribution": "Внесок користувача",
+      "external_sync": "Зовнішня синхронізація",
+      "system": "Система"
+    },
+    "empty": "Історія версій відсутня.",
+    "fieldAdded": "додано",
+    "fieldChanged": "змінено",
+    "fieldRemoved": "видалено",
+    "noDiff": "Немає відмінностей між цими версіями."
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "confirm": "Confirm",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "language": "Language",
+    "english": "English",
+    "ukrainian": "Ukrainian"
+  },
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one"
+    },
+    "register": {
+      "title": "Create an account",
+      "email": "Email",
+      "username": "Username",
+      "displayName": "Display name",
+      "password": "Password",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in"
+    },
+    "verify": {
+      "missingToken": "Missing verification token.",
+      "verifying": "Verifying your email...",
+      "invalid": "This verification link is invalid or expired.",
+      "success": "Your email has been verified."
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "loadingProfile": "Loading profile...",
+    "displayName": "Display name",
+    "bio": "Bio",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "updated": "Profile updated.",
+    "changePasswordTitle": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePassword": "Change password",
+    "changing": "Changing...",
+    "changed": "Password changed.",
+    "dangerZoneTitle": "Danger zone",
+    "deleteAccount": "Delete account",
+    "deleteConfirmTitle": "Delete your account?",
+    "deleteConfirmDescription": "Your account will be scheduled for deletion and permanently removed after a 30-day grace period. You can cancel any time before then.",
+    "confirmDeletion": "Confirm deletion",
+    "cancelDeletion": "Cancel deletion",
+    "scheduledDeletionNotice": "Your account is scheduled for deletion on {date}."
+  },
+  "catalog": {
+    "book": {
+      "noDescription": "No description available.",
+      "publishedYear": "Published {year}"
+    },
+    "filters": {
+      "titleLabel": "Title",
+      "authorLabel": "Author",
+      "languageLabel": "Language",
+      "titlePlaceholder": "Search by title",
+      "authorPlaceholder": "Search by author",
+      "languagePlaceholder": "e.g. en"
+    },
+    "release": {
+      "format": {
+        "hardcover": "Hardcover",
+        "paperback": "Paperback",
+        "ebook": "Ebook",
+        "audiobook": "Audiobook",
+        "other": "Other"
+      },
+      "noRating": "Not yet rated",
+      "ratingCount": "{count, plural, =0 {No ratings} one {# rating} other {# ratings}}"
+    },
+    "reviews": {
+      "empty": "No reviews yet.",
+      "spoilerWarning": "Contains spoilers",
+      "loading": "Loading reviews..."
+    },
+    "contributor": {
+      "noBio": "No biography available."
+    },
+    "pages": {
+      "browseTitle": "Browse books",
+      "loadingBooks": "Loading books...",
+      "noBooksFound": "No books found.",
+      "releasesTitle": "Editions",
+      "reviewsTitle": "Reviews",
+      "loadingBook": "Loading book...",
+      "bookNotFound": "Book not found.",
+      "contributorNotFound": "Contributor not found.",
+      "booksByContributor": "Books"
+    },
+    "external": {
+      "title": "Search external sources",
+      "searchPlaceholder": "Search by title, author, or ISBN",
+      "noResults": "No results found.",
+      "partialFailureNotice": "Some sources failed: {sources}",
+      "import": "Import",
+      "importing": "Importing...",
+      "imported": "Imported successfully.",
+      "notYetRated": "Not yet rated"
+    },
+    "suggestEdit": {
+      "trigger": "Suggest an edit",
+      "newBookTitle": "Suggest a new book",
+      "editBookTitle": "Suggest an edit to this book",
+      "editContributorTitle": "Suggest an edit to this contributor",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "fullNameLabel": "Full name",
+      "bioLabel": "Bio",
+      "submit": "Submit for review",
+      "submitting": "Submitting...",
+      "submitted": "Submitted for review.",
+      "signInRequired": "Sign in to suggest an edit."
+    },
+    "myContributions": {
+      "navLink": "My Submissions",
+      "title": "My Submissions",
+      "empty": "You haven't submitted any suggestions yet.",
+      "status": {
+        "draft": "Draft",
+        "submitted": "Submitted",
+        "under_review": "Under review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "merged": "Merged"
+      }
+    }
+  },
+  "catalogAdmin": {
+    "book": {
+      "titleLabel": "Title",
+      "originalTitleLabel": "Original title",
+      "originalLanguageLabel": "Original language",
+      "firstPublicationYearLabel": "First publication year",
+      "descriptionLabel": "Description",
+      "createSubmit": "Create book",
+      "creating": "Creating...",
+      "editSubmit": "Save changes",
+      "saving": "Saving..."
+    },
+    "release": {
+      "formatLabel": "Format",
+      "publisherLabel": "Publisher",
+      "publishedYearLabel": "Published year",
+      "languageLabel": "Language",
+      "pageCountLabel": "Page count",
+      "durationMinutesLabel": "Duration (minutes)",
+      "coverImageUrlLabel": "Cover image URL",
+      "createSubmit": "Create release",
+      "creating": "Creating...",
+      "editSubmit": "Save changes",
+      "saving": "Saving..."
+    },
+    "contributor": {
+      "fullNameLabel": "Full name",
+      "sortNameLabel": "Sort name",
+      "birthYearLabel": "Birth year",
+      "deathYearLabel": "Death year",
+      "bioLabel": "Bio",
+      "createSubmit": "Create contributor",
+      "creating": "Creating...",
+      "editSubmit": "Save changes",
+      "saving": "Saving..."
+    },
+    "merge": {
+      "trigger": "Merge into another book",
+      "title": "Merge \"{title}\" into another book",
+      "targetIdLabel": "Target book ID",
+      "confirm": "Merge",
+      "merging": "Merging...",
+      "selfMergeError": "Cannot merge a book into itself."
+    },
+    "attachContributor": {
+      "trigger": "Add contributor",
+      "title": "Add contributor",
+      "contributorLabel": "Contributor",
+      "roleLabel": "Role",
+      "confirm": "Add",
+      "adding": "Adding...",
+      "alreadyExisted": "This contributor already has this role on the book."
+    },
+    "pages": {
+      "manageBooks": "Manage books",
+      "newBook": "New book",
+      "editBook": "Edit book",
+      "edit": "Edit",
+      "deleteBook": "Delete",
+      "confirmDelete": "Delete this book permanently?",
+      "addRelease": "Add edition",
+      "backToList": "Back to list"
+    }
+  },
+  "history": {
+    "versionLabel": "Version {version}",
+    "changeSource": {
+      "admin": "Admin edit",
+      "contribution": "User contribution",
+      "external_sync": "External sync",
+      "system": "System"
+    },
+    "empty": "No version history yet.",
+    "fieldAdded": "added",
+    "fieldChanged": "changed",
+    "fieldRemoved": "removed",
+    "noDiff": "No differences between these versions."
+  }
+}

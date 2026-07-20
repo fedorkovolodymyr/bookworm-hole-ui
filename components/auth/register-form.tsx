@@ -1,12 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { useRegister } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { extractErrorMessage } from "@/lib/api/errors";
 
 export function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
+  const t = useTranslations("auth.register");
   const [email, setEmail] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [displayName, setDisplayName] = React.useState("");
@@ -25,7 +27,7 @@ export function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="register-email" className="text-sm font-medium">
-          Email
+          {t("email")}
         </label>
         <Input
           id="register-email"
@@ -37,7 +39,7 @@ export function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="register-username" className="text-sm font-medium">
-          Username
+          {t("username")}
         </label>
         <Input
           id="register-username"
@@ -48,7 +50,7 @@ export function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="register-display-name" className="text-sm font-medium">
-          Display name
+          {t("displayName")}
         </label>
         <Input
           id="register-display-name"
@@ -59,7 +61,7 @@ export function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="register-password" className="text-sm font-medium">
-          Password
+          {t("password")}
         </label>
         <Input
           id="register-password"
@@ -73,7 +75,7 @@ export function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
         <p className="text-destructive text-sm">{extractErrorMessage(register.error)}</p>
       )}
       <Button type="submit" disabled={register.isPending}>
-        {register.isPending ? "Creating account..." : "Create account"}
+        {register.isPending ? t("submitting") : t("submit")}
       </Button>
     </form>
   );

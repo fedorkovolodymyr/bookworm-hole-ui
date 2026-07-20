@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -10,12 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/shell/theme-toggle";
+import { LocaleSwitcher } from "@/components/shell/locale-switcher";
 import { useMe } from "@/hooks/useMe";
 import { useLogout } from "@/hooks/useAuth";
 
 export function Header() {
   const { data: me } = useMe();
   const logout = useLogout();
+  const t = useTranslations("catalog.myContributions");
 
   return (
     <header className="border-border flex h-16 items-center justify-between border-b px-4 sm:px-6">
@@ -23,7 +26,7 @@ export function Header() {
         Bookworm Hole
       </Link>
       <nav className="hidden items-center gap-6 sm:flex">
-        <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
+        <Link href="/books" className="text-muted-foreground hover:text-foreground text-sm">
           Browse
         </Link>
         <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
@@ -31,6 +34,7 @@ export function Header() {
         </Link>
       </nav>
       <div className="flex items-center gap-2">
+        <LocaleSwitcher />
         <ThemeToggle />
         {me ? (
           <DropdownMenu>
@@ -46,6 +50,9 @@ export function Header() {
             />
             <DropdownMenuContent>
               <DropdownMenuItem render={<Link href="/profile" />}>Profile</DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/contributions" />}>
+                {t("navLink")}
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => logout.mutate()}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

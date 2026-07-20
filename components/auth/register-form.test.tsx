@@ -1,17 +1,25 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
 import { AppQueryProvider } from "@/lib/query-client";
 import { RegisterForm } from "./register-form";
+import enMessages from "@/messages/en.json";
+
+function renderRegisterForm(onSuccess: () => void) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={enMessages}>
+      <AppQueryProvider>
+        <RegisterForm onSuccess={onSuccess} />
+      </AppQueryProvider>
+    </NextIntlClientProvider>,
+  );
+}
 
 describe("RegisterForm", () => {
   it("submits all fields and calls onSuccess", async () => {
     const onSuccess = vi.fn();
-    render(
-      <AppQueryProvider>
-        <RegisterForm onSuccess={onSuccess} />
-      </AppQueryProvider>,
-    );
+    renderRegisterForm(onSuccess);
 
     await userEvent.type(screen.getByLabelText("Email"), "a@b.com");
     await userEvent.type(screen.getByLabelText("Username"), "alice");
@@ -31,11 +39,7 @@ describe("RegisterForm", () => {
       ),
     );
 
-    render(
-      <AppQueryProvider>
-        <RegisterForm onSuccess={vi.fn()} />
-      </AppQueryProvider>,
-    );
+    renderRegisterForm(vi.fn());
 
     await userEvent.type(screen.getByLabelText("Email"), "a@b.com");
     await userEvent.type(screen.getByLabelText("Username"), "alice");

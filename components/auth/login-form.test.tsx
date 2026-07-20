@@ -1,17 +1,25 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
 import { AppQueryProvider } from "@/lib/query-client";
 import { LoginForm } from "./login-form";
+import enMessages from "@/messages/en.json";
+
+function renderLoginForm(onSuccess: () => void) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={enMessages}>
+      <AppQueryProvider>
+        <LoginForm onSuccess={onSuccess} />
+      </AppQueryProvider>
+    </NextIntlClientProvider>,
+  );
+}
 
 describe("LoginForm", () => {
   it("submits email and password and calls onSuccess", async () => {
     const onSuccess = vi.fn();
-    render(
-      <AppQueryProvider>
-        <LoginForm onSuccess={onSuccess} />
-      </AppQueryProvider>,
-    );
+    renderLoginForm(onSuccess);
 
     await userEvent.type(screen.getByLabelText("Email"), "a@b.com");
     await userEvent.type(screen.getByLabelText("Password"), "password123");
@@ -29,11 +37,7 @@ describe("LoginForm", () => {
       ),
     );
 
-    render(
-      <AppQueryProvider>
-        <LoginForm onSuccess={vi.fn()} />
-      </AppQueryProvider>,
-    );
+    renderLoginForm(vi.fn());
 
     await userEvent.type(screen.getByLabelText("Email"), "a@b.com");
     await userEvent.type(screen.getByLabelText("Password"), "wrong");
