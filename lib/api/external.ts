@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { ExternalSearchResponse } from "./types";
+import type { BookWithReleasesResponse, ExternalSearchResponse, ImportBookPayload } from "./types";
 
 export async function searchExternal(
   query: string,
@@ -8,5 +8,10 @@ export async function searchExternal(
   const { data } = await apiClient.get("/external/search", {
     params: { q: query, sources: sources?.join(",") },
   });
+  return data;
+}
+
+export async function importBook(payload: ImportBookPayload): Promise<BookWithReleasesResponse> {
+  const { data } = await apiClient.post("/external/import", payload);
   return data;
 }
