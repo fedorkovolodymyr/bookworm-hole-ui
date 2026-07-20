@@ -1,16 +1,24 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { AppQueryProvider } from "@/lib/query-client";
 import { Header } from "./header";
+import enMessages from "@/messages/en.json";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}));
 
 function renderHeader() {
   return render(
-    <ThemeProvider>
-      <AppQueryProvider>
-        <Header />
-      </AppQueryProvider>
-    </ThemeProvider>,
+    <NextIntlClientProvider locale="en" messages={enMessages}>
+      <ThemeProvider>
+        <AppQueryProvider>
+          <Header />
+        </AppQueryProvider>
+      </ThemeProvider>
+    </NextIntlClientProvider>,
   );
 }
 

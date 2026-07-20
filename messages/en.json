@@ -7,6 +7,9 @@
     "delete": "Delete",
     "create": "Create",
     "confirm": "Confirm",
-    "somethingWentWrong": "Something went wrong. Please try again."
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "language": "Language",
+    "english": "English",
+    "ukrainian": "Ukrainian"
   }
 }

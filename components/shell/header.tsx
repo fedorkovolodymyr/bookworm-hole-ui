@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/shell/theme-toggle";
+import { LocaleSwitcher } from "@/components/shell/locale-switcher";
 import { useMe } from "@/hooks/useMe";
 import { useLogout } from "@/hooks/useAuth";
 
@@ -31,6 +32,7 @@ export function Header() {
         </Link>
       </nav>
       <div className="flex items-center gap-2">
+        <LocaleSwitcher />
         <ThemeToggle />
         {me ? (
           <DropdownMenu>
