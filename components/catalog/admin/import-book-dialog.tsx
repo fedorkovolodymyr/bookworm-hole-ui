@@ -18,8 +18,6 @@ export function ImportBookDialog({ hit }: { hit: ExternalSearchHit }) {
   const t = useTranslations("catalog.external");
   const importBook = useImportBook();
 
-  const isImportSupported = hit.source === "open_library" && hit.isbns.length > 0;
-
   return (
     <Dialog>
       <DialogTrigger render={<Button size="sm" />}>{t("import")}</DialogTrigger>
@@ -27,17 +25,14 @@ export function ImportBookDialog({ hit }: { hit: ExternalSearchHit }) {
         <DialogHeader>
           <DialogTitle>{hit.title}</DialogTitle>
         </DialogHeader>
-        {!isImportSupported && (
-          <p className="text-muted-foreground text-sm">{t("importUnsupportedForSource")}</p>
-        )}
         {importBook.isSuccess && <p className="text-muted-foreground text-sm">{t("imported")}</p>}
         {importBook.isError && (
           <p className="text-destructive text-sm">{extractErrorMessage(importBook.error)}</p>
         )}
         <DialogFooter>
           <Button
-            disabled={!isImportSupported || importBook.isPending}
-            onClick={() => importBook.mutate({ source: hit.source, source_id: hit.isbns[0] })}
+            disabled={importBook.isPending}
+            onClick={() => importBook.mutate({ source: hit.source, source_id: hit.source_id })}
           >
             {importBook.isPending ? t("importing") : t("import")}
           </Button>

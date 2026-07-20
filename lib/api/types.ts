@@ -220,6 +220,7 @@ export interface UpdateContributorPayload {
 
 export interface ExternalSearchHit {
   source: string;
+  source_id: string;
   title: string;
   isbns: string[];
   authors: string[];

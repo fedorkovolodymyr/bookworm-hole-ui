@@ -113,8 +113,7 @@
       "import": "Імпортувати",
       "importing": "Імпортування...",
       "imported": "Успішно імпортовано.",
-      "notYetRated": "Ще немає оцінок",
-      "importUnsupportedForSource": "Імпорт для цього джерела поки не підтримується надійно."
+      "notYetRated": "Ще немає оцінок"
     },
     "suggestEdit": {
       "trigger": "Запропонувати зміну",

@@ -23,6 +23,7 @@ export const Default: StoryObj<typeof ImportBookDialog> = {
   args: {
     hit: {
       source: "google_books",
+      source_id: "zyTCAlFPjgYC",
       title: "Dune",
       isbns: ["9780441013593"],
       authors: ["Frank Herbert"],

@@ -113,8 +113,7 @@
       "import": "Import",
       "importing": "Importing...",
       "imported": "Imported successfully.",
-      "notYetRated": "Not yet rated",
-      "importUnsupportedForSource": "Import isn't reliably supported for this source yet."
+      "notYetRated": "Not yet rated"
     },
     "suggestEdit": {
       "trigger": "Suggest an edit",
