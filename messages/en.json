@@ -113,11 +113,14 @@
       "import": "Import",
       "importing": "Importing...",
       "imported": "Imported successfully.",
-      "notYetRated": "Not yet rated"
+      "notYetRated": "Not yet rated",
+      "importUnsupportedForSource": "Import isn't reliably supported for this source yet."
     },
     "suggestEdit": {
       "trigger": "Suggest an edit",
       "newBookTitle": "Suggest a new book",
+      "editBookTitle": "Suggest an edit to this book",
+      "editContributorTitle": "Suggest an edit to this contributor",
       "titleLabel": "Title",
       "descriptionLabel": "Description",
       "submit": "Submit for review",

@@ -23,9 +23,11 @@ function renderDialog() {
 }
 
 describe("SuggestEditDialog", () => {
-  it("creates and submits a contribution on confirm", async () => {
+  it("creates and submits a contribution with the edited title, not the seed value", async () => {
+    let capturedBody: { payload?: { title?: string; description?: string } } | undefined;
     server.use(
-      http.post("/api/contributions", () => {
+      http.post("/api/contributions", async ({ request }) => {
+        capturedBody = (await request.json()) as typeof capturedBody;
         return HttpResponse.json(
           {
             id: "c1",
@@ -61,7 +63,16 @@ describe("SuggestEditDialog", () => {
     const user = userEvent.setup();
     renderDialog();
     await user.click(screen.getByRole("button", { name: "Suggest an edit" }));
+
+    const titleInput = screen.getByLabelText("Title");
+    expect(titleInput).toHaveValue("Dune");
+    await user.clear(titleInput);
+    await user.type(titleInput, "Dune Messiah");
+
     await user.click(screen.getByRole("button", { name: "Submit for review" }));
     await waitFor(() => expect(screen.getByText("Submitted for review.")).toBeInTheDocument());
+
+    expect(capturedBody?.payload?.title).toBe("Dune Messiah");
+    expect(capturedBody?.payload?.description).toBe("A sci-fi epic.");
   });
 });

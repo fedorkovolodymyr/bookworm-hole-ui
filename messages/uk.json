@@ -113,11 +113,14 @@
       "import": "Імпортувати",
       "importing": "Імпортування...",
       "imported": "Успішно імпортовано.",
-      "notYetRated": "Ще немає оцінок"
+      "notYetRated": "Ще немає оцінок",
+      "importUnsupportedForSource": "Імпорт для цього джерела поки не підтримується надійно."
     },
     "suggestEdit": {
       "trigger": "Запропонувати зміну",
       "newBookTitle": "Запропонувати нову книгу",
+      "editBookTitle": "Запропонувати зміну до цієї книги",
+      "editContributorTitle": "Запропонувати зміну до цього автора",
       "titleLabel": "Назва",
       "descriptionLabel": "Опис",
       "submit": "Надіслати на розгляд",

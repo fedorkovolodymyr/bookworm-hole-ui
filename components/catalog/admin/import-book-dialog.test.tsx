@@ -9,7 +9,15 @@ import { ImportBookDialog } from "./import-book-dialog";
 import enMessages from "@/messages/en.json";
 import type { ExternalSearchHit } from "@/lib/api/types";
 
-const hit: ExternalSearchHit = {
+const openLibraryHit: ExternalSearchHit = {
+  source: "open_library",
+  title: "Dune",
+  isbns: ["9780441013593"],
+  authors: ["Frank Herbert"],
+  cover_image_url: null,
+};
+
+const googleBooksHit: ExternalSearchHit = {
   source: "google_books",
   title: "Dune",
   isbns: ["9780441013593"],
@@ -17,7 +25,15 @@ const hit: ExternalSearchHit = {
   cover_image_url: null,
 };
 
-function renderDialog() {
+const openLibraryHitNoIsbn: ExternalSearchHit = {
+  source: "open_library",
+  title: "Dune",
+  isbns: [],
+  authors: ["Frank Herbert"],
+  cover_image_url: null,
+};
+
+function renderDialog(hit: ExternalSearchHit) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={queryClient}>
@@ -29,7 +45,7 @@ function renderDialog() {
 }
 
 describe("ImportBookDialog", () => {
-  it("imports the book on confirm", async () => {
+  it("imports the book on confirm for an open_library hit with an ISBN", async () => {
     server.use(
       http.post("/api/external/import", () => {
         return HttpResponse.json({
@@ -42,9 +58,29 @@ describe("ImportBookDialog", () => {
       }),
     );
     const user = userEvent.setup();
-    renderDialog();
+    renderDialog(openLibraryHit);
     await user.click(screen.getByRole("button", { name: "Import" }));
     await user.click(screen.getByRole("button", { name: "Import" }));
     await waitFor(() => expect(screen.getByText("Imported successfully.")).toBeInTheDocument());
+  });
+
+  it("disables import and shows an unsupported note for a non-open_library hit", async () => {
+    const user = userEvent.setup();
+    renderDialog(googleBooksHit);
+    await user.click(screen.getByRole("button", { name: "Import" }));
+    expect(
+      screen.getByText("Import isn't reliably supported for this source yet."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Import" })).toBeDisabled();
+  });
+
+  it("disables import and shows an unsupported note for an open_library hit with no ISBN", async () => {
+    const user = userEvent.setup();
+    renderDialog(openLibraryHitNoIsbn);
+    await user.click(screen.getByRole("button", { name: "Import" }));
+    expect(
+      screen.getByText("Import isn't reliably supported for this source yet."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Import" })).toBeDisabled();
   });
 });
