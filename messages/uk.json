@@ -61,5 +61,11 @@
     "confirmDeletion": "Підтвердити видалення",
     "cancelDeletion": "Скасувати видалення",
     "scheduledDeletionNotice": "Ваш обліковий запис заплановано до видалення {date}."
+  },
+  "catalog": {
+    "book": {
+      "noDescription": "Опис відсутній.",
+      "publishedYear": "Опубліковано {year}"
+    }
   }
 }

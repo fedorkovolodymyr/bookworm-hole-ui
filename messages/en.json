@@ -61,5 +61,11 @@
     "confirmDeletion": "Confirm deletion",
     "cancelDeletion": "Cancel deletion",
     "scheduledDeletionNotice": "Your account is scheduled for deletion on {date}."
+  },
+  "catalog": {
+    "book": {
+      "noDescription": "No description available.",
+      "publishedYear": "Published {year}"
+    }
   }
 }
