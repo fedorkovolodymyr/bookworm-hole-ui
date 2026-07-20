@@ -168,6 +168,15 @@
       "confirm": "Add",
       "adding": "Adding...",
       "alreadyExisted": "This contributor already has this role on the book."
+    },
+    "pages": {
+      "manageBooks": "Manage books",
+      "newBook": "New book",
+      "editBook": "Edit book",
+      "deleteBook": "Delete",
+      "confirmDelete": "Delete this book permanently?",
+      "addRelease": "Add edition",
+      "backToList": "Back to list"
     }
   }
 }
