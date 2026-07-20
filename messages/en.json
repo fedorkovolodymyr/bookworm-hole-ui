@@ -115,5 +115,31 @@
       "imported": "Imported successfully.",
       "notYetRated": "Not yet rated"
     }
+  },
+  "catalogAdmin": {
+    "book": {
+      "titleLabel": "Title",
+      "originalTitleLabel": "Original title",
+      "originalLanguageLabel": "Original language",
+      "firstPublicationYearLabel": "First publication year",
+      "descriptionLabel": "Description",
+      "createSubmit": "Create book",
+      "creating": "Creating...",
+      "editSubmit": "Save changes",
+      "saving": "Saving..."
+    },
+    "release": {
+      "formatLabel": "Format",
+      "publisherLabel": "Publisher",
+      "publishedYearLabel": "Published year",
+      "languageLabel": "Language",
+      "pageCountLabel": "Page count",
+      "durationMinutesLabel": "Duration (minutes)",
+      "coverImageUrlLabel": "Cover image URL",
+      "createSubmit": "Create release",
+      "creating": "Creating...",
+      "editSubmit": "Save changes",
+      "saving": "Saving..."
+    }
   }
 }

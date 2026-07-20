@@ -115,5 +115,31 @@
       "imported": "Успішно імпортовано.",
       "notYetRated": "Ще немає оцінок"
     }
+  },
+  "catalogAdmin": {
+    "book": {
+      "titleLabel": "Назва",
+      "originalTitleLabel": "Оригінальна назва",
+      "originalLanguageLabel": "Оригінальна мова",
+      "firstPublicationYearLabel": "Рік першої публікації",
+      "descriptionLabel": "Опис",
+      "createSubmit": "Створити книгу",
+      "creating": "Створення...",
+      "editSubmit": "Зберегти зміни",
+      "saving": "Збереження..."
+    },
+    "release": {
+      "formatLabel": "Формат",
+      "publisherLabel": "Видавець",
+      "publishedYearLabel": "Рік видання",
+      "languageLabel": "Мова",
+      "pageCountLabel": "Кількість сторінок",
+      "durationMinutesLabel": "Тривалість (хв)",
+      "coverImageUrlLabel": "URL обкладинки",
+      "createSubmit": "Створити видання",
+      "creating": "Створення...",
+      "editSubmit": "Зберегти зміни",
+      "saving": "Збереження..."
+    }
   }
 }
