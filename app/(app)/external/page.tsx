@@ -45,7 +45,15 @@ export default function ExternalSearchPage() {
               {me && !me.is_admin && (
                 <SuggestEditDialog
                   kind="new_book"
-                  buildPayload={() => ({ title: hit.title, description: hit.authors.join(", ") })}
+                  fields={[
+                    { key: "title", labelKey: "titleLabel", initialValue: hit.title },
+                    {
+                      key: "description",
+                      labelKey: "descriptionLabel",
+                      initialValue: hit.authors.join(", "),
+                      multiline: true,
+                    },
+                  ]}
                 />
               )}
             </CardContent>

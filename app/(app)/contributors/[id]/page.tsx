@@ -31,7 +31,15 @@ export default function ContributorDetailPage({ params }: { params: Promise<{ id
           <SuggestEditDialog
             kind="edit_contributor"
             targetId={contributor.id}
-            buildPayload={() => ({ title: contributor.full_name, description: contributor.bio })}
+            fields={[
+              { key: "full_name", labelKey: "fullNameLabel", initialValue: contributor.full_name },
+              {
+                key: "bio",
+                labelKey: "bioLabel",
+                initialValue: contributor.bio ?? "",
+                multiline: true,
+              },
+            ]}
           />
         )}
       </div>

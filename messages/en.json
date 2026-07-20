@@ -123,6 +123,8 @@
       "editContributorTitle": "Suggest an edit to this contributor",
       "titleLabel": "Title",
       "descriptionLabel": "Description",
+      "fullNameLabel": "Full name",
+      "bioLabel": "Bio",
       "submit": "Submit for review",
       "submitting": "Submitting...",
       "submitted": "Submitted for review.",

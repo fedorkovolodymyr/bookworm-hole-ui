@@ -123,6 +123,8 @@
       "editContributorTitle": "Запропонувати зміну до цього автора",
       "titleLabel": "Назва",
       "descriptionLabel": "Опис",
+      "fullNameLabel": "Повне ім'я",
+      "bioLabel": "Біографія",
       "submit": "Надіслати на розгляд",
       "submitting": "Надсилання...",
       "submitted": "Надіслано на розгляд.",

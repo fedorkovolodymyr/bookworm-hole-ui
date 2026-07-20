@@ -27,23 +27,32 @@ const DIALOG_TITLE_KEY: Record<ContributionKind, string> = {
   new_contributor: "newBookTitle",
 };
 
+export interface SuggestEditField {
+  /** The payload key this field maps to, e.g. "title" or "full_name". */
+  key: string;
+  /** Message key under catalog.suggestEdit for the field's label. */
+  labelKey: string;
+  initialValue: string;
+  /** Use a Textarea instead of an Input. */
+  multiline?: boolean;
+}
+
 export function SuggestEditDialog({
   kind,
   targetId,
-  buildPayload,
+  fields,
 }: {
   kind: ContributionKind;
   targetId?: string;
-  buildPayload: () => { title?: unknown; description?: unknown } & Record<string, unknown>;
+  fields: SuggestEditField[];
 }) {
   const t = useTranslations("catalog.suggestEdit");
   const { data: me } = useMe();
   const createContribution = useCreateContribution();
   const submitContribution = useSubmitContribution();
 
-  const [title, setTitle] = React.useState(() => String(buildPayload().title ?? ""));
-  const [description, setDescription] = React.useState(() =>
-    String(buildPayload().description ?? ""),
+  const [values, setValues] = React.useState<Record<string, string>>(() =>
+    Object.fromEntries(fields.map((field) => [field.key, field.initialValue])),
   );
 
   const isPending = createContribution.isPending || submitContribution.isPending;
@@ -51,8 +60,9 @@ export function SuggestEditDialog({
   const error = createContribution.error ?? submitContribution.error;
 
   function handleSubmit() {
+    const payload = Object.fromEntries(fields.map((field) => [field.key, values[field.key]]));
     createContribution.mutate(
-      { kind, target_id: targetId ?? null, payload: { title, description } },
+      { kind, target_id: targetId ?? null, payload },
       {
         onSuccess: (contribution) => submitContribution.mutate(contribution.id),
       },
@@ -69,26 +79,33 @@ export function SuggestEditDialog({
         {!me && <p className="text-muted-foreground text-sm">{t("signInRequired")}</p>}
         {me && !isSubmitted && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="suggest-edit-title" className="text-sm font-medium">
-                {t("titleLabel")}
-              </label>
-              <Input
-                id="suggest-edit-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="suggest-edit-description" className="text-sm font-medium">
-                {t("descriptionLabel")}
-              </label>
-              <Textarea
-                id="suggest-edit-description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
+            {fields.map((field) => {
+              const inputId = `suggest-edit-${field.key}`;
+              return (
+                <div key={field.key} className="flex flex-col gap-1.5">
+                  <label htmlFor={inputId} className="text-sm font-medium">
+                    {t(field.labelKey)}
+                  </label>
+                  {field.multiline ? (
+                    <Textarea
+                      id={inputId}
+                      value={values[field.key] ?? ""}
+                      onChange={(e) =>
+                        setValues((prev) => ({ ...prev, [field.key]: e.target.value }))
+                      }
+                    />
+                  ) : (
+                    <Input
+                      id={inputId}
+                      value={values[field.key] ?? ""}
+                      onChange={(e) =>
+                        setValues((prev) => ({ ...prev, [field.key]: e.target.value }))
+                      }
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
         {isSubmitted && <p className="text-muted-foreground text-sm">{t("submitted")}</p>}

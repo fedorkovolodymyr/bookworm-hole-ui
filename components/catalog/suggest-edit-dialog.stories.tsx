@@ -51,7 +51,15 @@ export default meta;
 export const NewBook: StoryObj<typeof SuggestEditDialog> = {
   args: {
     kind: "new_book",
-    buildPayload: () => ({ title: "Dune", description: "A sci-fi epic." }),
+    fields: [
+      { key: "title", labelKey: "titleLabel", initialValue: "Dune" },
+      {
+        key: "description",
+        labelKey: "descriptionLabel",
+        initialValue: "A sci-fi epic.",
+        multiline: true,
+      },
+    ],
   },
 };
 
@@ -59,7 +67,23 @@ export const EditExistingBook: StoryObj<typeof SuggestEditDialog> = {
   args: {
     kind: "edit_book",
     targetId: "b1",
-    buildPayload: () => ({ title: "Dune (revised)" }),
+    fields: [{ key: "title", labelKey: "titleLabel", initialValue: "Dune (revised)" }],
+  },
+};
+
+export const EditContributor: StoryObj<typeof SuggestEditDialog> = {
+  args: {
+    kind: "edit_contributor",
+    targetId: "c1",
+    fields: [
+      { key: "full_name", labelKey: "fullNameLabel", initialValue: "Frank Herbert" },
+      {
+        key: "bio",
+        labelKey: "bioLabel",
+        initialValue: "American science fiction author.",
+        multiline: true,
+      },
+    ],
   },
 };
 
@@ -67,6 +91,14 @@ export const SignedOut: StoryObj<typeof SuggestEditDialog> = {
   decorators: [withQueryClient(null)],
   args: {
     kind: "new_book",
-    buildPayload: () => ({ title: "Dune", description: "A sci-fi epic." }),
+    fields: [
+      { key: "title", labelKey: "titleLabel", initialValue: "Dune" },
+      {
+        key: "description",
+        labelKey: "descriptionLabel",
+        initialValue: "A sci-fi epic.",
+        multiline: true,
+      },
+    ],
   },
 };

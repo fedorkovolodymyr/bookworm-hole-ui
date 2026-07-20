@@ -32,7 +32,15 @@ export default function BookDetailPage({ params }: { params: Promise<{ id: strin
           <SuggestEditDialog
             kind="edit_book"
             targetId={book.id}
-            buildPayload={() => ({ title: book.title, description: book.description })}
+            fields={[
+              { key: "title", labelKey: "titleLabel", initialValue: book.title },
+              {
+                key: "description",
+                labelKey: "descriptionLabel",
+                initialValue: book.description,
+                multiline: true,
+              },
+            ]}
           />
         )}
       </div>
