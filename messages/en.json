@@ -90,6 +90,9 @@
       "empty": "No reviews yet.",
       "spoilerWarning": "Contains spoilers",
       "loading": "Loading reviews..."
+    },
+    "contributor": {
+      "noBio": "No biography available."
     }
   }
 }
