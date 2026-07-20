@@ -22,7 +22,7 @@ export function ReleaseForm({
   release,
   onSuccess,
 }: {
-  bookId: string;
+  bookId?: string;
   release?: ReleaseWithISBNsResponse;
   onSuccess: (release: ReleaseWithISBNsResponse) => void;
 }) {
@@ -57,6 +57,7 @@ export function ReleaseForm({
     if (release) {
       updateRelease.mutate(basePayload, { onSuccess: (result) => onSuccess(result) });
     } else {
+      if (!bookId) return;
       createRelease.mutate(
         { ...basePayload, book_id: bookId, description_override: null },
         { onSuccess: (result) => onSuccess(result) },

@@ -173,6 +173,7 @@
       "manageBooks": "Manage books",
       "newBook": "New book",
       "editBook": "Edit book",
+      "edit": "Edit",
       "deleteBook": "Delete",
       "confirmDelete": "Delete this book permanently?",
       "addRelease": "Add edition",

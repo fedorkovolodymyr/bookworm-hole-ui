@@ -49,7 +49,7 @@ export default function AdminBooksPage() {
                     variant="outline"
                     render={<Link href={`/admin/catalog/books/${book.id}/edit`} />}
                   >
-                    {t("editBook")}
+                    {t("edit")}
                   </Button>
                   <Button
                     size="sm"
