@@ -10,12 +10,49 @@ Deliver the Catalog block per `docs/specs/2026-07-13-ui-repo-design.md`'s block 
 - Public book search/browse (filters: title, author, language), book detail (releases, contributors, reviews list), contributor detail, external source search (public read).
 - Admin catalog management: create/edit book, create/edit release, create/edit contributor, merge books, attach/detach contributor to book or release, import book from external source.
 - Version history + diff viewer for books, releases, contributors (admin-only screens).
+- **Non-admin "Suggest an edit" flow via the `contributions` router** (added after discovering a prior, independently-produced Block 2 spec on `main` dated 2026-07-18, verified against the live API — see Addendum below): authenticated non-admin users can propose a new book/release/contributor or an edit to an existing one; the proposal is created as a `draft` contribution and immediately submitted, surfacing in a minimal "My Submissions" read-only list. Approval/rejection review UI is explicitly Block 7's job, not this block's.
 - next-intl setup (English default + Ukrainian), all new Block 2 UI strings translated, visible locale switcher in app shell header.
 - Migrate existing Block 1 hardcoded strings (login, register, verify, profile pages) to next-intl as part of this setup.
 
 **Out of scope / deferred:**
 - Review creation/editing (belongs to Block 3 — Collections & Reviews). Block 2 only *displays* existing reviews via the nested `GET /books/{id}/reviews` / `GET /releases/{id}/reviews` endpoints.
 - JWT-claim-based edge middleware admin gating — blocked on API-side change ([bookworm-hole-api#144](https://github.com/fedorkovolodymyr/bookworm-hole-api/issues/144), not merge-blocking). Interim: server-side `/users/me` check.
+- Contribution moderation (approve/reject queue, `admin_contributions` router) — Block 7.
+
+## Addendum: Reconciliation with prior Block 2 spec (2026-07-18, commit 98e069d)
+
+An earlier session had already written a Block 2 spec verified against the *live* API (this session's initial research read source only). That spec correctly identified that every mutating endpoint on `books`/`releases`/`contributors` carries `dependencies=[Depends(require_admin)]` — confirmed here by re-grepping `app/routers/{books,releases,contributors}.py` directly. It concluded Block 2 should be read-only browse + a `contributions`-based "suggest an edit" flow, deferring all direct admin CRUD UI to Block 7.
+
+This session's spec (the one this document is) took a different scope decision, explicitly chosen by the user after being shown the admin-gating tradeoff: build real admin CRUD screens in Block 2 itself, gated behind `/admin/catalog` and a genuine `is_admin` check — which is consistent with `require_admin`, just answers "who builds the admin UI" differently than the prior spec did (Block 2 now, not deferred to Block 7).
+
+What the prior spec caught that this one had missed entirely: the `contributions` router (`POST /contributions/`, `GET /contributions/me/contributions`, `PATCH/DELETE /contributions/{id}`, `POST /contributions/{id}/submit`) is the *only* write path available to non-admin users, and had no coverage in this spec. That gap is real regardless of which spec "governs" the admin-UI question, since the router exists in the live API either way. Resolution: **this spec governs the admin-CRUD scope decision; the contributions flow is added on top, not swapped in.** Both admin CRUD and the non-admin suggest-an-edit flow ship in this block.
+
+### `contributions` router reference (verified against `app/routers/contributions.py`, `app/schemas/contribution_schemas.py`, `app/models/contribution.py`)
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| POST | `/contributions/` | any authenticated user (`get_current_user`, no admin check) | Body `CreateContributionSchema{kind, target_id?, payload}` → `ContributionResponse` (201) |
+| GET | `/contributions/me/contributions` | authenticated | `Page<ContributionResponse>`, query `skip`/`limit` |
+| GET | `/contributions/{id}` | authenticated (own) | `ContributionResponse`; 404 |
+| PATCH | `/contributions/{id}` | authenticated (own) | Body `UpdateContributionSchema{payload}` → `ContributionResponse`; 404, 409 |
+| POST | `/contributions/{id}/submit` | authenticated (own) | `ContributionResponse` (draft → submitted); 404, 409 |
+| DELETE | `/contributions/{id}` | authenticated (own) | 204; 404, 409 |
+
+```ts
+type ContributionKind = "new_book" | "new_release" | "new_contributor" | "edit_book" | "edit_release" | "edit_contributor";
+type ContributionStatus = "draft" | "submitted" | "under_review" | "approved" | "rejected" | "merged";
+
+interface CreateContributionPayload { kind: ContributionKind; target_id?: string | null; payload: Record<string, unknown> }
+interface UpdateContributionPayload { payload: Record<string, unknown> }
+interface ContributionResponse {
+  id: string; user_id: string; kind: ContributionKind; target_id: string | null;
+  payload: Record<string, unknown>; status: ContributionStatus;
+  reviewer_id: string | null; review_notes: string | null;
+  created_at: string; updated_at: string;
+}
+```
+
+**UI surface added:** a shared `SuggestEditDialog` component (kind-aware form, builds the `payload` object matching the relevant `Create*Schema`/`Update*Schema` shape for the target entity type), triggered from book detail, contributor detail, and external-search-hit cards for signed-in non-admin users (redirect to `/login` if unauthenticated). Submit composes `POST /contributions/` then `POST /contributions/{id}/submit` in one action (draft→submitted immediately; editing a still-draft contribution before submit is out of scope). A minimal read-only "My Submissions" list (`GET /contributions/me/contributions`) is linked from the profile menu.
 
 ## API Reference (bookworm-hole-api, base `/api/v1`)
 

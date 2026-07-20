@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Package manager: pnpm. Scripts: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check`.
-- Never merge/push directly to `main` — this whole block lands via one PR on branch `block-2-catalog`.
+- Never merge/push directly to `main` — this whole block lands via one PR on branch `worktree-block-2-catalog`.
 - API base path `/api/v1`; axios client already proxies through `/api` (see `lib/api/client.ts`) — new domain files call relative paths like `apiClient.get("/books")`.
 - Error shape is uniform: `{ detail: string }`. Use `extractErrorMessage` from `lib/api/errors.ts` in every form/mutation error display.
 - `POST .../contributors` (books and releases) returns **HTTP 200** for both create and already-existed — branch on response body `{status: "created"|"already_existed"}`, never on status code.
@@ -180,10 +180,11 @@ Expected: both succeed with no errors.
 - [ ] **Step 8: Commit**
 
 ```bash
-git checkout -b block-2-catalog
 git add package.json pnpm-lock.yaml i18n/ messages/ app/layout.tsx next.config.ts
 git commit -m "feat(i18n): add next-intl infra with en/uk message files"
 ```
+
+(Already on the isolated worktree branch for this block — no need to create a new branch here.)
 
 ---
 
@@ -5819,7 +5820,701 @@ git commit -m "test(i18n): add en/uk message key parity smoke test"
 
 ---
 
-### Task 26: Final gate — full repo verification
+## Phase 7.5 — Non-Admin "Suggest an Edit" Flow (Contributions)
+
+> Added after reconciling with a prior, independently-produced Block 2 spec found on `main` (2026-07-18, commit 98e069d) that correctly identified the `contributions` router as the only write path available to non-admin users. See the design doc's Addendum section for full detail. This phase is additive — it does not change or remove any task from Phases 1-7.
+
+### Task 27: Contributions API client, types, hooks
+
+**Files:**
+- Modify: `lib/api/types.ts` (append contribution types)
+- Create: `lib/api/contributions.ts`
+- Create: `hooks/useContributions.ts`
+- Create: `hooks/useContributions.test.tsx`
+
+**Interfaces:**
+- Consumes: `apiClient` from `lib/api/client.ts`.
+- Produces: `createContribution`, `listOwnContributions`, `getContribution`, `updateContribution`, `submitContribution`, `deleteContribution` (API client); `useCreateContribution`, `useSubmitContribution`, `useMyContributions`, `useUpdateContribution`, `useDeleteContribution` (hooks) — consumed by `SuggestEditDialog` (Task 28) and the My Submissions page (Task 29).
+
+- [ ] **Step 1: Append contribution types to `lib/api/types.ts`**
+
+```ts
+export type ContributionKind =
+  | "new_book"
+  | "new_release"
+  | "new_contributor"
+  | "edit_book"
+  | "edit_release"
+  | "edit_contributor";
+
+export type ContributionStatus =
+  | "draft"
+  | "submitted"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "merged";
+
+export interface CreateContributionPayload {
+  kind: ContributionKind;
+  target_id?: string | null;
+  payload: Record<string, unknown>;
+}
+
+export interface UpdateContributionPayload {
+  payload: Record<string, unknown>;
+}
+
+export interface ContributionResponse {
+  id: string;
+  user_id: string;
+  kind: ContributionKind;
+  target_id: string | null;
+  payload: Record<string, unknown>;
+  status: ContributionStatus;
+  reviewer_id: string | null;
+  review_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+```
+
+- [ ] **Step 2: Run typecheck**
+
+Run: `pnpm typecheck`
+Expected: PASS
+
+- [ ] **Step 3: Implement lib/api/contributions.ts**
+
+```ts
+// lib/api/contributions.ts
+import { apiClient } from "./client";
+import type {
+  ContributionResponse,
+  CreateContributionPayload,
+  Page,
+  UpdateContributionPayload,
+} from "./types";
+
+export async function createContribution(
+  payload: CreateContributionPayload,
+): Promise<ContributionResponse> {
+  const { data } = await apiClient.post("/contributions", payload);
+  return data;
+}
+
+export async function listOwnContributions(
+  params: { skip?: number; limit?: number } = {},
+): Promise<Page<ContributionResponse>> {
+  const { data } = await apiClient.get("/contributions/me/contributions", { params });
+  return data;
+}
+
+export async function getContribution(contributionId: string): Promise<ContributionResponse> {
+  const { data } = await apiClient.get(`/contributions/${contributionId}`);
+  return data;
+}
+
+export async function updateContribution(
+  contributionId: string,
+  payload: UpdateContributionPayload,
+): Promise<ContributionResponse> {
+  const { data } = await apiClient.patch(`/contributions/${contributionId}`, payload);
+  return data;
+}
+
+export async function submitContribution(contributionId: string): Promise<ContributionResponse> {
+  const { data } = await apiClient.post(`/contributions/${contributionId}/submit`);
+  return data;
+}
+
+export async function deleteContribution(contributionId: string): Promise<void> {
+  await apiClient.delete(`/contributions/${contributionId}`);
+}
+```
+
+- [ ] **Step 4: Run typecheck**
+
+Run: `pnpm typecheck`
+Expected: PASS
+
+- [ ] **Step 5: Write hooks/useContributions.test.tsx**
+
+```tsx
+// hooks/useContributions.test.tsx
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { useCreateContribution, useMyContributions, useSubmitContribution } from "./useContributions";
+
+const server = setupServer(
+  http.post("/api/contributions", async ({ request }) => {
+    const body = (await request.json()) as { kind: string };
+    return HttpResponse.json(
+      {
+        id: "c1",
+        user_id: "u1",
+        kind: body.kind,
+        target_id: null,
+        payload: {},
+        status: "draft",
+        reviewer_id: null,
+        review_notes: null,
+        created_at: "2020-01-01T00:00:00Z",
+        updated_at: "2020-01-01T00:00:00Z",
+      },
+      { status: 201 },
+    );
+  }),
+  http.post("/api/contributions/:id/submit", ({ params }) => {
+    return HttpResponse.json({
+      id: params.id,
+      user_id: "u1",
+      kind: "new_book",
+      target_id: null,
+      payload: {},
+      status: "submitted",
+      reviewer_id: null,
+      review_notes: null,
+      created_at: "2020-01-01T00:00:00Z",
+      updated_at: "2020-01-01T00:00:00Z",
+    });
+  }),
+  http.get("/api/contributions/me/contributions", () => {
+    return HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 });
+  }),
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+function wrapper({ children }: { children: React.ReactNode }) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+describe("useCreateContribution", () => {
+  it("creates a draft contribution", async () => {
+    const { result } = renderHook(() => useCreateContribution(), { wrapper });
+    act(() => result.current.mutate({ kind: "new_book", payload: { title: "Dune" } }));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.status).toBe("draft");
+  });
+});
+
+describe("useSubmitContribution", () => {
+  it("submits a draft contribution", async () => {
+    const { result } = renderHook(() => useSubmitContribution(), { wrapper });
+    act(() => result.current.mutate("c1"));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.status).toBe("submitted");
+  });
+});
+
+describe("useMyContributions", () => {
+  it("lists the current user's contributions", async () => {
+    const { result } = renderHook(() => useMyContributions(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.items).toEqual([]);
+  });
+});
+```
+
+- [ ] **Step 6: Run test to verify it fails**
+
+Run: `pnpm test useContributions`
+Expected: FAIL — `hooks/useContributions.ts` not found.
+
+- [ ] **Step 7: Implement hooks/useContributions.ts**
+
+```ts
+// hooks/useContributions.ts
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createContribution,
+  deleteContribution,
+  getContribution,
+  listOwnContributions,
+  submitContribution,
+  updateContribution,
+} from "@/lib/api/contributions";
+import type { CreateContributionPayload, UpdateContributionPayload } from "@/lib/api/types";
+
+export function useMyContributions(params: { skip?: number; limit?: number } = {}) {
+  return useQuery({
+    queryKey: ["contributions", "me", params],
+    queryFn: () => listOwnContributions(params),
+  });
+}
+
+export function useContribution(contributionId: string | undefined) {
+  return useQuery({
+    queryKey: ["contributions", contributionId],
+    queryFn: () => getContribution(contributionId as string),
+    enabled: Boolean(contributionId),
+  });
+}
+
+export function useCreateContribution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateContributionPayload) => createContribution(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["contributions", "me"] }),
+  });
+}
+
+export function useUpdateContribution(contributionId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: UpdateContributionPayload) => updateContribution(contributionId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contributions", contributionId] });
+      queryClient.invalidateQueries({ queryKey: ["contributions", "me"] });
+    },
+  });
+}
+
+export function useSubmitContribution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (contributionId: string) => submitContribution(contributionId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["contributions", "me"] }),
+  });
+}
+
+export function useDeleteContribution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (contributionId: string) => deleteContribution(contributionId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["contributions", "me"] }),
+  });
+}
+```
+
+- [ ] **Step 8: Run test to verify it passes**
+
+Run: `pnpm test useContributions`
+Expected: PASS
+
+- [ ] **Step 9: Run typecheck + lint**
+
+Run: `pnpm typecheck && pnpm lint`
+Expected: PASS
+
+- [ ] **Step 10: Commit**
+
+```bash
+git add lib/api/types.ts lib/api/contributions.ts hooks/useContributions.ts hooks/useContributions.test.tsx
+git commit -m "feat(catalog): add contributions API client, types, and hooks"
+```
+
+---
+
+### Task 28: SuggestEditDialog component
+
+**Files:**
+- Create: `components/catalog/suggest-edit-dialog.tsx`
+- Create: `components/catalog/suggest-edit-dialog.stories.tsx`
+- Create: `components/catalog/suggest-edit-dialog.test.tsx`
+- Modify: `messages/en.json`, `messages/uk.json` (add `catalog.suggestEdit` namespace)
+
+**Interfaces:**
+- Consumes: `useCreateContribution`, `useSubmitContribution` (Task 27); `useMe` (existing, Block 1).
+- Produces: `SuggestEditDialog({ kind: ContributionKind, targetId?: string, buildPayload: () => Record<string, unknown> }): JSX.Element` — a generic trigger+dialog; the caller supplies `kind`, optional `targetId`, and a `buildPayload` callback that reads its own local form state into the shape the API expects. This task builds the dialog shell with a **generic JSON-free text-field form for the common "new_book" case** (title + description, matching `CreateBookSchema`'s required fields) — book detail/contributor detail/external-search call sites (wired in Task 29) pass their own `kind`/`targetId`/`buildPayload` for their specific entity type, reusing the same dialog shell and submit flow.
+
+- [ ] **Step 1: Add message keys**
+
+`messages/en.json` under `catalog`:
+```json
+"suggestEdit": {
+  "trigger": "Suggest an edit",
+  "newBookTitle": "Suggest a new book",
+  "titleLabel": "Title",
+  "descriptionLabel": "Description",
+  "submit": "Submit for review",
+  "submitting": "Submitting...",
+  "submitted": "Submitted for review.",
+  "signInRequired": "Sign in to suggest an edit."
+}
+```
+`messages/uk.json`:
+```json
+"suggestEdit": {
+  "trigger": "Запропонувати зміну",
+  "newBookTitle": "Запропонувати нову книгу",
+  "titleLabel": "Назва",
+  "descriptionLabel": "Опис",
+  "submit": "Надіслати на розгляд",
+  "submitting": "Надсилання...",
+  "submitted": "Надіслано на розгляд.",
+  "signInRequired": "Увійдіть, щоб запропонувати зміну."
+}
+```
+
+- [ ] **Step 2: Write test**
+
+```tsx
+// components/catalog/suggest-edit-dialog.test.tsx
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import { NextIntlClientProvider } from "next-intl";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { afterAll, afterEach, beforeAll } from "vitest";
+import { SuggestEditDialog } from "./suggest-edit-dialog";
+import enMessages from "@/messages/en.json";
+
+const server = setupServer(
+  http.post("/api/contributions", () => {
+    return HttpResponse.json(
+      {
+        id: "c1",
+        user_id: "u1",
+        kind: "new_book",
+        target_id: null,
+        payload: {},
+        status: "draft",
+        reviewer_id: null,
+        review_notes: null,
+        created_at: "2020-01-01T00:00:00Z",
+        updated_at: "2020-01-01T00:00:00Z",
+      },
+      { status: 201 },
+    );
+  }),
+  http.post("/api/contributions/:id/submit", ({ params }) => {
+    return HttpResponse.json({
+      id: params.id,
+      user_id: "u1",
+      kind: "new_book",
+      target_id: null,
+      payload: {},
+      status: "submitted",
+      reviewer_id: null,
+      review_notes: null,
+      created_at: "2020-01-01T00:00:00Z",
+      updated_at: "2020-01-01T00:00:00Z",
+    });
+  }),
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+function renderDialog() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <SuggestEditDialog
+          kind="new_book"
+          buildPayload={() => ({ title: "Dune", description: "A sci-fi epic." })}
+        />
+      </NextIntlClientProvider>
+    </QueryClientProvider>,
+  );
+}
+
+describe("SuggestEditDialog", () => {
+  it("creates and submits a contribution on confirm", async () => {
+    const user = userEvent.setup();
+    renderDialog();
+    await user.click(screen.getByRole("button", { name: "Suggest an edit" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
+    await waitFor(() => expect(screen.getByText("Submitted for review.")).toBeInTheDocument());
+  });
+});
+```
+
+- [ ] **Step 3: Implement SuggestEditDialog**
+
+```tsx
+// components/catalog/suggest-edit-dialog.tsx
+"use client";
+
+import * as React from "react";
+import { useTranslations } from "next-intl";
+import { useCreateContribution, useSubmitContribution } from "@/hooks/useContributions";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { extractErrorMessage } from "@/lib/api/errors";
+import type { ContributionKind } from "@/lib/api/types";
+
+export function SuggestEditDialog({
+  kind,
+  targetId,
+  buildPayload,
+}: {
+  kind: ContributionKind;
+  targetId?: string;
+  buildPayload: () => Record<string, unknown>;
+}) {
+  const t = useTranslations("catalog.suggestEdit");
+  const createContribution = useCreateContribution();
+  const submitContribution = useSubmitContribution();
+
+  const isPending = createContribution.isPending || submitContribution.isPending;
+  const isSubmitted = submitContribution.isSuccess;
+  const error = createContribution.error ?? submitContribution.error;
+
+  function handleSubmit() {
+    createContribution.mutate(
+      { kind, target_id: targetId ?? null, payload: buildPayload() },
+      {
+        onSuccess: (contribution) => submitContribution.mutate(contribution.id),
+      },
+    );
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline" size="sm" />}>{t("trigger")}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("newBookTitle")}</DialogTitle>
+        </DialogHeader>
+        {isSubmitted && <p className="text-muted-foreground text-sm">{t("submitted")}</p>}
+        {error && <p className="text-destructive text-sm">{extractErrorMessage(error)}</p>}
+        <DialogFooter>
+          <Button disabled={isPending || isSubmitted} onClick={handleSubmit}>
+            {isPending ? t("submitting") : t("submit")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+- [ ] **Step 4: Run test**
+
+Run: `pnpm test suggest-edit-dialog`
+Expected: PASS
+
+- [ ] **Step 5: Write story**
+
+```tsx
+// components/catalog/suggest-edit-dialog.stories.tsx
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { NextIntlClientProvider } from "next-intl";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SuggestEditDialog } from "./suggest-edit-dialog";
+import enMessages from "@/messages/en.json";
+
+const meta: Meta<typeof SuggestEditDialog> = {
+  title: "Catalog/SuggestEditDialog",
+  component: SuggestEditDialog,
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={new QueryClient()}>
+        <NextIntlClientProvider locale="en" messages={enMessages}>
+          <Story />
+        </NextIntlClientProvider>
+      </QueryClientProvider>
+    ),
+  ],
+};
+export default meta;
+
+export const NewBook: StoryObj<typeof SuggestEditDialog> = {
+  args: {
+    kind: "new_book",
+    buildPayload: () => ({ title: "Dune", description: "A sci-fi epic." }),
+  },
+};
+
+export const EditExistingBook: StoryObj<typeof SuggestEditDialog> = {
+  args: {
+    kind: "edit_book",
+    targetId: "b1",
+    buildPayload: () => ({ title: "Dune (revised)" }),
+  },
+};
+```
+
+- [ ] **Step 6: Run lint**
+
+Run: `pnpm lint`
+Expected: PASS
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add components/catalog/suggest-edit-dialog.tsx components/catalog/suggest-edit-dialog.stories.tsx components/catalog/suggest-edit-dialog.test.tsx messages/
+git commit -m "feat(catalog): add SuggestEditDialog component"
+```
+
+---
+
+### Task 29: Wire SuggestEditDialog into public pages + My Submissions page
+
+**Files:**
+- Modify: `app/(app)/books/[id]/page.tsx` (add SuggestEditDialog for non-admin signed-in users, `kind: "edit_book"`)
+- Modify: `app/(app)/contributors/[id]/page.tsx` (same, `kind: "edit_contributor"`)
+- Modify: `app/(app)/external/page.tsx` (same on each hit card, `kind: "new_book"`, for non-admin signed-in users — admins still get `ImportBookDialog` from Task 17, not this)
+- Create: `app/(app)/contributions/page.tsx` (My Submissions, read-only list)
+- Modify: `components/shell/header.tsx` (add "My Submissions" link to the user dropdown menu)
+- Modify: `messages/en.json`, `messages/uk.json` (add `catalog.myContributions` namespace)
+
+**Interfaces:**
+- Consumes: `SuggestEditDialog` (Task 28), `useMyContributions` (Task 27), `useMe` (existing).
+
+- [ ] **Step 1: Add message keys**
+
+`messages/en.json` under `catalog`:
+```json
+"myContributions": {
+  "navLink": "My Submissions",
+  "title": "My Submissions",
+  "empty": "You haven't submitted any suggestions yet.",
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "under_review": "Under review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "merged": "Merged"
+  }
+}
+```
+`messages/uk.json`:
+```json
+"myContributions": {
+  "navLink": "Мої пропозиції",
+  "title": "Мої пропозиції",
+  "empty": "Ви ще не надсилали пропозицій.",
+  "status": {
+    "draft": "Чернетка",
+    "submitted": "Надіслано",
+    "under_review": "На розгляді",
+    "approved": "Схвалено",
+    "rejected": "Відхилено",
+    "merged": "Об'єднано"
+  }
+}
+```
+
+- [ ] **Step 2: Add SuggestEditDialog to book detail page**
+
+In `app/(app)/books/[id]/page.tsx`, import `SuggestEditDialog` and `useMe`. Read the existing implementation from Task 15 before editing — add, near the title/description block:
+
+```tsx
+import { SuggestEditDialog } from "@/components/catalog/suggest-edit-dialog";
+import { useMe } from "@/hooks/useMe";
+
+// inside the component, after existing hooks:
+const { data: me } = useMe();
+
+// in the JSX, after the title/description block:
+{me && !me.is_admin && (
+  <SuggestEditDialog
+    kind="edit_book"
+    targetId={book.id}
+    buildPayload={() => ({ title: book.title, description: book.description })}
+  />
+)}
+```
+
+- [ ] **Step 3: Add SuggestEditDialog to contributor detail page**
+
+Same pattern in `app/(app)/contributors/[id]/page.tsx`, `kind: "edit_contributor"`, `targetId={contributor.id}`, `buildPayload={() => ({ full_name: contributor.full_name, bio: contributor.bio })}`.
+
+- [ ] **Step 4: Add SuggestEditDialog to external search hit cards**
+
+In `app/(app)/external/page.tsx`, read the existing implementation from Task 17 first. Alongside the existing `{me?.is_admin && <ImportBookDialog hit={hit} />}` line, add the non-admin equivalent:
+
+```tsx
+{me && !me.is_admin && (
+  <SuggestEditDialog
+    kind="new_book"
+    buildPayload={() => ({ title: hit.title, description: hit.authors.join(", ") })}
+  />
+)}
+```
+
+- [ ] **Step 5: Implement My Submissions page**
+
+```tsx
+// app/(app)/contributions/page.tsx
+"use client";
+
+import { useTranslations } from "next-intl";
+import { useMyContributions } from "@/hooks/useContributions";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { ContributionStatus } from "@/lib/api/types";
+
+export default function MyContributionsPage() {
+  const t = useTranslations("catalog.myContributions");
+  const { data, isPending } = useMyContributions({ limit: 50 });
+
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      {isPending && <Skeleton className="h-40 w-full" />}
+      {!isPending && (data?.items.length ?? 0) === 0 && (
+        <p className="text-muted-foreground text-sm">{t("empty")}</p>
+      )}
+      <div className="flex flex-col gap-3">
+        {(data?.items ?? []).map((contribution) => (
+          <Card key={contribution.id}>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-base">{contribution.kind}</CardTitle>
+              <Badge variant="secondary">
+                {t(`status.${contribution.status as ContributionStatus}`)}
+              </Badge>
+            </CardHeader>
+            <CardContent />
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+- [ ] **Step 6: Add nav link to header dropdown**
+
+In `components/shell/header.tsx`, read the current implementation (from Task 15's header edit) first. Add a `DropdownMenuItem` linking to `/contributions` inside the existing authenticated dropdown menu, using `useTranslations("catalog.myContributions")` for the label:
+
+```tsx
+<DropdownMenuItem render={<Link href="/contributions" />}>{t("navLink")}</DropdownMenuItem>
+```//place alongside the existing "Profile" item.
+
+- [ ] **Step 7: Run typecheck, lint, tests**
+
+Run: `pnpm typecheck && pnpm lint && pnpm test`
+Expected: PASS
+
+- [ ] **Step 8: Run build**
+
+Run: `pnpm build`
+Expected: PASS
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add app/\(app\)/books/\[id\]/page.tsx app/\(app\)/contributors/\[id\]/page.tsx app/\(app\)/external/page.tsx app/\(app\)/contributions/ components/shell/header.tsx messages/
+git commit -m "feat(catalog): wire SuggestEditDialog into detail/search pages, add My Submissions page"
+```
+
+---
+
+### Task 30: Final gate — full repo verification
 
 **Files:** none (verification only)
 
@@ -5872,12 +6567,13 @@ git commit -m "fix: resolve gate failures (lint/typecheck/test/format/build)"
 - [ ] **Step 10: Push branch and open PR**
 
 ```bash
-git push -u origin block-2-catalog
-gh pr create --title "Block 2: Catalog (public browse, admin management, history, i18n)" --body "$(cat <<'EOF'
+git push -u origin worktree-block-2-catalog
+gh pr create --title "Block 2: Catalog (public browse, admin management, contributions, history, i18n)" --body "$(cat <<'EOF'
 ## Summary
 - Public book/release/contributor browsing and detail pages
 - External source search + admin import
 - Full admin catalog CRUD (books, releases, contributors) with merge and contributor-attach flows
+- Non-admin "Suggest an edit" flow via the `contributions` router (new book/release/contributor proposals and edits to existing entities), plus a read-only "My Submissions" list
 - Version history + diff viewer for books/releases/contributors
 - next-intl (en/uk) infrastructure, including migration of existing Block 1 (auth/profile) strings
 
@@ -5885,10 +6581,14 @@ gh pr create --title "Block 2: Catalog (public browse, admin management, history
 - Routes under `/admin/catalog/**`, gated by `proxy.ts` (presence check) + a server-side `is_admin` layout guard (`app/(app)/admin/catalog/layout.tsx`)
 - Interim approach — not blocking: fedorkovolodymyr/bookworm-hole-api#144 requests an `is_admin` JWT claim for faster edge-middleware gating later
 
+## Scope note
+This block was reconciled mid-implementation against a prior, independently-produced Block 2 spec found on `main` (98e069d, 2026-07-18) that scoped Block 2 as read-only + contributions only, deferring admin CRUD to Block 7. This PR keeps the admin-CRUD-in-Block-2 decision (explicitly re-confirmed with the human after verifying `require_admin` gating against source) but adds the contributions flow the prior spec had already identified as a gap in this session's original plan. See `docs/superpowers/specs/2026-07-19-block-2-catalog-design.md`'s Addendum section for the full reconciliation.
+
 ## Test plan
 - [ ] `pnpm lint && pnpm typecheck && pnpm test && pnpm format:check && pnpm build && pnpm build-storybook` all pass
 - [ ] Non-admin redirected away from `/admin/catalog/**`
 - [ ] Admin can create/edit/merge a book, attach a contributor, import from external search
+- [ ] Non-admin can submit a "Suggest an edit" proposal and see it in My Submissions
 - [ ] Locale switcher changes UI language and persists across refresh
 - [ ] Playwright e2e catalog browse spec passes
 
@@ -5901,8 +6601,9 @@ EOF
 
 ## Plan Self-Review Notes
 
-- **Spec coverage:** i18n infra + Block 1 migration (Tasks 1-4), API clients (Tasks 5-8), hooks (Tasks 9-10), public catalog pages/components (Tasks 11-15), admin boundary (Task 16), external search/import (Task 17), admin forms (Tasks 18-19), admin pages (Tasks 20-21), history/diff viewer (Tasks 22-23), e2e + i18n smoke test + final gate (Tasks 24-26) — all design doc sections have a corresponding task.
-- **Known follow-up, not a gap:** JWT-claim-based edge admin gating is explicitly deferred to bookworm-hole-api#144; Task 16 implements the agreed interim (server-side layout check).
+- **Spec coverage:** i18n infra + Block 1 migration (Tasks 1-4), API clients (Tasks 5-8), hooks (Tasks 9-10), public catalog pages/components (Tasks 11-15), admin boundary (Task 16), external search/import (Task 17), admin forms (Tasks 18-19), admin pages (Tasks 20-21), history/diff viewer (Tasks 22-23), e2e + i18n smoke test (Tasks 24-25), non-admin contributions flow (Tasks 27-29), final gate (Task 30) — all design doc sections (including the Addendum) have a corresponding task.
+- **Known follow-up, not a gap:** JWT-claim-based edge admin gating is explicitly deferred to bookworm-hole-api#144; Task 16 implements the agreed interim (server-side layout check). Contribution moderation (approve/reject) is explicitly Block 7's job, not this block's — Task 29's My Submissions page is read-only by design.
 - **Type consistency:** `BookResponse` (list-view, no releases) vs `BookWithReleasesResponse` (detail-view) is used consistently — `useBookList`/`listBooks` return `Page<BookResponse>`, `useBook`/`getBook` return `BookWithReleasesResponse`, matching the real API contract flagged in Task 6.
 - **Contributor attach 200-status quirk:** handled by branching on response body (`AddContributorResult.status`) in `AttachContributorDialog` (Task 19), never on HTTP status.
 - **External import rating quirk:** flagged in Global Constraints and handled by `ImportBookDialog`/`useImportBook` test asserting `rating_count: 0`/`average_rating: null` explicitly (Task 10, Task 17).
+- **Admin vs. non-admin write paths:** Task 29 explicitly gates `SuggestEditDialog` to `me && !me.is_admin` and `ImportBookDialog`/admin forms to `me?.is_admin`, so the two write paths (direct admin CRUD vs. contribution proposal) never both render for the same user.
