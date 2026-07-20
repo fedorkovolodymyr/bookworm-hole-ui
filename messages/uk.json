@@ -114,6 +114,16 @@
       "importing": "Імпортування...",
       "imported": "Успішно імпортовано.",
       "notYetRated": "Ще немає оцінок"
+    },
+    "suggestEdit": {
+      "trigger": "Запропонувати зміну",
+      "newBookTitle": "Запропонувати нову книгу",
+      "titleLabel": "Назва",
+      "descriptionLabel": "Опис",
+      "submit": "Надіслати на розгляд",
+      "submitting": "Надсилання...",
+      "submitted": "Надіслано на розгляд.",
+      "signInRequired": "Увійдіть, щоб запропонувати зміну."
     }
   },
   "catalogAdmin": {

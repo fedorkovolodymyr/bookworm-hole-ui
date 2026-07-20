@@ -114,6 +114,16 @@
       "importing": "Importing...",
       "imported": "Imported successfully.",
       "notYetRated": "Not yet rated"
+    },
+    "suggestEdit": {
+      "trigger": "Suggest an edit",
+      "newBookTitle": "Suggest a new book",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "submit": "Submit for review",
+      "submitting": "Submitting...",
+      "submitted": "Submitted for review.",
+      "signInRequired": "Sign in to suggest an edit."
     }
   },
   "catalogAdmin": {
