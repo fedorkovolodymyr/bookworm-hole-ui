@@ -104,6 +104,16 @@
       "bookNotFound": "Книгу не знайдено.",
       "contributorNotFound": "Автора не знайдено.",
       "booksByContributor": "Книги"
+    },
+    "external": {
+      "title": "Пошук у зовнішніх джерелах",
+      "searchPlaceholder": "Пошук за назвою, автором або ISBN",
+      "noResults": "Результатів не знайдено.",
+      "partialFailureNotice": "Деякі джерела недоступні: {sources}",
+      "import": "Імпортувати",
+      "importing": "Імпортування...",
+      "imported": "Успішно імпортовано.",
+      "notYetRated": "Ще немає оцінок"
     }
   }
 }

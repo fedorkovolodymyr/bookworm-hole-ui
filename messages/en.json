@@ -104,6 +104,16 @@
       "bookNotFound": "Book not found.",
       "contributorNotFound": "Contributor not found.",
       "booksByContributor": "Books"
+    },
+    "external": {
+      "title": "Search external sources",
+      "searchPlaceholder": "Search by title, author, or ISBN",
+      "noResults": "No results found.",
+      "partialFailureNotice": "Some sources failed: {sources}",
+      "import": "Import",
+      "importing": "Importing...",
+      "imported": "Imported successfully.",
+      "notYetRated": "Not yet rated"
     }
   }
 }
