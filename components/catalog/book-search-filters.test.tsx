@@ -1,39 +1,39 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
-import { useState } from "react";
 import { BookSearchFilters } from "./book-search-filters";
 import enMessages from "@/messages/en.json";
 import type { BookListParams } from "@/lib/api/types";
 
-function Wrapper() {
-  const [value, setValue] = useState<BookListParams>({});
-  return <BookSearchFilters value={value} onChange={setValue} />;
-}
-
-function renderFilters() {
+function renderFilters(value: BookListParams = {}, onChange = vi.fn()) {
   render(
     <NextIntlClientProvider locale="en" messages={enMessages}>
-      <Wrapper />
+      <BookSearchFilters value={value} onChange={onChange} />
     </NextIntlClientProvider>,
   );
+  return onChange;
 }
 
 describe("BookSearchFilters", () => {
-  it("calls onChange with title when typed", async () => {
+  it("calls onChange with the full merged params object when title changes", async () => {
     const user = userEvent.setup();
-    renderFilters();
-    const titleInput = screen.getByLabelText("Title") as HTMLInputElement;
-    await user.type(titleInput, "Dune");
-    expect(titleInput.value).toBe("Dune");
+    const onChange = renderFilters({ author: "Herbert" });
+    await user.type(screen.getByLabelText("Title"), "D");
+    expect(onChange).toHaveBeenLastCalledWith({ author: "Herbert", title: "D" });
   });
 
-  it("calls onChange with author when typed", async () => {
+  it("calls onChange with the full merged params object when author changes", async () => {
     const user = userEvent.setup();
-    renderFilters();
-    const authorInput = screen.getByLabelText("Author") as HTMLInputElement;
-    await user.type(authorInput, "Herbert");
-    expect(authorInput.value).toBe("Herbert");
+    const onChange = renderFilters({ title: "Dune" });
+    await user.type(screen.getByLabelText("Author"), "H");
+    expect(onChange).toHaveBeenLastCalledWith({ title: "Dune", author: "H" });
+  });
+
+  it("preserves other fields when language changes", async () => {
+    const user = userEvent.setup();
+    const onChange = renderFilters({ title: "Dune", author: "Herbert" });
+    await user.type(screen.getByLabelText("Language"), "e");
+    expect(onChange).toHaveBeenLastCalledWith({ title: "Dune", author: "Herbert", language: "e" });
   });
 });
