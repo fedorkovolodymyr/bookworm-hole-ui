@@ -124,6 +124,19 @@
       "submitting": "Submitting...",
       "submitted": "Submitted for review.",
       "signInRequired": "Sign in to suggest an edit."
+    },
+    "myContributions": {
+      "navLink": "My Submissions",
+      "title": "My Submissions",
+      "empty": "You haven't submitted any suggestions yet.",
+      "status": {
+        "draft": "Draft",
+        "submitted": "Submitted",
+        "under_review": "Under review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "merged": "Merged"
+      }
     }
   },
   "catalogAdmin": {

@@ -3,7 +3,9 @@
 import { use } from "react";
 import { useTranslations } from "next-intl";
 import { useContributor, useContributorBooks } from "@/hooks/useContributors";
+import { useMe } from "@/hooks/useMe";
 import { BookCard } from "@/components/catalog/book-card";
+import { SuggestEditDialog } from "@/components/catalog/suggest-edit-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ContributorDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -11,6 +13,7 @@ export default function ContributorDetailPage({ params }: { params: Promise<{ id
   const t = useTranslations("catalog.pages");
   const { data: contributor, isPending, isError } = useContributor(id);
   const { data: booksPage, isLoading: booksLoading } = useContributorBooks(id);
+  const { data: me } = useMe();
 
   if (isPending) {
     return <Skeleton className="h-64 w-full" />;
@@ -24,6 +27,13 @@ export default function ContributorDetailPage({ params }: { params: Promise<{ id
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">{contributor.full_name}</h1>
         {contributor.bio && <p className="text-muted-foreground">{contributor.bio}</p>}
+        {me && !me.is_admin && (
+          <SuggestEditDialog
+            kind="edit_contributor"
+            targetId={contributor.id}
+            buildPayload={() => ({ full_name: contributor.full_name, bio: contributor.bio })}
+          />
+        )}
       </div>
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{t("booksByContributor")}</h2>

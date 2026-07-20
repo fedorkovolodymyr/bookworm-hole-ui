@@ -124,6 +124,19 @@
       "submitting": "Надсилання...",
       "submitted": "Надіслано на розгляд.",
       "signInRequired": "Увійдіть, щоб запропонувати зміну."
+    },
+    "myContributions": {
+      "navLink": "Мої пропозиції",
+      "title": "Мої пропозиції",
+      "empty": "Ви ще не надсилали пропозицій.",
+      "status": {
+        "draft": "Чернетка",
+        "submitted": "Надіслано",
+        "under_review": "На розгляді",
+        "approved": "Схвалено",
+        "rejected": "Відхилено",
+        "merged": "Об'єднано"
+      }
     }
   },
   "catalogAdmin": {

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -17,6 +18,7 @@ import { useLogout } from "@/hooks/useAuth";
 export function Header() {
   const { data: me } = useMe();
   const logout = useLogout();
+  const t = useTranslations("catalog.myContributions");
 
   return (
     <header className="border-border flex h-16 items-center justify-between border-b px-4 sm:px-6">
@@ -48,6 +50,9 @@ export function Header() {
             />
             <DropdownMenuContent>
               <DropdownMenuItem render={<Link href="/profile" />}>Profile</DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/contributions" />}>
+                {t("navLink")}
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => logout.mutate()}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

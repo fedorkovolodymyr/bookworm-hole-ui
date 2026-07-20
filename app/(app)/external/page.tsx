@@ -7,6 +7,7 @@ import { useMe } from "@/hooks/useMe";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImportBookDialog } from "@/components/catalog/admin/import-book-dialog";
+import { SuggestEditDialog } from "@/components/catalog/suggest-edit-dialog";
 
 export default function ExternalSearchPage() {
   const t = useTranslations("catalog.external");
@@ -41,6 +42,12 @@ export default function ExternalSearchPage() {
             <CardContent className="flex flex-col gap-2">
               <p className="text-muted-foreground text-sm">{hit.authors.join(", ")}</p>
               {me?.is_admin && <ImportBookDialog hit={hit} />}
+              {me && !me.is_admin && (
+                <SuggestEditDialog
+                  kind="new_book"
+                  buildPayload={() => ({ title: hit.title, description: hit.authors.join(", ") })}
+                />
+              )}
             </CardContent>
           </Card>
         ))}
