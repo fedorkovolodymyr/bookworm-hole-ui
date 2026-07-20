@@ -46,7 +46,10 @@ export function useContributorHistory(
   });
 }
 
-export function useContributorVersion(contributorId: string | undefined, version: number | undefined) {
+export function useContributorVersion(
+  contributorId: string | undefined,
+  version: number | undefined,
+) {
   return useQuery({
     queryKey: ["contributors", contributorId, "history", version],
     queryFn: () => getContributorVersion(contributorId as string, version as number),

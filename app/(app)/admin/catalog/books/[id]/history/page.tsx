@@ -27,7 +27,11 @@ export default function AdminBookHistoryPage({ params }: { params: Promise<{ id:
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Book history</h1>
-        <Button size="sm" variant="outline" render={<Link href={`/admin/catalog/books/${id}/edit`} />}>
+        <Button
+          size="sm"
+          variant="outline"
+          render={<Link href={`/admin/catalog/books/${id}/edit`} />}
+        >
           Back to edit
         </Button>
       </div>

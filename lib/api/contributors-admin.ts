@@ -1,5 +1,9 @@
 import { apiClient } from "./client";
-import type { ContributorResponse, CreateContributorPayload, UpdateContributorPayload } from "./types";
+import type {
+  ContributorResponse,
+  CreateContributorPayload,
+  UpdateContributorPayload,
+} from "./types";
 
 export async function createContributor(
   payload: CreateContributorPayload,

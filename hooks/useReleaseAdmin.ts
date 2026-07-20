@@ -6,7 +6,12 @@ import {
   removeReleaseContributor,
   updateRelease,
 } from "@/lib/api/releases-admin";
-import type { AddContributorPayload, ContributorRole, CreateReleasePayload, UpdateReleasePayload } from "@/lib/api/types";
+import type {
+  AddContributorPayload,
+  ContributorRole,
+  CreateReleasePayload,
+  UpdateReleasePayload,
+} from "@/lib/api/types";
 
 export function useCreateRelease() {
   const queryClient = useQueryClient();

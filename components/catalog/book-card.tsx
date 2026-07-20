@@ -10,7 +10,7 @@ export function BookCard({ book }: { book: BookResponse }) {
 
   return (
     <Link href={`/books/${book.id}`}>
-      <Card className="h-full transition-colors hover:border-foreground/30">
+      <Card className="hover:border-foreground/30 h-full transition-colors">
         <CardHeader>
           <CardTitle className="line-clamp-2">{book.title}</CardTitle>
         </CardHeader>

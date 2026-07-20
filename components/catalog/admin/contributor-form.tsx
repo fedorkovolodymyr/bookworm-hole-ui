@@ -47,13 +47,23 @@ export function ContributorForm({
         <label htmlFor="contributor-full-name" className="text-sm font-medium">
           {t("fullNameLabel")}
         </label>
-        <Input id="contributor-full-name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+        <Input
+          id="contributor-full-name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+        />
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="contributor-sort-name" className="text-sm font-medium">
           {t("sortNameLabel")}
         </label>
-        <Input id="contributor-sort-name" value={sortName} onChange={(e) => setSortName(e.target.value)} required />
+        <Input
+          id="contributor-sort-name"
+          value={sortName}
+          onChange={(e) => setSortName(e.target.value)}
+          required
+        />
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="contributor-birth-year" className="text-sm font-medium">

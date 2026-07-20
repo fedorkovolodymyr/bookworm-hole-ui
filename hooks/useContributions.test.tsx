@@ -4,7 +4,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import { describe, expect, it } from "vitest";
 import { server } from "@/tests/mocks/server";
-import { useCreateContribution, useMyContributions, useSubmitContribution } from "./useContributions";
+import {
+  useCreateContribution,
+  useMyContributions,
+  useSubmitContribution,
+} from "./useContributions";
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });

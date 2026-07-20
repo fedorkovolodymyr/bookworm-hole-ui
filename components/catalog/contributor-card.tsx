@@ -10,12 +10,14 @@ export function ContributorCard({ contributor }: { contributor: ContributorRespo
 
   return (
     <Link href={`/contributors/${contributor.id}`}>
-      <Card className="h-full transition-colors hover:border-foreground/30">
+      <Card className="hover:border-foreground/30 h-full transition-colors">
         <CardHeader>
           <CardTitle>{contributor.full_name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground line-clamp-3 text-sm">{contributor.bio || t("noBio")}</p>
+          <p className="text-muted-foreground line-clamp-3 text-sm">
+            {contributor.bio || t("noBio")}
+          </p>
         </CardContent>
       </Card>
     </Link>

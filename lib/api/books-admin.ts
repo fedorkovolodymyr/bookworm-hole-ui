@@ -14,7 +14,10 @@ export async function createBook(payload: CreateBookPayload): Promise<BookRespon
   return data;
 }
 
-export async function updateBook(bookId: string, payload: UpdateBookPayload): Promise<BookResponse> {
+export async function updateBook(
+  bookId: string,
+  payload: UpdateBookPayload,
+): Promise<BookResponse> {
   const { data } = await apiClient.patch(`/books/${bookId}`, payload);
   return data;
 }

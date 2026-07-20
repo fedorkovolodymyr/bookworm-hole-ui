@@ -27,7 +27,11 @@ export default function AdminReleaseHistoryPage({ params }: { params: Promise<{ 
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Release history</h1>
-        <Button size="sm" variant="outline" render={<Link href={`/admin/catalog/releases/${id}/edit`} />}>
+        <Button
+          size="sm"
+          variant="outline"
+          render={<Link href={`/admin/catalog/releases/${id}/edit`} />}
+        >
           Back to edit
         </Button>
       </div>

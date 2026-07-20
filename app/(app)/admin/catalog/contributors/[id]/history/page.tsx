@@ -8,7 +8,11 @@ import { VersionDiffViewer } from "@/components/catalog/history/version-diff-vie
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function AdminContributorHistoryPage({ params }: { params: Promise<{ id: string }> }) {
+export default function AdminContributorHistoryPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const { data: historyPage, isPending } = useContributorHistory(id, { limit: 50 });
   const versions = historyPage?.items ?? [];

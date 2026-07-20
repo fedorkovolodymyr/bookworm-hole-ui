@@ -38,7 +38,9 @@ describe("useBook", () => {
 
   it("surfaces a 404 error", async () => {
     server.use(
-      http.get("/api/books/:id", () => HttpResponse.json({ detail: "Book not found" }, { status: 404 })),
+      http.get("/api/books/:id", () =>
+        HttpResponse.json({ detail: "Book not found" }, { status: 404 }),
+      ),
     );
     const { result } = renderHook(() => useBook("missing"), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true));

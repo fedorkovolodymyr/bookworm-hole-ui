@@ -25,7 +25,14 @@ describe("AttachContributorDialog", () => {
     server.use(
       http.get("/api/contributors", () => {
         return HttpResponse.json({
-          items: [{ id: "c1", full_name: "Frank Herbert", sort_name: "Herbert, Frank", slug: "frank-herbert" }],
+          items: [
+            {
+              id: "c1",
+              full_name: "Frank Herbert",
+              sort_name: "Herbert, Frank",
+              slug: "frank-herbert",
+            },
+          ],
           total: 1,
           limit: 10,
           offset: 0,
@@ -45,7 +52,14 @@ describe("AttachContributorDialog", () => {
     server.use(
       http.get("/api/contributors", () => {
         return HttpResponse.json({
-          items: [{ id: "c1", full_name: "Frank Herbert", sort_name: "Herbert, Frank", slug: "frank-herbert" }],
+          items: [
+            {
+              id: "c1",
+              full_name: "Frank Herbert",
+              sort_name: "Herbert, Frank",
+              slug: "frank-herbert",
+            },
+          ],
           total: 1,
           limit: 10,
           offset: 0,

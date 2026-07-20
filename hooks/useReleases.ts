@@ -1,6 +1,11 @@
 // hooks/useReleases.ts
 import { useQuery } from "@tanstack/react-query";
-import { getRelease, getReleaseHistory, getReleaseReviews, getReleaseVersion } from "@/lib/api/releases";
+import {
+  getRelease,
+  getReleaseHistory,
+  getReleaseReviews,
+  getReleaseVersion,
+} from "@/lib/api/releases";
 import type { ReviewSort } from "@/lib/api/types";
 
 export function useRelease(releaseId: string | undefined) {

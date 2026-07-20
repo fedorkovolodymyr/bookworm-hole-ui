@@ -36,5 +36,7 @@ export const Unrated: StoryObj<typeof ReleaseCard> = {
   args: { release: { ...baseRelease, average_rating: null, rating_count: 0 } },
 };
 export const Audiobook: StoryObj<typeof ReleaseCard> = {
-  args: { release: { ...baseRelease, format: "audiobook", duration_minutes: 620, page_count: null } },
+  args: {
+    release: { ...baseRelease, format: "audiobook", duration_minutes: 620, page_count: null },
+  },
 };

@@ -8,7 +8,12 @@ import {
   removeBookContributor,
   updateBook,
 } from "@/lib/api/books-admin";
-import type { AddContributorPayload, ContributorRole, CreateBookPayload, UpdateBookPayload } from "@/lib/api/types";
+import type {
+  AddContributorPayload,
+  ContributorRole,
+  CreateBookPayload,
+  UpdateBookPayload,
+} from "@/lib/api/types";
 
 export function useCreateBook() {
   const queryClient = useQueryClient();

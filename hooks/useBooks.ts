@@ -44,7 +44,10 @@ export function useBookReviews(
   });
 }
 
-export function useBookHistory(bookId: string | undefined, params: { skip?: number; limit?: number } = {}) {
+export function useBookHistory(
+  bookId: string | undefined,
+  params: { skip?: number; limit?: number } = {},
+) {
   return useQuery({
     queryKey: ["books", bookId, "history", params],
     queryFn: () => getBookHistory(bookId as string, params),

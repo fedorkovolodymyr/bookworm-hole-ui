@@ -39,7 +39,11 @@ export function MergeBooksDialog({
           <label htmlFor="merge-target-id" className="text-sm font-medium">
             {t("targetIdLabel")}
           </label>
-          <Input id="merge-target-id" value={targetId} onChange={(e) => setTargetId(e.target.value)} />
+          <Input
+            id="merge-target-id"
+            value={targetId}
+            onChange={(e) => setTargetId(e.target.value)}
+          />
         </div>
         {mergeBooks.isError && (
           <p className="text-destructive text-sm">{extractErrorMessage(mergeBooks.error)}</p>

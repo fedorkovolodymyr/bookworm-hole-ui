@@ -5,7 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ReviewResponse } from "@/lib/api/types";
 
-export function ReviewList({ reviews, isLoading }: { reviews: ReviewResponse[]; isLoading: boolean }) {
+export function ReviewList({
+  reviews,
+  isLoading,
+}: {
+  reviews: ReviewResponse[];
+  isLoading: boolean;
+}) {
   const t = useTranslations("catalog.reviews");
 
   if (isLoading) {
@@ -25,7 +31,10 @@ export function ReviewList({ reviews, isLoading }: { reviews: ReviewResponse[]; 
   return (
     <div className="flex flex-col gap-4">
       {reviews.map((review) => (
-        <div key={review.id} className="border-border flex flex-col gap-1 border-b pb-4 last:border-b-0">
+        <div
+          key={review.id}
+          className="border-border flex flex-col gap-1 border-b pb-4 last:border-b-0"
+        >
           <div className="flex items-center gap-2">
             {review.title && <p className="font-medium">{review.title}</p>}
             {review.contains_spoilers && <Badge variant="outline">{t("spoilerWarning")}</Badge>}

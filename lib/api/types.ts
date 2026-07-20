@@ -292,12 +292,7 @@ export type ContributionKind =
   | "edit_contributor";
 
 export type ContributionStatus =
-  | "draft"
-  | "submitted"
-  | "under_review"
-  | "approved"
-  | "rejected"
-  | "merged";
+  "draft" | "submitted" | "under_review" | "approved" | "rejected" | "merged";
 
 export interface CreateContributionPayload {
   kind: ContributionKind;

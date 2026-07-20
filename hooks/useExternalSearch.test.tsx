@@ -19,7 +19,13 @@ describe("useExternalSearch", () => {
         return HttpResponse.json({
           query: url.searchParams.get("q"),
           hits: [
-            { source: "google_books", title: "Dune", isbns: ["123"], authors: ["Frank Herbert"], cover_image_url: null },
+            {
+              source: "google_books",
+              title: "Dune",
+              isbns: ["123"],
+              authors: ["Frank Herbert"],
+              cover_image_url: null,
+            },
           ],
           partial_failures: {},
         });

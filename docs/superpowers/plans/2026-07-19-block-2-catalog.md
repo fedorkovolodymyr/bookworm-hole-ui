@@ -28,6 +28,7 @@
 ### Task 1: Install and configure next-intl
 
 **Files:**
+
 - Modify: `package.json` (add `next-intl` dependency)
 - Create: `i18n/request.ts`
 - Create: `i18n/routing.ts`
@@ -37,6 +38,7 @@
 - Modify: `app/layout.tsx`
 
 **Interfaces:**
+
 - Produces: `messages/en.json` / `messages/uk.json` structure with top-level namespaces `common`, `auth`, `profile`, `catalog`, `catalogAdmin`, `history` — later tasks add keys under these namespaces.
 - Produces: locale cookie name `NEXT_LOCALE` (next-intl default), read via `getLocale()` server-side.
 
@@ -191,6 +193,7 @@ git commit -m "feat(i18n): add next-intl infra with en/uk message files"
 ### Task 2: Locale switcher component + wire into header
 
 **Files:**
+
 - Create: `components/shell/locale-switcher.tsx`
 - Create: `components/shell/locale-switcher.stories.tsx`
 - Create: `components/shell/locale-switcher.test.tsx`
@@ -198,17 +201,20 @@ git commit -m "feat(i18n): add next-intl infra with en/uk message files"
 - Modify: `messages/en.json`, `messages/uk.json` (add `common.language`, `common.english`, `common.ukrainian`)
 
 **Interfaces:**
+
 - Consumes: `routing.locales`, `routing.defaultLocale` from `i18n/routing.ts` (Task 1).
 - Produces: `LocaleSwitcher` component, no props, sets `NEXT_LOCALE` cookie and calls `router.refresh()`.
 
 - [ ] **Step 1: Add message keys**
 
 Add to both `messages/en.json` and `messages/uk.json` under `common`:
+
 ```json
 "language": "Language",
 "english": "English",
 "ukrainian": "Ukrainian"
 ```
+
 (uk.json: `"language": "Мова", "english": "Англійська", "ukrainian": "Українська"`)
 
 - [ ] **Step 2: Write component test**
@@ -356,7 +362,7 @@ import { LocaleSwitcher } from "@/components/shell/locale-switcher";
   <LocaleSwitcher />
   <ThemeToggle />
   {/* ...rest unchanged */}
-</div>
+</div>;
 ```
 
 - [ ] **Step 7: Run full test + lint**
@@ -376,6 +382,7 @@ git commit -m "feat(i18n): add locale switcher to app shell header"
 ### Task 3: Migrate Block 1 auth strings (login, register, verify pages/forms)
 
 **Files:**
+
 - Modify: `app/(auth)/login/page.tsx`
 - Modify: `app/(auth)/register/page.tsx`
 - Modify: `app/(auth)/verify/page.tsx`
@@ -385,12 +392,14 @@ git commit -m "feat(i18n): add locale switcher to app shell header"
 - Modify existing test files for the above (update assertions to match new text if tests assert exact strings — check each test file first)
 
 **Interfaces:**
+
 - Consumes: `useTranslations("auth")` from next-intl.
 - Produces: `auth.*` message keys used by these five files: `login.title`, `login.email`, `login.password`, `login.submit`, `login.submitting`, `login.noAccount`, `login.createOne`, `register.title`, `register.email`, `register.username`, `register.displayName`, `register.password`, `register.submit`, `register.submitting`, `register.haveAccount`, `register.logIn`, `verify.missingToken`, `verify.verifying`, `verify.invalid`, `verify.success`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`, add top-level `auth`:
+
 ```json
 "auth": {
   "login": {
@@ -423,6 +432,7 @@ git commit -m "feat(i18n): add locale switcher to app shell header"
 ```
 
 `messages/uk.json`, matching structure:
+
 ```json
 "auth": {
   "login": {
@@ -525,6 +535,7 @@ git commit -m "refactor(i18n): migrate auth pages/forms to next-intl"
 ### Task 4: Migrate Block 1 profile strings (profile page, forms, delete-account section)
 
 **Files:**
+
 - Modify: `app/(app)/profile/page.tsx`
 - Modify: `components/profile/profile-form.tsx`
 - Modify: `components/profile/change-password-form.tsx`
@@ -533,12 +544,14 @@ git commit -m "refactor(i18n): migrate auth pages/forms to next-intl"
 - Modify corresponding `*.test.tsx` files to wrap with `NextIntlClientProvider`
 
 **Interfaces:**
+
 - Consumes: `useTranslations("profile")`.
 - Produces: `profile.*` keys: `title`, `changePasswordTitle`, `dangerZoneTitle`, `displayName`, `bio`, `saveChanges`, `saving`, `updated`, `currentPassword`, `newPassword`, `changePassword`, `changing`, `changed`, `deleteAccount`, `deleteConfirmTitle`, `deleteConfirmDescription`, `confirmDeletion`, `cancelDeletion`, `scheduledDeletionNotice` (with `{date}` param), `loadingProfile`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`:
+
 ```json
 "profile": {
   "title": "Profile",
@@ -565,6 +578,7 @@ git commit -m "refactor(i18n): migrate auth pages/forms to next-intl"
 ```
 
 `messages/uk.json`:
+
 ```json
 "profile": {
   "title": "Профіль",
@@ -601,11 +615,13 @@ git commit -m "refactor(i18n): migrate auth pages/forms to next-intl"
 - [ ] **Step 4: Update delete-account-section.tsx**
 
 `useTranslations("profile")`. Note the `scheduledDeletionNotice` uses ICU interpolation — replace:
+
 ```tsx
 <p className="text-sm">
   {t("scheduledDeletionNotice", { date: new Date(scheduledAt as string).toLocaleDateString() })}
 </p>
 ```
+
 Replace `"Cancel deletion"`, `"Delete account"`, dialog title/description, `"Confirm deletion"` with corresponding `t(...)` calls.
 
 - [ ] **Step 5: Update profile/page.tsx**
@@ -635,9 +651,11 @@ git commit -m "refactor(i18n): migrate profile pages/forms to next-intl"
 ### Task 5: Extend shared types with catalog schemas
 
 **Files:**
+
 - Modify: `lib/api/types.ts`
 
 **Interfaces:**
+
 - Produces: all TypeScript interfaces below, used verbatim by every subsequent task's API client files.
 
 - [ ] **Step 1: Append catalog types to `lib/api/types.ts`**
@@ -885,9 +903,11 @@ git commit -m "feat(catalog): add books/releases/contributors/external types"
 ### Task 6: Books public API client
 
 **Files:**
+
 - Create: `lib/api/books.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient` from `lib/api/client.ts`; types from Task 5.
 - Produces: `listBooks`, `getBookByIsbn`, `getBook`, `getBookReviews`, `getBookHistory`, `getBookVersion` — exact names/signatures used by `hooks/useBooks.ts` (Task 9).
 
@@ -906,7 +926,9 @@ import type {
   ReviewSort,
 } from "./types";
 
-export async function listBooks(params: BookListParams = {}): Promise<Page<BookWithReleasesResponse>> {
+export async function listBooks(
+  params: BookListParams = {},
+): Promise<Page<BookWithReleasesResponse>> {
   const { data } = await apiClient.get("/books", { params });
   return data;
 }
@@ -950,7 +972,7 @@ Note: `listBooks` response items are typed `BookWithReleasesResponse` because th
 
 - [ ] **Step 2: Fix the type per the note above**
 
-```ts
+````ts
 import type {
   BookListParams,
   BookResponse,
@@ -978,18 +1000,20 @@ Expected: PASS
 ```bash
 git add lib/api/books.ts
 git commit -m "feat(catalog): add public books API client"
-```
+````
 
 ---
 
 ### Task 7: Releases, contributors, external public API clients
 
 **Files:**
+
 - Create: `lib/api/releases.ts`
 - Create: `lib/api/contributors.ts`
 - Create: `lib/api/external.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`, types from Task 5.
 - Produces: `getRelease`, `getReleaseReviews`, `getReleaseHistory`, `getReleaseVersion`; `listContributors`, `getContributor`, `getContributorBooks`, `getContributorHistory`, `getContributorVersion`; `searchExternal`.
 
@@ -1089,6 +1113,7 @@ export async function getContributorVersion(
 ```
 
 Clean up the inline `import("./types")` in `listContributors` — add `ContributorResponse` to the top-level type import instead:
+
 ```ts
 import type {
   BookResponse,
@@ -1100,7 +1125,9 @@ import type {
   Page,
 } from "./types";
 
-export async function listContributors(params: ContributorListParams = {}): Promise<Page<ContributorResponse>> {
+export async function listContributors(
+  params: ContributorListParams = {},
+): Promise<Page<ContributorResponse>> {
   const { data } = await apiClient.get("/contributors", { params });
   return data;
 }
@@ -1141,12 +1168,14 @@ git commit -m "feat(catalog): add public releases/contributors/external API clie
 ### Task 8: Admin API clients (books, releases, contributors, external import)
 
 **Files:**
+
 - Create: `lib/api/books-admin.ts`
 - Create: `lib/api/releases-admin.ts`
 - Create: `lib/api/contributors-admin.ts`
 - Modify: `lib/api/external.ts` (add `importBook`)
 
 **Interfaces:**
+
 - Produces: `createBook`, `updateBook`, `deleteBook`, `mergeBooks`, `addBookContributor`, `removeBookContributor`; `createRelease`, `updateRelease`, `addReleaseContributor`, `removeReleaseContributor`; `createContributor`, `updateContributor`; `importBook`.
 
 - [ ] **Step 1: Implement books-admin.ts**
@@ -1169,7 +1198,10 @@ export async function createBook(payload: CreateBookPayload): Promise<BookRespon
   return data;
 }
 
-export async function updateBook(bookId: string, payload: UpdateBookPayload): Promise<BookResponse> {
+export async function updateBook(
+  bookId: string,
+  payload: UpdateBookPayload,
+): Promise<BookResponse> {
   const { data } = await apiClient.patch(`/books/${bookId}`, payload);
   return data;
 }
@@ -1256,7 +1288,11 @@ export async function removeReleaseContributor(
 ```ts
 // lib/api/contributors-admin.ts
 import { apiClient } from "./client";
-import type { ContributorResponse, CreateContributorPayload, UpdateContributorPayload } from "./types";
+import type {
+  ContributorResponse,
+  CreateContributorPayload,
+  UpdateContributorPayload,
+} from "./types";
 
 export async function createContributor(
   payload: CreateContributorPayload,
@@ -1277,6 +1313,7 @@ export async function updateContributor(
 - [ ] **Step 4: Add importBook to external.ts**
 
 Append to `lib/api/external.ts`:
+
 ```ts
 import type { BookWithReleasesResponse, ImportBookPayload } from "./types";
 
@@ -1285,6 +1322,7 @@ export async function importBook(payload: ImportBookPayload): Promise<BookWithRe
   return data;
 }
 ```
+
 (Merge into the existing single `import type` line from Task 7 rather than duplicating it.)
 
 - [ ] **Step 5: Run typecheck**
@@ -1306,6 +1344,7 @@ git commit -m "feat(catalog): add admin API clients for books/releases/contribut
 ### Task 9: Public query hooks (books, releases, contributors, external)
 
 **Files:**
+
 - Create: `hooks/useBooks.ts`
 - Create: `hooks/useReleases.ts`
 - Create: `hooks/useContributors.ts`
@@ -1316,6 +1355,7 @@ git commit -m "feat(catalog): add admin API clients for books/releases/contribut
 - Create: `hooks/useExternalSearch.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `lib/api/books.ts`, `lib/api/releases.ts`, `lib/api/contributors.ts`, `lib/api/external.ts` (Tasks 6-7).
 - Produces: `useBookList(params)`, `useBook(bookId)`, `useBookReviews(bookId, params)`, `useBookHistory(bookId, params)`, `useBookVersion(bookId, version)`; `useRelease(releaseId)`, `useReleaseReviews`, `useReleaseHistory`, `useReleaseVersion`; `useContributorList(params)`, `useContributor(contributorId)`, `useContributorBooks`, `useContributorHistory`, `useContributorVersion`; `useExternalSearch(query, sources)`.
 
@@ -1374,7 +1414,10 @@ export function useBookReviews(
   });
 }
 
-export function useBookHistory(bookId: string | undefined, params: { skip?: number; limit?: number } = {}) {
+export function useBookHistory(
+  bookId: string | undefined,
+  params: { skip?: number; limit?: number } = {},
+) {
   return useQuery({
     queryKey: ["books", bookId, "history", params],
     queryFn: () => getBookHistory(bookId as string, params),
@@ -1404,7 +1447,12 @@ import { useBook, useBookList } from "./useBooks";
 
 const server = setupServer(
   http.get("/api/books", () => {
-    return HttpResponse.json({ items: [{ id: "b1", title: "Dune" }], total: 1, limit: 10, offset: 0 });
+    return HttpResponse.json({
+      items: [{ id: "b1", title: "Dune" }],
+      total: 1,
+      limit: 10,
+      offset: 0,
+    });
   }),
   http.get("/api/books/:id", ({ params }) => {
     if (params.id === "missing") {
@@ -1460,7 +1508,12 @@ Expected: PASS
 ```ts
 // hooks/useReleases.ts
 import { useQuery } from "@tanstack/react-query";
-import { getRelease, getReleaseHistory, getReleaseReviews, getReleaseVersion } from "@/lib/api/releases";
+import {
+  getRelease,
+  getReleaseHistory,
+  getReleaseReviews,
+  getReleaseVersion,
+} from "@/lib/api/releases";
 import type { ReviewSort } from "@/lib/api/types";
 
 export function useRelease(releaseId: string | undefined) {
@@ -1557,7 +1610,10 @@ export function useContributorHistory(
   });
 }
 
-export function useContributorVersion(contributorId: string | undefined, version: number | undefined) {
+export function useContributorVersion(
+  contributorId: string | undefined,
+  version: number | undefined,
+) {
   return useQuery({
     queryKey: ["contributors", contributorId, "history", version],
     queryFn: () => getContributorVersion(contributorId as string, version as number),
@@ -1602,7 +1658,15 @@ const server = setupServer(
     const url = new URL(request.url);
     return HttpResponse.json({
       query: url.searchParams.get("q"),
-      hits: [{ source: "google_books", title: "Dune", isbns: ["123"], authors: ["Frank Herbert"], cover_image_url: null }],
+      hits: [
+        {
+          source: "google_books",
+          title: "Dune",
+          isbns: ["123"],
+          authors: ["Frank Herbert"],
+          cover_image_url: null,
+        },
+      ],
       partial_failures: {},
     });
   }),
@@ -1653,6 +1717,7 @@ git commit -m "feat(catalog): add public query hooks for books/releases/contribu
 ### Task 10: Admin mutation hooks
 
 **Files:**
+
 - Create: `hooks/useBookAdmin.ts`
 - Create: `hooks/useReleaseAdmin.ts`
 - Create: `hooks/useContributorAdmin.ts`
@@ -1661,6 +1726,7 @@ git commit -m "feat(catalog): add public query hooks for books/releases/contribu
 - Create: `hooks/useImportBook.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `lib/api/books-admin.ts`, `lib/api/releases-admin.ts`, `lib/api/contributors-admin.ts`, `lib/api/external.ts` (Task 8).
 - Produces: `useCreateBook`, `useUpdateBook`, `useDeleteBook`, `useMergeBooks`, `useAddBookContributor`, `useRemoveBookContributor`; `useCreateRelease`, `useUpdateRelease`, `useAddReleaseContributor`, `useRemoveReleaseContributor`; `useCreateContributor`, `useUpdateContributor`; `useImportBook`.
 
@@ -1677,7 +1743,12 @@ import {
   removeBookContributor,
   updateBook,
 } from "@/lib/api/books-admin";
-import type { AddContributorPayload, ContributorRole, CreateBookPayload, UpdateBookPayload } from "@/lib/api/types";
+import type {
+  AddContributorPayload,
+  ContributorRole,
+  CreateBookPayload,
+  UpdateBookPayload,
+} from "@/lib/api/types";
 
 export function useCreateBook() {
   const queryClient = useQueryClient();
@@ -1806,7 +1877,12 @@ import {
   removeReleaseContributor,
   updateRelease,
 } from "@/lib/api/releases-admin";
-import type { AddContributorPayload, ContributorRole, CreateReleasePayload, UpdateReleasePayload } from "@/lib/api/types";
+import type {
+  AddContributorPayload,
+  ContributorRole,
+  CreateReleasePayload,
+  UpdateReleasePayload,
+} from "@/lib/api/types";
 
 export function useCreateRelease() {
   const queryClient = useQueryClient();
@@ -1957,18 +2033,21 @@ git commit -m "feat(catalog): add admin mutation hooks for books/releases/contri
 ### Task 11: BookCard component
 
 **Files:**
+
 - Create: `components/catalog/book-card.tsx`
 - Create: `components/catalog/book-card.stories.tsx`
 - Create: `components/catalog/book-card.test.tsx`
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.book` namespace)
 
 **Interfaces:**
+
 - Consumes: `BookResponse` type from `lib/api/types.ts`.
 - Produces: `BookCard({ book: BookResponse }): JSX.Element`, used by `books/page.tsx` (Task 15).
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`, add `catalog.book`:
+
 ```json
 "catalog": {
   "book": {
@@ -1977,7 +2056,9 @@ git commit -m "feat(catalog): add admin mutation hooks for books/releases/contri
   }
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "catalog": {
   "book": {
@@ -2055,7 +2136,7 @@ export function BookCard({ book }: { book: BookResponse }) {
 
   return (
     <Link href={`/books/${book.id}`}>
-      <Card className="h-full transition-colors hover:border-foreground/30">
+      <Card className="hover:border-foreground/30 h-full transition-colors">
         <CardHeader>
           <CardTitle className="line-clamp-2">{book.title}</CardTitle>
         </CardHeader>
@@ -2143,17 +2224,20 @@ git commit -m "feat(catalog): add BookCard component"
 ### Task 12: BookSearchFilters component
 
 **Files:**
+
 - Create: `components/catalog/book-search-filters.tsx`
 - Create: `components/catalog/book-search-filters.stories.tsx`
 - Create: `components/catalog/book-search-filters.test.tsx`
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.filters` namespace)
 
 **Interfaces:**
+
 - Produces: `BookSearchFilters({ value: BookListParams, onChange: (params: BookListParams) => void }): JSX.Element`, consumed by `books/page.tsx` (Task 15).
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json` under `catalog`:
+
 ```json
 "filters": {
   "titleLabel": "Title",
@@ -2164,7 +2248,9 @@ git commit -m "feat(catalog): add BookCard component"
   "languagePlaceholder": "e.g. en"
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "filters": {
   "titleLabel": "Назва",
@@ -2331,6 +2417,7 @@ git commit -m "feat(catalog): add BookSearchFilters component"
 ### Task 13: ReleaseCard and ReviewList components
 
 **Files:**
+
 - Create: `components/catalog/release-card.tsx`
 - Create: `components/catalog/release-card.stories.tsx`
 - Create: `components/catalog/release-card.test.tsx`
@@ -2340,11 +2427,13 @@ git commit -m "feat(catalog): add BookSearchFilters component"
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.release`, `catalog.reviews` namespaces)
 
 **Interfaces:**
+
 - Produces: `ReleaseCard({ release: ReleaseWithISBNsResponse }): JSX.Element`; `ReviewList({ reviews: ReviewResponse[], isLoading: boolean }): JSX.Element` — both consumed by book detail page (Task 15).
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`:
+
 ```json
 "release": {
   "format": {
@@ -2363,7 +2452,9 @@ git commit -m "feat(catalog): add BookSearchFilters component"
   "loading": "Loading reviews..."
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "release": {
   "format": {
@@ -2457,7 +2548,9 @@ export function ReleaseCard({ release }: { release: ReleaseWithISBNsResponse }) 
       <CardContent className="flex flex-col gap-1 text-sm">
         {release.published_year && <p>{release.published_year}</p>}
         <p className="text-muted-foreground">
-          {release.rating_count > 0 ? t("ratingCount", { count: release.rating_count }) : t("noRating")}
+          {release.rating_count > 0
+            ? t("ratingCount", { count: release.rating_count })
+            : t("noRating")}
         </p>
       </CardContent>
     </Card>
@@ -2512,7 +2605,9 @@ export const Unrated: StoryObj<typeof ReleaseCard> = {
   args: { release: { ...baseRelease, average_rating: null, rating_count: 0 } },
 };
 export const Audiobook: StoryObj<typeof ReleaseCard> = {
-  args: { release: { ...baseRelease, format: "audiobook", duration_minutes: 620, page_count: null } },
+  args: {
+    release: { ...baseRelease, format: "audiobook", duration_minutes: 620, page_count: null },
+  },
 };
 ```
 
@@ -2581,7 +2676,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ReviewResponse } from "@/lib/api/types";
 
-export function ReviewList({ reviews, isLoading }: { reviews: ReviewResponse[]; isLoading: boolean }) {
+export function ReviewList({
+  reviews,
+  isLoading,
+}: {
+  reviews: ReviewResponse[];
+  isLoading: boolean;
+}) {
   const t = useTranslations("catalog.reviews");
 
   if (isLoading) {
@@ -2601,7 +2702,10 @@ export function ReviewList({ reviews, isLoading }: { reviews: ReviewResponse[]; 
   return (
     <div className="flex flex-col gap-4">
       {reviews.map((review) => (
-        <div key={review.id} className="border-border flex flex-col gap-1 border-b pb-4 last:border-b-0">
+        <div
+          key={review.id}
+          className="border-border flex flex-col gap-1 border-b pb-4 last:border-b-0"
+        >
           <div className="flex items-center gap-2">
             {review.title && <p className="font-medium">{review.title}</p>}
             {review.contains_spoilers && <Badge variant="outline">{t("spoilerWarning")}</Badge>}
@@ -2679,23 +2783,28 @@ git commit -m "feat(catalog): add ReleaseCard and ReviewList components"
 ### Task 14: ContributorCard component
 
 **Files:**
+
 - Create: `components/catalog/contributor-card.tsx`
 - Create: `components/catalog/contributor-card.stories.tsx`
 - Create: `components/catalog/contributor-card.test.tsx`
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.contributor` namespace)
 
 **Interfaces:**
+
 - Produces: `ContributorCard({ contributor: ContributorResponse }): JSX.Element`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`:
+
 ```json
 "contributor": {
   "noBio": "No biography available."
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "contributor": {
   "noBio": "Біографія відсутня."
@@ -2761,12 +2870,14 @@ export function ContributorCard({ contributor }: { contributor: ContributorRespo
 
   return (
     <Link href={`/contributors/${contributor.id}`}>
-      <Card className="h-full transition-colors hover:border-foreground/30">
+      <Card className="hover:border-foreground/30 h-full transition-colors">
         <CardHeader>
           <CardTitle>{contributor.full_name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground line-clamp-3 text-sm">{contributor.bio || t("noBio")}</p>
+          <p className="text-muted-foreground line-clamp-3 text-sm">
+            {contributor.bio || t("noBio")}
+          </p>
         </CardContent>
       </Card>
     </Link>
@@ -2838,6 +2949,7 @@ git commit -m "feat(catalog): add ContributorCard component"
 ### Task 15: Public pages — books list, book detail, contributor detail
 
 **Files:**
+
 - Create: `app/(app)/books/page.tsx`
 - Create: `app/(app)/books/[id]/page.tsx`
 - Create: `app/(app)/contributors/[id]/page.tsx`
@@ -2845,11 +2957,13 @@ git commit -m "feat(catalog): add ContributorCard component"
 - Modify: `components/shell/header.tsx` (point "Browse" nav link at `/books`)
 
 **Interfaces:**
+
 - Consumes: `useBookList`, `useBook` (Task 9), `BookCard`, `BookSearchFilters`, `ReleaseCard`, `ReviewList`, `ContributorCard` (Tasks 11-14), `useContributor`, `useContributorBooks` (Task 9).
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`:
+
 ```json
 "pages": {
   "browseTitle": "Browse books",
@@ -2863,7 +2977,9 @@ git commit -m "feat(catalog): add ContributorCard component"
   "booksByContributor": "Books"
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "pages": {
   "browseTitle": "Переглянути книги",
@@ -3049,11 +3165,13 @@ git commit -m "feat(catalog): add public books list, book detail, contributor de
 ### Task 16: proxy.ts admin gating + admin layout guard
 
 **Files:**
+
 - Modify: `proxy.ts`
 - Create: `app/(app)/admin/catalog/layout.tsx`
 - Modify: `proxy.test.ts` (check if it exists; if not, create it)
 
 **Interfaces:**
+
 - Consumes: `fetchProfile` from `lib/api/users.ts` (existing, Block 1).
 - Produces: server-side admin redirect used by every admin page under `app/(app)/admin/catalog/**`.
 
@@ -3196,6 +3314,7 @@ git commit -m "feat(catalog): add admin route gating (proxy presence check + ser
 ### Task 17: External search page + import dialog
 
 **Files:**
+
 - Create: `app/(app)/external/page.tsx`
 - Create: `components/catalog/admin/import-book-dialog.tsx`
 - Create: `components/catalog/admin/import-book-dialog.stories.tsx`
@@ -3203,12 +3322,14 @@ git commit -m "feat(catalog): add admin route gating (proxy presence check + ser
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.external` namespace)
 
 **Interfaces:**
+
 - Consumes: `useExternalSearch` (Task 9), `useImportBook` (Task 10), `useMe` (existing).
 - Produces: `ImportBookDialog({ hit: ExternalSearchHit }): JSX.Element`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`:
+
 ```json
 "external": {
   "title": "Search external sources",
@@ -3221,7 +3342,9 @@ git commit -m "feat(catalog): add admin route gating (proxy presence check + ser
   "notYetRated": "Not yet rated"
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "external": {
   "title": "Пошук у зовнішніх джерелах",
@@ -3335,7 +3458,9 @@ export function ImportBookDialog({ hit }: { hit: ExternalSearchHit }) {
         <DialogFooter>
           <Button
             disabled={importBook.isPending}
-            onClick={() => importBook.mutate({ source: hit.source, source_id: hit.isbns[0] ?? hit.title })}
+            onClick={() =>
+              importBook.mutate({ source: hit.source, source_id: hit.isbns[0] ?? hit.title })
+            }
           >
             {importBook.isPending ? t("importing") : t("import")}
           </Button>
@@ -3462,6 +3587,7 @@ git commit -m "feat(catalog): add external search page and import dialog"
 ### Task 18: Admin BookForm + ReleaseForm components
 
 **Files:**
+
 - Create: `components/catalog/admin/book-form.tsx`
 - Create: `components/catalog/admin/book-form.stories.tsx`
 - Create: `components/catalog/admin/book-form.test.tsx`
@@ -3471,12 +3597,14 @@ git commit -m "feat(catalog): add external search page and import dialog"
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalogAdmin.book`, `catalogAdmin.release` namespaces)
 
 **Interfaces:**
+
 - Consumes: `useCreateBook`, `useUpdateBook` (Task 10); `useCreateRelease`, `useUpdateRelease` (Task 10).
 - Produces: `BookForm({ book?: BookResponse, onSuccess: (book: BookResponse) => void }): JSX.Element`; `ReleaseForm({ bookId: string, release?: ReleaseWithISBNsResponse, onSuccess: (release: ReleaseWithISBNsResponse) => void }): JSX.Element`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`, add top-level `catalogAdmin`:
+
 ```json
 "catalogAdmin": {
   "book": {
@@ -3505,7 +3633,9 @@ git commit -m "feat(catalog): add external search page and import dialog"
   }
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "catalogAdmin": {
   "book": {
@@ -3776,7 +3906,14 @@ const server = setupServer(
   http.post("/api/releases", async ({ request }) => {
     const body = (await request.json()) as { publisher: string };
     return HttpResponse.json(
-      { id: "new-release", publisher: body.publisher, format: "hardcover", isbns: [], average_rating: null, rating_count: 0 },
+      {
+        id: "new-release",
+        publisher: body.publisher,
+        format: "hardcover",
+        isbns: [],
+        average_rating: null,
+        rating_count: 0,
+      },
       { status: 201 },
     );
   }),
@@ -3821,7 +3958,13 @@ import { useTranslations } from "next-intl";
 import { useCreateRelease, useUpdateRelease } from "@/hooks/useReleaseAdmin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { extractErrorMessage } from "@/lib/api/errors";
 import type { ReleaseFormat, ReleaseWithISBNsResponse } from "@/lib/api/types";
 
@@ -3839,7 +3982,9 @@ export function ReleaseForm({
   const t = useTranslations("catalogAdmin.release");
   const [format, setFormat] = React.useState<ReleaseFormat>(release?.format ?? "paperback");
   const [publisher, setPublisher] = React.useState(release?.publisher ?? "");
-  const [publishedYear, setPublishedYear] = React.useState(release?.published_year?.toString() ?? "");
+  const [publishedYear, setPublishedYear] = React.useState(
+    release?.published_year?.toString() ?? "",
+  );
   const [language, setLanguage] = React.useState(release?.language ?? "");
   const [pageCount, setPageCount] = React.useState(release?.page_count?.toString() ?? "");
   const [durationMinutes, setDurationMinutes] = React.useState(
@@ -3865,9 +4010,12 @@ export function ReleaseForm({
     if (release) {
       updateRelease.mutate(basePayload, { onSuccess: (result) => onSuccess(result) });
     } else {
-      createRelease.mutate({ ...basePayload, book_id: bookId, description_override: null }, {
-        onSuccess: (result) => onSuccess(result),
-      });
+      createRelease.mutate(
+        { ...basePayload, book_id: bookId, description_override: null },
+        {
+          onSuccess: (result) => onSuccess(result),
+        },
+      );
     }
   }
 
@@ -4024,6 +4172,7 @@ git commit -m "feat(catalog): add admin BookForm and ReleaseForm components"
 ### Task 19: Admin ContributorForm, MergeBooksDialog, AttachContributorDialog
 
 **Files:**
+
 - Create: `components/catalog/admin/contributor-form.tsx`
 - Create: `components/catalog/admin/contributor-form.stories.tsx`
 - Create: `components/catalog/admin/contributor-form.test.tsx`
@@ -4036,12 +4185,14 @@ git commit -m "feat(catalog): add admin BookForm and ReleaseForm components"
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalogAdmin.contributor`, `catalogAdmin.merge`, `catalogAdmin.attachContributor` namespaces)
 
 **Interfaces:**
+
 - Consumes: `useCreateContributor`, `useUpdateContributor` (Task 10); `useMergeBooks` (Task 10); `useAddBookContributor` (Task 10), `useContributorList` (Task 9).
 - Produces: `ContributorForm({ contributor?: ContributorResponse, onSuccess: (c: ContributorResponse) => void })`; `MergeBooksDialog({ sourceBookId: string, sourceBookTitle: string, onSuccess: () => void })`; `AttachContributorDialog({ bookId: string, onSuccess: () => void })`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json` under `catalogAdmin`:
+
 ```json
 "contributor": {
   "fullNameLabel": "Full name",
@@ -4072,7 +4223,9 @@ git commit -m "feat(catalog): add admin BookForm and ReleaseForm components"
   "alreadyExisted": "This contributor already has this role on the book."
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "contributor": {
   "fullNameLabel": "Повне ім'я",
@@ -4210,13 +4363,23 @@ export function ContributorForm({
         <label htmlFor="contributor-full-name" className="text-sm font-medium">
           {t("fullNameLabel")}
         </label>
-        <Input id="contributor-full-name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+        <Input
+          id="contributor-full-name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+        />
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="contributor-sort-name" className="text-sm font-medium">
           {t("sortNameLabel")}
         </label>
-        <Input id="contributor-sort-name" value={sortName} onChange={(e) => setSortName(e.target.value)} required />
+        <Input
+          id="contributor-sort-name"
+          value={sortName}
+          onChange={(e) => setSortName(e.target.value)}
+          required
+        />
       </div>
       <div className="flex flex-col gap-1.5">
         <label htmlFor="contributor-birth-year" className="text-sm font-medium">
@@ -4406,7 +4569,11 @@ export function MergeBooksDialog({
           <label htmlFor="merge-target-id" className="text-sm font-medium">
             {t("targetIdLabel")}
           </label>
-          <Input id="merge-target-id" value={targetId} onChange={(e) => setTargetId(e.target.value)} />
+          <Input
+            id="merge-target-id"
+            value={targetId}
+            onChange={(e) => setTargetId(e.target.value)}
+          />
         </div>
         {mergeBooks.isError && (
           <p className="text-destructive text-sm">{extractErrorMessage(mergeBooks.error)}</p>
@@ -4483,7 +4650,14 @@ import enMessages from "@/messages/en.json";
 const server = setupServer(
   http.get("/api/contributors", () => {
     return HttpResponse.json({
-      items: [{ id: "c1", full_name: "Frank Herbert", sort_name: "Herbert, Frank", slug: "frank-herbert" }],
+      items: [
+        {
+          id: "c1",
+          full_name: "Frank Herbert",
+          sort_name: "Herbert, Frank",
+          slug: "frank-herbert",
+        },
+      ],
       total: 1,
       limit: 10,
       offset: 0,
@@ -4531,7 +4705,13 @@ import { useTranslations } from "next-intl";
 import { useContributorList } from "@/hooks/useContributors";
 import { useAddBookContributor } from "@/hooks/useBookAdmin";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -4687,16 +4867,19 @@ git commit -m "feat(catalog): add admin ContributorForm, MergeBooksDialog, Attac
 ### Task 20: Admin books list/create page + book edit page
 
 **Files:**
+
 - Create: `app/(app)/admin/catalog/books/page.tsx`
 - Create: `app/(app)/admin/catalog/books/[id]/edit/page.tsx`
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalogAdmin.pages` namespace)
 
 **Interfaces:**
+
 - Consumes: `useBookList` (Task 9), `useBook`, `BookForm`, `MergeBooksDialog`, `AttachContributorDialog`, `ReleaseForm` (Tasks 18-19), `useDeleteBook` (Task 10).
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json` under `catalogAdmin`:
+
 ```json
 "pages": {
   "manageBooks": "Manage books",
@@ -4708,7 +4891,9 @@ git commit -m "feat(catalog): add admin ContributorForm, MergeBooksDialog, Attac
   "backToList": "Back to list"
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "pages": {
   "manageBooks": "Керування книгами",
@@ -4770,7 +4955,11 @@ export default function AdminBooksPage() {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-base">{book.title}</CardTitle>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" render={<Link href={`/admin/catalog/books/${book.id}/edit`} />}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    render={<Link href={`/admin/catalog/books/${book.id}/edit`} />}
+                  >
                     {t("editBook")}
                   </Button>
                   <Button
@@ -4842,21 +5031,31 @@ export default function AdminBookEditPage({ params }: { params: Promise<{ id: st
           <Button size="sm" variant="outline" render={<Link href="/admin/catalog/books" />}>
             {t("backToList")}
           </Button>
-          <Button size="sm" variant="outline" render={<Link href={`/admin/catalog/books/${id}/history`} />}>
+          <Button
+            size="sm"
+            variant="outline"
+            render={<Link href={`/admin/catalog/books/${id}/history`} />}
+          >
             History
           </Button>
         </div>
       </div>
       <BookForm book={book} onSuccess={() => refetch()} />
       <div className="flex items-center gap-2">
-        <MergeBooksDialog sourceBookId={book.id} sourceBookTitle={book.title} onSuccess={() => refetch()} />
+        <MergeBooksDialog
+          sourceBookId={book.id}
+          sourceBookTitle={book.title}
+          onSuccess={() => refetch()}
+        />
         <AttachContributorDialog bookId={book.id} onSuccess={() => refetch()} />
       </div>
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">Editions</h2>
           <Dialog open={addReleaseOpen} onOpenChange={setAddReleaseOpen}>
-            <DialogTrigger render={<Button size="sm" variant="outline" />}>{t("addRelease")}</DialogTrigger>
+            <DialogTrigger render={<Button size="sm" variant="outline" />}>
+              {t("addRelease")}
+            </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{t("addRelease")}</DialogTitle>
@@ -4899,11 +5098,13 @@ git commit -m "feat(catalog): add admin books list/create and book edit pages"
 ### Task 21: Admin contributors page + release edit page
 
 **Files:**
+
 - Create: `app/(app)/admin/catalog/contributors/page.tsx`
 - Create: `app/(app)/admin/catalog/contributors/[id]/edit/page.tsx`
 - Create: `app/(app)/admin/catalog/releases/[id]/edit/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useContributorList`, `useContributor` (Task 9), `ContributorForm` (Task 19), `useRelease` (Task 9), `ReleaseForm` (Task 18).
 
 - [ ] **Step 1: Implement admin/catalog/contributors/page.tsx**
@@ -5086,6 +5287,7 @@ git commit -m "feat(catalog): add admin contributors page and release edit page"
 ### Task 22: VersionList and VersionDiffViewer components
 
 **Files:**
+
 - Create: `components/catalog/history/version-list.tsx`
 - Create: `components/catalog/history/version-list.stories.tsx`
 - Create: `components/catalog/history/version-list.test.tsx`
@@ -5095,12 +5297,14 @@ git commit -m "feat(catalog): add admin contributors page and release edit page"
 - Modify: `messages/en.json`, `messages/uk.json` (add `history` namespace)
 
 **Interfaces:**
+
 - Consumes: `EntityVersionResponse`, `EntityVersionDetailResponse` types (Task 5).
 - Produces: `VersionList({ versions: EntityVersionResponse[], selectedVersion?: number, onSelect: (version: number) => void }): JSX.Element`; `VersionDiffViewer({ before?: EntityVersionDetailResponse, after: EntityVersionDetailResponse }): JSX.Element`.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json`, add top-level `history`:
+
 ```json
 "history": {
   "versionLabel": "Version {version}",
@@ -5117,7 +5321,9 @@ git commit -m "feat(catalog): add admin contributors page and release edit page"
   "noDiff": "No differences between these versions."
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "history": {
   "versionLabel": "Версія {version}",
@@ -5449,10 +5655,15 @@ export function VersionDiffViewer({
   return (
     <div className="flex flex-col gap-3">
       {rows.map((row) => (
-        <div key={row.key} className="border-border flex flex-col gap-1 border-b pb-3 last:border-b-0">
+        <div
+          key={row.key}
+          className="border-border flex flex-col gap-1 border-b pb-3 last:border-b-0"
+        >
           <div className="flex items-center gap-2">
             <span className="font-mono text-sm font-medium">{row.key}</span>
-            <Badge variant="outline">{t(`field${row.kind[0].toUpperCase()}${row.kind.slice(1)}`)}</Badge>
+            <Badge variant="outline">
+              {t(`field${row.kind[0].toUpperCase()}${row.kind.slice(1)}`)}
+            </Badge>
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <p className="text-destructive line-through">{formatValue(row.before)}</p>
@@ -5535,11 +5746,13 @@ git commit -m "feat(catalog): add VersionList and VersionDiffViewer components"
 ### Task 23: Admin history pages (book, release, contributor)
 
 **Files:**
+
 - Create: `app/(app)/admin/catalog/books/[id]/history/page.tsx`
 - Create: `app/(app)/admin/catalog/releases/[id]/history/page.tsx`
 - Create: `app/(app)/admin/catalog/contributors/[id]/history/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useBookHistory`, `useBookVersion` (Task 9); `useReleaseHistory`, `useReleaseVersion`; `useContributorHistory`, `useContributorVersion`; `VersionList`, `VersionDiffViewer` (Task 22).
 
 - [ ] **Step 1: Implement book history page**
@@ -5575,12 +5788,18 @@ export default function AdminBookHistoryPage({ params }: { params: Promise<{ id:
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Book history</h1>
-        <Button size="sm" variant="outline" render={<Link href={`/admin/catalog/books/${id}/edit`} />}>
+        <Button
+          size="sm"
+          variant="outline"
+          render={<Link href={`/admin/catalog/books/${id}/edit`} />}
+        >
           Back to edit
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">
-        {isPending ? <Skeleton className="h-64 w-full" /> : (
+        {isPending ? (
+          <Skeleton className="h-64 w-full" />
+        ) : (
           <VersionList versions={versions} selectedVersion={selected} onSelect={setSelected} />
         )}
         {afterVersion && <VersionDiffViewer before={beforeVersion} after={afterVersion} />}
@@ -5625,12 +5844,18 @@ export default function AdminReleaseHistoryPage({ params }: { params: Promise<{ 
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Release history</h1>
-        <Button size="sm" variant="outline" render={<Link href={`/admin/catalog/releases/${id}/edit`} />}>
+        <Button
+          size="sm"
+          variant="outline"
+          render={<Link href={`/admin/catalog/releases/${id}/edit`} />}
+        >
           Back to edit
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">
-        {isPending ? <Skeleton className="h-64 w-full" /> : (
+        {isPending ? (
+          <Skeleton className="h-64 w-full" />
+        ) : (
           <VersionList versions={versions} selectedVersion={selected} onSelect={setSelected} />
         )}
         {afterVersion && <VersionDiffViewer before={beforeVersion} after={afterVersion} />}
@@ -5656,7 +5881,11 @@ import { VersionDiffViewer } from "@/components/catalog/history/version-diff-vie
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function AdminContributorHistoryPage({ params }: { params: Promise<{ id: string }> }) {
+export default function AdminContributorHistoryPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const { data: historyPage, isPending } = useContributorHistory(id, { limit: 50 });
   const versions = historyPage?.items ?? [];
@@ -5684,7 +5913,9 @@ export default function AdminContributorHistoryPage({ params }: { params: Promis
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">
-        {isPending ? <Skeleton className="h-64 w-full" /> : (
+        {isPending ? (
+          <Skeleton className="h-64 w-full" />
+        ) : (
           <VersionList versions={versions} selectedVersion={selected} onSelect={setSelected} />
         )}
         {afterVersion && <VersionDiffViewer before={beforeVersion} after={afterVersion} />}
@@ -5713,9 +5944,11 @@ git commit -m "feat(catalog): add admin version history pages for books/releases
 ### Task 24: Playwright e2e happy path — browse and view a book
 
 **Files:**
+
 - Create: `e2e/catalog-browse.spec.ts`
 
 **Interfaces:**
+
 - Consumes: existing Playwright setup (check `e2e/` directory for the auth happy-path spec from Block 1 to match its config/fixture pattern before writing this).
 
 - [ ] **Step 1: Read the existing e2e spec for setup pattern**
@@ -5769,9 +6002,11 @@ git commit -m "test(catalog): add Playwright happy path for browsing and viewing
 ### Task 25: next-intl locale smoke test
 
 **Files:**
+
 - Create: `messages/messages.test.ts`
 
 **Interfaces:**
+
 - Consumes: `messages/en.json`, `messages/uk.json`.
 
 - [ ] **Step 1: Write a structural parity test**
@@ -5827,12 +6062,14 @@ git commit -m "test(i18n): add en/uk message key parity smoke test"
 ### Task 27: Contributions API client, types, hooks
 
 **Files:**
+
 - Modify: `lib/api/types.ts` (append contribution types)
 - Create: `lib/api/contributions.ts`
 - Create: `hooks/useContributions.ts`
 - Create: `hooks/useContributions.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `apiClient` from `lib/api/client.ts`.
 - Produces: `createContribution`, `listOwnContributions`, `getContribution`, `updateContribution`, `submitContribution`, `deleteContribution` (API client); `useCreateContribution`, `useSubmitContribution`, `useMyContributions`, `useUpdateContribution`, `useDeleteContribution` (hooks) — consumed by `SuggestEditDialog` (Task 28) and the My Submissions page (Task 29).
 
@@ -5848,12 +6085,7 @@ export type ContributionKind =
   | "edit_contributor";
 
 export type ContributionStatus =
-  | "draft"
-  | "submitted"
-  | "under_review"
-  | "approved"
-  | "rejected"
-  | "merged";
+  "draft" | "submitted" | "under_review" | "approved" | "rejected" | "merged";
 
 export interface CreateContributionPayload {
   kind: ContributionKind;
@@ -5947,7 +6179,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { useCreateContribution, useMyContributions, useSubmitContribution } from "./useContributions";
+import {
+  useCreateContribution,
+  useMyContributions,
+  useSubmitContribution,
+} from "./useContributions";
 
 const server = setupServer(
   http.post("/api/contributions", async ({ request }) => {
@@ -6116,18 +6352,21 @@ git commit -m "feat(catalog): add contributions API client, types, and hooks"
 ### Task 28: SuggestEditDialog component
 
 **Files:**
+
 - Create: `components/catalog/suggest-edit-dialog.tsx`
 - Create: `components/catalog/suggest-edit-dialog.stories.tsx`
 - Create: `components/catalog/suggest-edit-dialog.test.tsx`
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.suggestEdit` namespace)
 
 **Interfaces:**
+
 - Consumes: `useCreateContribution`, `useSubmitContribution` (Task 27); `useMe` (existing, Block 1).
 - Produces: `SuggestEditDialog({ kind: ContributionKind, targetId?: string, buildPayload: () => Record<string, unknown> }): JSX.Element` — a generic trigger+dialog; the caller supplies `kind`, optional `targetId`, and a `buildPayload` callback that reads its own local form state into the shape the API expects. This task builds the dialog shell with a **generic JSON-free text-field form for the common "new_book" case** (title + description, matching `CreateBookSchema`'s required fields) — book detail/contributor detail/external-search call sites (wired in Task 29) pass their own `kind`/`targetId`/`buildPayload` for their specific entity type, reusing the same dialog shell and submit flow.
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json` under `catalog`:
+
 ```json
 "suggestEdit": {
   "trigger": "Suggest an edit",
@@ -6140,7 +6379,9 @@ git commit -m "feat(catalog): add contributions API client, types, and hooks"
   "signInRequired": "Sign in to suggest an edit."
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "suggestEdit": {
   "trigger": "Запропонувати зміну",
@@ -6362,6 +6603,7 @@ git commit -m "feat(catalog): add SuggestEditDialog component"
 ### Task 29: Wire SuggestEditDialog into public pages + My Submissions page
 
 **Files:**
+
 - Modify: `app/(app)/books/[id]/page.tsx` (add SuggestEditDialog for non-admin signed-in users, `kind: "edit_book"`)
 - Modify: `app/(app)/contributors/[id]/page.tsx` (same, `kind: "edit_contributor"`)
 - Modify: `app/(app)/external/page.tsx` (same on each hit card, `kind: "new_book"`, for non-admin signed-in users — admins still get `ImportBookDialog` from Task 17, not this)
@@ -6370,11 +6612,13 @@ git commit -m "feat(catalog): add SuggestEditDialog component"
 - Modify: `messages/en.json`, `messages/uk.json` (add `catalog.myContributions` namespace)
 
 **Interfaces:**
+
 - Consumes: `SuggestEditDialog` (Task 28), `useMyContributions` (Task 27), `useMe` (existing).
 
 - [ ] **Step 1: Add message keys**
 
 `messages/en.json` under `catalog`:
+
 ```json
 "myContributions": {
   "navLink": "My Submissions",
@@ -6390,7 +6634,9 @@ git commit -m "feat(catalog): add SuggestEditDialog component"
   }
 }
 ```
+
 `messages/uk.json`:
+
 ```json
 "myContributions": {
   "navLink": "Мої пропозиції",
@@ -6419,13 +6665,15 @@ import { useMe } from "@/hooks/useMe";
 const { data: me } = useMe();
 
 // in the JSX, after the title/description block:
-{me && !me.is_admin && (
-  <SuggestEditDialog
-    kind="edit_book"
-    targetId={book.id}
-    buildPayload={() => ({ title: book.title, description: book.description })}
-  />
-)}
+{
+  me && !me.is_admin && (
+    <SuggestEditDialog
+      kind="edit_book"
+      targetId={book.id}
+      buildPayload={() => ({ title: book.title, description: book.description })}
+    />
+  );
+}
 ```
 
 - [ ] **Step 3: Add SuggestEditDialog to contributor detail page**
@@ -6437,12 +6685,14 @@ Same pattern in `app/(app)/contributors/[id]/page.tsx`, `kind: "edit_contributor
 In `app/(app)/external/page.tsx`, read the existing implementation from Task 17 first. Alongside the existing `{me?.is_admin && <ImportBookDialog hit={hit} />}` line, add the non-admin equivalent:
 
 ```tsx
-{me && !me.is_admin && (
-  <SuggestEditDialog
-    kind="new_book"
-    buildPayload={() => ({ title: hit.title, description: hit.authors.join(", ") })}
-  />
-)}
+{
+  me && !me.is_admin && (
+    <SuggestEditDialog
+      kind="new_book"
+      buildPayload={() => ({ title: hit.title, description: hit.authors.join(", ") })}
+    />
+  );
+}
 ```
 
 - [ ] **Step 5: Implement My Submissions page**
@@ -6491,7 +6741,7 @@ export default function MyContributionsPage() {
 
 In `components/shell/header.tsx`, read the current implementation (from Task 15's header edit) first. Add a `DropdownMenuItem` linking to `/contributions` inside the existing authenticated dropdown menu, using `useTranslations("catalog.myContributions")` for the label:
 
-```tsx
+````tsx
 <DropdownMenuItem render={<Link href="/contributions" />}>{t("navLink")}</DropdownMenuItem>
 ```//place alongside the existing "Profile" item.
 
@@ -6510,7 +6760,7 @@ Expected: PASS
 ```bash
 git add app/\(app\)/books/\[id\]/page.tsx app/\(app\)/contributors/\[id\]/page.tsx app/\(app\)/external/page.tsx app/\(app\)/contributions/ components/shell/header.tsx messages/
 git commit -m "feat(catalog): wire SuggestEditDialog into detail/search pages, add My Submissions page"
-```
+````
 
 ---
 
@@ -6559,6 +6809,7 @@ In the running dev server, click the locale switcher in the header, select Ukrai
 - [ ] **Step 9: Commit any final fixes**
 
 If Steps 1-6 required fixes, commit them:
+
 ```bash
 git add -A
 git commit -m "fix: resolve gate failures (lint/typecheck/test/format/build)"

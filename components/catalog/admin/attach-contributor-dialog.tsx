@@ -5,7 +5,13 @@ import { useTranslations } from "next-intl";
 import { useContributorList } from "@/hooks/useContributors";
 import { useAddBookContributor } from "@/hooks/useBookAdmin";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,

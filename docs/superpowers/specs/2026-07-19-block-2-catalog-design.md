@@ -7,6 +7,7 @@ Deliver the Catalog block per `docs/specs/2026-07-13-ui-repo-design.md`'s block 
 ## Scope
 
 **In scope:**
+
 - Public book search/browse (filters: title, author, language), book detail (releases, contributors, reviews list), contributor detail, external source search (public read).
 - Admin catalog management: create/edit book, create/edit release, create/edit contributor, merge books, attach/detach contributor to book or release, import book from external source.
 - Version history + diff viewer for books, releases, contributors (admin-only screens).
@@ -15,40 +16,60 @@ Deliver the Catalog block per `docs/specs/2026-07-13-ui-repo-design.md`'s block 
 - Migrate existing Block 1 hardcoded strings (login, register, verify, profile pages) to next-intl as part of this setup.
 
 **Out of scope / deferred:**
-- Review creation/editing (belongs to Block 3 — Collections & Reviews). Block 2 only *displays* existing reviews via the nested `GET /books/{id}/reviews` / `GET /releases/{id}/reviews` endpoints.
+
+- Review creation/editing (belongs to Block 3 — Collections & Reviews). Block 2 only _displays_ existing reviews via the nested `GET /books/{id}/reviews` / `GET /releases/{id}/reviews` endpoints.
 - JWT-claim-based edge middleware admin gating — blocked on API-side change ([bookworm-hole-api#144](https://github.com/fedorkovolodymyr/bookworm-hole-api/issues/144), not merge-blocking). Interim: server-side `/users/me` check.
 - Contribution moderation (approve/reject queue, `admin_contributions` router) — Block 7.
 
 ## Addendum: Reconciliation with prior Block 2 spec (2026-07-18, commit 98e069d)
 
-An earlier session had already written a Block 2 spec verified against the *live* API (this session's initial research read source only). That spec correctly identified that every mutating endpoint on `books`/`releases`/`contributors` carries `dependencies=[Depends(require_admin)]` — confirmed here by re-grepping `app/routers/{books,releases,contributors}.py` directly. It concluded Block 2 should be read-only browse + a `contributions`-based "suggest an edit" flow, deferring all direct admin CRUD UI to Block 7.
+An earlier session had already written a Block 2 spec verified against the _live_ API (this session's initial research read source only). That spec correctly identified that every mutating endpoint on `books`/`releases`/`contributors` carries `dependencies=[Depends(require_admin)]` — confirmed here by re-grepping `app/routers/{books,releases,contributors}.py` directly. It concluded Block 2 should be read-only browse + a `contributions`-based "suggest an edit" flow, deferring all direct admin CRUD UI to Block 7.
 
 This session's spec (the one this document is) took a different scope decision, explicitly chosen by the user after being shown the admin-gating tradeoff: build real admin CRUD screens in Block 2 itself, gated behind `/admin/catalog` and a genuine `is_admin` check — which is consistent with `require_admin`, just answers "who builds the admin UI" differently than the prior spec did (Block 2 now, not deferred to Block 7).
 
-What the prior spec caught that this one had missed entirely: the `contributions` router (`POST /contributions/`, `GET /contributions/me/contributions`, `PATCH/DELETE /contributions/{id}`, `POST /contributions/{id}/submit`) is the *only* write path available to non-admin users, and had no coverage in this spec. That gap is real regardless of which spec "governs" the admin-UI question, since the router exists in the live API either way. Resolution: **this spec governs the admin-CRUD scope decision; the contributions flow is added on top, not swapped in.** Both admin CRUD and the non-admin suggest-an-edit flow ship in this block.
+What the prior spec caught that this one had missed entirely: the `contributions` router (`POST /contributions/`, `GET /contributions/me/contributions`, `PATCH/DELETE /contributions/{id}`, `POST /contributions/{id}/submit`) is the _only_ write path available to non-admin users, and had no coverage in this spec. That gap is real regardless of which spec "governs" the admin-UI question, since the router exists in the live API either way. Resolution: **this spec governs the admin-CRUD scope decision; the contributions flow is added on top, not swapped in.** Both admin CRUD and the non-admin suggest-an-edit flow ship in this block.
 
 ### `contributions` router reference (verified against `app/routers/contributions.py`, `app/schemas/contribution_schemas.py`, `app/models/contribution.py`)
 
-| Method | Path | Auth | Notes |
-|---|---|---|---|
-| POST | `/contributions/` | any authenticated user (`get_current_user`, no admin check) | Body `CreateContributionSchema{kind, target_id?, payload}` → `ContributionResponse` (201) |
-| GET | `/contributions/me/contributions` | authenticated | `Page<ContributionResponse>`, query `skip`/`limit` |
-| GET | `/contributions/{id}` | authenticated (own) | `ContributionResponse`; 404 |
-| PATCH | `/contributions/{id}` | authenticated (own) | Body `UpdateContributionSchema{payload}` → `ContributionResponse`; 404, 409 |
-| POST | `/contributions/{id}/submit` | authenticated (own) | `ContributionResponse` (draft → submitted); 404, 409 |
-| DELETE | `/contributions/{id}` | authenticated (own) | 204; 404, 409 |
+| Method | Path                              | Auth                                                        | Notes                                                                                     |
+| ------ | --------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| POST   | `/contributions/`                 | any authenticated user (`get_current_user`, no admin check) | Body `CreateContributionSchema{kind, target_id?, payload}` → `ContributionResponse` (201) |
+| GET    | `/contributions/me/contributions` | authenticated                                               | `Page<ContributionResponse>`, query `skip`/`limit`                                        |
+| GET    | `/contributions/{id}`             | authenticated (own)                                         | `ContributionResponse`; 404                                                               |
+| PATCH  | `/contributions/{id}`             | authenticated (own)                                         | Body `UpdateContributionSchema{payload}` → `ContributionResponse`; 404, 409               |
+| POST   | `/contributions/{id}/submit`      | authenticated (own)                                         | `ContributionResponse` (draft → submitted); 404, 409                                      |
+| DELETE | `/contributions/{id}`             | authenticated (own)                                         | 204; 404, 409                                                                             |
 
 ```ts
-type ContributionKind = "new_book" | "new_release" | "new_contributor" | "edit_book" | "edit_release" | "edit_contributor";
-type ContributionStatus = "draft" | "submitted" | "under_review" | "approved" | "rejected" | "merged";
+type ContributionKind =
+  | "new_book"
+  | "new_release"
+  | "new_contributor"
+  | "edit_book"
+  | "edit_release"
+  | "edit_contributor";
+type ContributionStatus =
+  "draft" | "submitted" | "under_review" | "approved" | "rejected" | "merged";
 
-interface CreateContributionPayload { kind: ContributionKind; target_id?: string | null; payload: Record<string, unknown> }
-interface UpdateContributionPayload { payload: Record<string, unknown> }
+interface CreateContributionPayload {
+  kind: ContributionKind;
+  target_id?: string | null;
+  payload: Record<string, unknown>;
+}
+interface UpdateContributionPayload {
+  payload: Record<string, unknown>;
+}
 interface ContributionResponse {
-  id: string; user_id: string; kind: ContributionKind; target_id: string | null;
-  payload: Record<string, unknown>; status: ContributionStatus;
-  reviewer_id: string | null; review_notes: string | null;
-  created_at: string; updated_at: string;
+  id: string;
+  user_id: string;
+  kind: ContributionKind;
+  target_id: string | null;
+  payload: Record<string, unknown>;
+  status: ContributionStatus;
+  reviewer_id: string | null;
+  review_notes: string | null;
+  created_at: string;
+  updated_at: string;
 }
 ```
 
@@ -63,7 +84,7 @@ Full endpoint/schema detail gathered from the sibling repo — see "Endpoint Ref
 - `POST /books/{id}/contributors` and `POST /releases/{id}/contributors` return **HTTP 200** for both "created" and "already_existed" cases (body differs: `{status: "created"|"already_existed"}`) — do not branch UI logic on status code here, branch on body.
 - `POST /external/import` response (`BookWithReleasesResponse`) does **not** compute `average_rating`/`rating_count` — they come back as Pydantic defaults (`null`/`0`), unlike `GET /books/{id}` which computes real aggregates. Surface this only where it'd visibly confuse (e.g. immediately after import, briefly show "not yet rated" rather than a fake `0`-star display).
 - `releases` router has no list-all endpoint — releases are only reachable via a book's nested `releases[]` or by direct `release_id`.
-- Admin routes require `is_admin` server-side (403 `"Admin privileges required"` if not); none of the four routers gate *reads* behind auth.
+- Admin routes require `is_admin` server-side (403 `"Admin privileges required"` if not); none of the four routers gate _reads_ behind auth.
 
 ## Architecture
 
@@ -176,96 +197,240 @@ Unchanged from repo-wide pattern (`docs/specs/2026-07-13-ui-repo-design.md`): ax
 ## Endpoint Reference (verbatim from bookworm-hole-api)
 
 ### Global error shape
+
 All domain errors: `{ "detail": "<message>" }`. `AppError` subclasses: `NotFoundError` (404), `ConflictError` (409), `UnauthorizedError` (401), `ExternalServiceError` (502), `BadRequestError` (400), `ServiceUnavailableError` (503). Plain `HTTPException` used in a few older paths — same JSON shape.
 
 ### Pagination
+
 `Page<T> { items: T[], total: number, limit: number, offset: number }`. Query params `skip`, `limit`. Enforced bounds (`ge=0`, `1<=limit<=100`) only on the `books` router; `releases`/`contributors` accept unbounded ints.
 
 ### `books` router (`/api/v1/books`)
 
-| Method | Path | Auth | Status | Notes |
-|---|---|---|---|---|
-| GET | `/` | public | 200 | `Page<BookResponse>`. Query: `skip`, `limit`, `title` (ILIKE), `author` (ILIKE on contributor name), `language` (exact, joined release) |
-| POST | `/` | admin | 201 | Body `CreateBookSchema` → `BookResponse` |
-| GET | `/by-isbn/{isbn}` | public | 200 | `BookWithReleasesResponse`; 404 if not found |
-| GET | `/{book_id}` | public | 200 | `BookWithReleasesResponse` incl. computed `average_rating`/`rating_count`; 404 |
-| PATCH | `/{book_id}` | admin | 200 | Body `UpdateBookSchema` (all optional) → `BookResponse`; 404 |
-| DELETE | `/{book_id}` | admin | 204 | 404 |
-| POST | `/{source_id}/merge-into/{target_id}` | admin | 200 | `BookWithReleasesResponse`; 409 if source==target, 404 if either missing |
-| POST | `/{book_id}/contributors` | admin | 200 (always) | Body `AddContributorSchema{contributor_id, role}` → `{status: "created"\|"already_existed"}`; 404 |
-| DELETE | `/{book_id}/contributors/{contributor_id}` | admin | 204 | Query `role` required; 404 variants |
-| GET | `/{book_id}/reviews` | public | 200 | `Page<ReviewResponse>`; query `sort` (`created_at`\|`rating`), `skip`, `limit` |
-| GET | `/{book_id}/history` | public | 200 | `Page<EntityVersionResponse>` |
-| GET | `/{book_id}/history/{version}` | public | 200 | `EntityVersionDetailResponse`; 404 |
+| Method | Path                                       | Auth   | Status       | Notes                                                                                                                                   |
+| ------ | ------------------------------------------ | ------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/`                                        | public | 200          | `Page<BookResponse>`. Query: `skip`, `limit`, `title` (ILIKE), `author` (ILIKE on contributor name), `language` (exact, joined release) |
+| POST   | `/`                                        | admin  | 201          | Body `CreateBookSchema` → `BookResponse`                                                                                                |
+| GET    | `/by-isbn/{isbn}`                          | public | 200          | `BookWithReleasesResponse`; 404 if not found                                                                                            |
+| GET    | `/{book_id}`                               | public | 200          | `BookWithReleasesResponse` incl. computed `average_rating`/`rating_count`; 404                                                          |
+| PATCH  | `/{book_id}`                               | admin  | 200          | Body `UpdateBookSchema` (all optional) → `BookResponse`; 404                                                                            |
+| DELETE | `/{book_id}`                               | admin  | 204          | 404                                                                                                                                     |
+| POST   | `/{source_id}/merge-into/{target_id}`      | admin  | 200          | `BookWithReleasesResponse`; 409 if source==target, 404 if either missing                                                                |
+| POST   | `/{book_id}/contributors`                  | admin  | 200 (always) | Body `AddContributorSchema{contributor_id, role}` → `{status: "created"\|"already_existed"}`; 404                                       |
+| DELETE | `/{book_id}/contributors/{contributor_id}` | admin  | 204          | Query `role` required; 404 variants                                                                                                     |
+| GET    | `/{book_id}/reviews`                       | public | 200          | `Page<ReviewResponse>`; query `sort` (`created_at`\|`rating`), `skip`, `limit`                                                          |
+| GET    | `/{book_id}/history`                       | public | 200          | `Page<EntityVersionResponse>`                                                                                                           |
+| GET    | `/{book_id}/history/{version}`             | public | 200          | `EntityVersionDetailResponse`; 404                                                                                                      |
 
 ### `releases` router (`/api/v1/releases`) — no list-all endpoint
 
-| Method | Path | Auth | Status | Notes |
-|---|---|---|---|---|
-| GET | `/{release_id}` | public | 200 | `ReleaseWithISBNsResponse` incl. computed rating fields; 404 |
-| POST | `/` | admin | 201 | Body `CreateReleaseSchema` → `ReleaseWithISBNsResponse`; 404 if `book_id` invalid |
-| PATCH | `/{release_id}` | admin | 200 | Body `UpdateReleaseSchema`; 404 |
-| POST | `/{release_id}/contributors` | admin | 200 (always) | Same pattern as books; 404 |
-| DELETE | `/{release_id}/contributors/{contributor_id}` | admin | 204 | Query `role` required; 404 variants |
-| GET | `/{release_id}/reviews` | public | 200 | `Page<ReviewResponse>` |
-| GET | `/{release_id}/history` | public | 200 | `Page<EntityVersionResponse>` |
-| GET | `/{release_id}/history/{version}` | public | 200 | `EntityVersionDetailResponse`; 404 |
+| Method | Path                                          | Auth   | Status       | Notes                                                                             |
+| ------ | --------------------------------------------- | ------ | ------------ | --------------------------------------------------------------------------------- |
+| GET    | `/{release_id}`                               | public | 200          | `ReleaseWithISBNsResponse` incl. computed rating fields; 404                      |
+| POST   | `/`                                           | admin  | 201          | Body `CreateReleaseSchema` → `ReleaseWithISBNsResponse`; 404 if `book_id` invalid |
+| PATCH  | `/{release_id}`                               | admin  | 200          | Body `UpdateReleaseSchema`; 404                                                   |
+| POST   | `/{release_id}/contributors`                  | admin  | 200 (always) | Same pattern as books; 404                                                        |
+| DELETE | `/{release_id}/contributors/{contributor_id}` | admin  | 204          | Query `role` required; 404 variants                                               |
+| GET    | `/{release_id}/reviews`                       | public | 200          | `Page<ReviewResponse>`                                                            |
+| GET    | `/{release_id}/history`                       | public | 200          | `Page<EntityVersionResponse>`                                                     |
+| GET    | `/{release_id}/history/{version}`             | public | 200          | `EntityVersionDetailResponse`; 404                                                |
 
 ### `contributors` router (`/api/v1/contributors`)
 
-| Method | Path | Auth | Status | Notes |
-|---|---|---|---|---|
-| GET | `/` | public | 200 | `Page<ContributorResponse>`. Query: `skip`, `limit`, `name` (ILIKE full_name OR sort_name), `role` |
-| POST | `/` | admin | 201 | Body `CreateContributorSchema` → `ContributorResponse` |
-| GET | `/{contributor_id}` | public | 200 | `ContributorDetailResponse` (books_by_role, releases_by_role maps); 404 |
-| PATCH | `/{contributor_id}` | admin | 200 | Body `UpdateContributorSchema`; 404 |
-| GET | `/{contributor_id}/books` | public | 200 | `Page<BookResponse>`; 404 |
-| GET | `/{contributor_id}/history` | public | 200 | `Page<EntityVersionResponse>` |
-| GET | `/{contributor_id}/history/{version}` | public | 200 | `EntityVersionDetailResponse`; 404 |
+| Method | Path                                  | Auth   | Status | Notes                                                                                              |
+| ------ | ------------------------------------- | ------ | ------ | -------------------------------------------------------------------------------------------------- |
+| GET    | `/`                                   | public | 200    | `Page<ContributorResponse>`. Query: `skip`, `limit`, `name` (ILIKE full_name OR sort_name), `role` |
+| POST   | `/`                                   | admin  | 201    | Body `CreateContributorSchema` → `ContributorResponse`                                             |
+| GET    | `/{contributor_id}`                   | public | 200    | `ContributorDetailResponse` (books_by_role, releases_by_role maps); 404                            |
+| PATCH  | `/{contributor_id}`                   | admin  | 200    | Body `UpdateContributorSchema`; 404                                                                |
+| GET    | `/{contributor_id}/books`             | public | 200    | `Page<BookResponse>`; 404                                                                          |
+| GET    | `/{contributor_id}/history`           | public | 200    | `Page<EntityVersionResponse>`                                                                      |
+| GET    | `/{contributor_id}/history/{version}` | public | 200    | `EntityVersionDetailResponse`; 404                                                                 |
 
 ### `external` router (`/api/v1/external`)
 
-| Method | Path | Auth | Status | Notes |
-|---|---|---|---|---|
-| GET | `/search` | public | 200 (always) | Query `q` (required), `sources` (CSV, optional — omit for all adapters). `ExternalSearchResponse{query, hits[], partial_failures{}}`. Per-source failures captured in `partial_failures`, not raised. |
-| POST | `/import` | admin | 200 | Body `ImportBookRequest{source, source_id}` → `BookWithReleasesResponse` **(rating fields not computed — see quirk above)**. 404 unknown adapter/source book; 502 possible from adapter internals |
+| Method | Path      | Auth   | Status       | Notes                                                                                                                                                                                                 |
+| ------ | --------- | ------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/search` | public | 200 (always) | Query `q` (required), `sources` (CSV, optional — omit for all adapters). `ExternalSearchResponse{query, hits[], partial_failures{}}`. Per-source failures captured in `partial_failures`, not raised. |
+| POST   | `/import` | admin  | 200          | Body `ImportBookRequest{source, source_id}` → `BookWithReleasesResponse` **(rating fields not computed — see quirk above)**. 404 unknown adapter/source book; 502 possible from adapter internals     |
 
 ### Schemas (verbatim)
 
 ```ts
 // books
-interface CreateBookSchema { title: string; original_title?: string|null; original_language?: string|null; first_publication_year?: number|null; description: string }
-interface UpdateBookSchema { title?: string|null; original_title?: string|null; original_language?: string|null; first_publication_year?: number|null; description?: string|null }
-interface BookResponse { id: string; title: string; original_title: string|null; original_language: string|null; first_publication_year: number|null; description: string; created_at: string; updated_at: string }
-interface ISBNResponse { id: string; code_normalized: string; code_original: string; kind: "isbn10"|"isbn13"|"asin"|"other" }
-interface ReleaseWithISBNsResponse { id: string; format: ReleaseFormat; publisher: string; published_year: number|null; language: string; page_count: number|null; duration_minutes: number|null; cover_image_url: string|null; description_override: string|null; isbns: ISBNResponse[]; average_rating: number|null; rating_count: number }
-interface BookWithReleasesResponse extends BookResponse { releases: ReleaseWithISBNsResponse[]; average_rating: number|null; rating_count: number }
-interface CreateReleaseSchema { book_id: string; format: ReleaseFormat; publisher: string; published_year?: number|null; language: string; page_count?: number|null; duration_minutes?: number|null; cover_image_url?: string|null; description_override?: string|null }
-interface UpdateReleaseSchema { format?: ReleaseFormat; publisher?: string; published_year?: number|null; language?: string; page_count?: number|null; duration_minutes?: number|null; cover_image_url?: string|null; description_override?: string|null }
-interface ImportBookRequest { source: string; source_id: string }
+interface CreateBookSchema {
+  title: string;
+  original_title?: string | null;
+  original_language?: string | null;
+  first_publication_year?: number | null;
+  description: string;
+}
+interface UpdateBookSchema {
+  title?: string | null;
+  original_title?: string | null;
+  original_language?: string | null;
+  first_publication_year?: number | null;
+  description?: string | null;
+}
+interface BookResponse {
+  id: string;
+  title: string;
+  original_title: string | null;
+  original_language: string | null;
+  first_publication_year: number | null;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+interface ISBNResponse {
+  id: string;
+  code_normalized: string;
+  code_original: string;
+  kind: "isbn10" | "isbn13" | "asin" | "other";
+}
+interface ReleaseWithISBNsResponse {
+  id: string;
+  format: ReleaseFormat;
+  publisher: string;
+  published_year: number | null;
+  language: string;
+  page_count: number | null;
+  duration_minutes: number | null;
+  cover_image_url: string | null;
+  description_override: string | null;
+  isbns: ISBNResponse[];
+  average_rating: number | null;
+  rating_count: number;
+}
+interface BookWithReleasesResponse extends BookResponse {
+  releases: ReleaseWithISBNsResponse[];
+  average_rating: number | null;
+  rating_count: number;
+}
+interface CreateReleaseSchema {
+  book_id: string;
+  format: ReleaseFormat;
+  publisher: string;
+  published_year?: number | null;
+  language: string;
+  page_count?: number | null;
+  duration_minutes?: number | null;
+  cover_image_url?: string | null;
+  description_override?: string | null;
+}
+interface UpdateReleaseSchema {
+  format?: ReleaseFormat;
+  publisher?: string;
+  published_year?: number | null;
+  language?: string;
+  page_count?: number | null;
+  duration_minutes?: number | null;
+  cover_image_url?: string | null;
+  description_override?: string | null;
+}
+interface ImportBookRequest {
+  source: string;
+  source_id: string;
+}
 
 // contributors
-interface CreateContributorSchema { full_name: string; sort_name: string; birth_year?: number|null; death_year?: number|null; bio?: string|null }
-interface UpdateContributorSchema { full_name?: string; sort_name?: string; birth_year?: number|null; death_year?: number|null; bio?: string|null }
-interface ContributorResponse { id: string; full_name: string; sort_name: string; birth_year: number|null; death_year: number|null; bio: string|null; slug: string; created_at: string; updated_at: string }
-interface ContributorBookSummary { id: string; title: string }
-interface ContributorReleaseSummary { id: string; format: ReleaseFormat; publisher: string; language: string }
-interface ContributorDetailResponse extends ContributorResponse { books_by_role: Record<ContributorRole, ContributorBookSummary[]>; releases_by_role: Record<ContributorRole, ContributorReleaseSummary[]> }
-interface AddContributorSchema { contributor_id: string; role: ContributorRole }
+interface CreateContributorSchema {
+  full_name: string;
+  sort_name: string;
+  birth_year?: number | null;
+  death_year?: number | null;
+  bio?: string | null;
+}
+interface UpdateContributorSchema {
+  full_name?: string;
+  sort_name?: string;
+  birth_year?: number | null;
+  death_year?: number | null;
+  bio?: string | null;
+}
+interface ContributorResponse {
+  id: string;
+  full_name: string;
+  sort_name: string;
+  birth_year: number | null;
+  death_year: number | null;
+  bio: string | null;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+}
+interface ContributorBookSummary {
+  id: string;
+  title: string;
+}
+interface ContributorReleaseSummary {
+  id: string;
+  format: ReleaseFormat;
+  publisher: string;
+  language: string;
+}
+interface ContributorDetailResponse extends ContributorResponse {
+  books_by_role: Record<ContributorRole, ContributorBookSummary[]>;
+  releases_by_role: Record<ContributorRole, ContributorReleaseSummary[]>;
+}
+interface AddContributorSchema {
+  contributor_id: string;
+  role: ContributorRole;
+}
 
 // external
-interface ExternalSearchHit { source: string; title: string; isbns: string[]; authors: string[]; cover_image_url: string|null }
-interface ExternalSearchResponse { query: string; hits: ExternalSearchHit[]; partial_failures: Record<string,string> }
+interface ExternalSearchHit {
+  source: string;
+  title: string;
+  isbns: string[];
+  authors: string[];
+  cover_image_url: string | null;
+}
+interface ExternalSearchResponse {
+  query: string;
+  hits: ExternalSearchHit[];
+  partial_failures: Record<string, string>;
+}
 
 // version history
-interface EntityVersionResponse { id: string; entity_type: "book"|"release"|"contributor"; entity_id: string; version_number: number; changed_by_user_id: string|null; change_source: "admin"|"contribution"|"external_sync"|"system"; contribution_id: string|null; created_at: string }
-interface EntityVersionDetailResponse extends EntityVersionResponse { snapshot: Record<string, unknown> }
+interface EntityVersionResponse {
+  id: string;
+  entity_type: "book" | "release" | "contributor";
+  entity_id: string;
+  version_number: number;
+  changed_by_user_id: string | null;
+  change_source: "admin" | "contribution" | "external_sync" | "system";
+  contribution_id: string | null;
+  created_at: string;
+}
+interface EntityVersionDetailResponse extends EntityVersionResponse {
+  snapshot: Record<string, unknown>;
+}
 
 // reviews (display-only in this block)
-interface ReviewResponse { id: string; user_id: string|null; book_id: string|null; release_id: string|null; rating: number|null; title: string|null; body: string|null; is_public: boolean; contains_spoilers: boolean; created_at: string; updated_at: string }
+interface ReviewResponse {
+  id: string;
+  user_id: string | null;
+  book_id: string | null;
+  release_id: string | null;
+  rating: number | null;
+  title: string | null;
+  body: string | null;
+  is_public: boolean;
+  contains_spoilers: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 // enums
-type ContributorRole = "author"|"co_author"|"translator"|"illustrator"|"editor"|"narrator"|"foreword"|"other"
-type ReleaseFormat = "hardcover"|"paperback"|"ebook"|"audiobook"|"other"
-type ReviewSort = "created_at"|"rating"
+type ContributorRole =
+  | "author"
+  | "co_author"
+  | "translator"
+  | "illustrator"
+  | "editor"
+  | "narrator"
+  | "foreword"
+  | "other";
+type ReleaseFormat = "hardcover" | "paperback" | "ebook" | "audiobook" | "other";
+type ReviewSort = "created_at" | "rating";
 ```

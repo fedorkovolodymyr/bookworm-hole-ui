@@ -17,7 +17,9 @@ export function ReleaseCard({ release }: { release: ReleaseWithISBNsResponse }) 
       <CardContent className="flex flex-col gap-1 text-sm">
         {release.published_year && <p>{release.published_year}</p>}
         <p className="text-muted-foreground">
-          {release.rating_count > 0 ? t("ratingCount", { count: release.rating_count }) : t("noRating")}
+          {release.rating_count > 0
+            ? t("ratingCount", { count: release.rating_count })
+            : t("noRating")}
         </p>
       </CardContent>
     </Card>
