@@ -280,3 +280,44 @@ export interface ContributorListParams {
   name?: string;
   role?: ContributorRole;
 }
+
+// --- Contributions domain types ---
+
+export type ContributionKind =
+  | "new_book"
+  | "new_release"
+  | "new_contributor"
+  | "edit_book"
+  | "edit_release"
+  | "edit_contributor";
+
+export type ContributionStatus =
+  | "draft"
+  | "submitted"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "merged";
+
+export interface CreateContributionPayload {
+  kind: ContributionKind;
+  target_id?: string | null;
+  payload: Record<string, unknown>;
+}
+
+export interface UpdateContributionPayload {
+  payload: Record<string, unknown>;
+}
+
+export interface ContributionResponse {
+  id: string;
+  user_id: string;
+  kind: ContributionKind;
+  target_id: string | null;
+  payload: Record<string, unknown>;
+  status: ContributionStatus;
+  reviewer_id: string | null;
+  review_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
