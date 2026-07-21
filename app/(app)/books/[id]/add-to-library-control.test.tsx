@@ -31,7 +31,8 @@ describe("AddToLibraryControl", () => {
     const user = userEvent.setup();
     renderControl();
     await user.click(screen.getByRole("combobox"));
-    await user.click(screen.getByRole("option", { name: "Wishlist" }));
+    const option = await screen.findByRole("option", { name: "Wishlist" });
+    await user.click(option);
     await waitFor(() => expect(capturedBody).toMatchObject({ book_id: "b1", status: "wishlist" }));
   });
 });
