@@ -4,7 +4,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import { server } from "@/tests/mocks/server";
-import { useRelease } from "./useReleases";
+import { useRelease, useReleaseReviews } from "./useReleases";
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -49,5 +49,18 @@ describe("useRelease", () => {
   it("does not fetch when releaseId is undefined", () => {
     const { result } = renderHook(() => useRelease(undefined), { wrapper });
     expect(result.current.fetchStatus).toBe("idle");
+  });
+});
+
+describe("useReleaseReviews", () => {
+  it("fetches reviews for a release", async () => {
+    server.use(
+      http.get("/api/releases/:id/reviews", () =>
+        HttpResponse.json({ items: [{ id: "r1" }], total: 1, limit: 10, offset: 0 }),
+      ),
+    );
+    const { result } = renderHook(() => useReleaseReviews("rel1"), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.items[0].id).toBe("r1");
   });
 });
