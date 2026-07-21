@@ -10,7 +10,8 @@
     "somethingWentWrong": "Щось пішло не так. Спробуйте ще раз.",
     "language": "Мова",
     "english": "Англійська",
-    "ukrainian": "Українська"
+    "ukrainian": "Українська",
+    "notAvailable": "Недоступно."
   },
   "auth": {
     "login": {

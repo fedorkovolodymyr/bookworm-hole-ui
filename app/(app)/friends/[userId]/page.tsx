@@ -11,6 +11,7 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
   const { userId } = use(params);
   const t = useTranslations("collections");
   const statusesT = useTranslations("statuses");
+  const commonT = useTranslations("common");
   const { data: collectionsPage, isPending: collectionsPending, isError: collectionsError } =
     useFriendCollections(userId);
   const { data: libraryPage, isPending: libraryPending, isError: libraryError } =
@@ -21,7 +22,7 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{t("pageTitle")}</h2>
         {collectionsPending && <Skeleton className="h-40 w-full" />}
-        {collectionsError && <p className="text-muted-foreground">Not available.</p>}
+        {collectionsError && <p className="text-muted-foreground">{commonT("notAvailable")}</p>}
         {!collectionsPending && !collectionsError && collectionsPage?.items.length === 0 && (
           <p className="text-muted-foreground">{t("empty")}</p>
         )}
@@ -36,7 +37,7 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{statusesT("tabs.library")}</h2>
         {libraryPending && <Skeleton className="h-40 w-full" />}
-        {libraryError && <p className="text-muted-foreground">Not available.</p>}
+        {libraryError && <p className="text-muted-foreground">{commonT("notAvailable")}</p>}
         {!libraryPending && !libraryError && libraryPage?.items.length === 0 && (
           <p className="text-muted-foreground">{statusesT("empty")}</p>
         )}

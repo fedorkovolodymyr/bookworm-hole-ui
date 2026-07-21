@@ -10,7 +10,8 @@
     "somethingWentWrong": "Something went wrong. Please try again.",
     "language": "Language",
     "english": "English",
-    "ukrainian": "Ukrainian"
+    "ukrainian": "Ukrainian",
+    "notAvailable": "Not available."
   },
   "auth": {
     "login": {
