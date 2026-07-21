@@ -23,7 +23,7 @@ describe("releases api client", () => {
     server.use(
       http.get("/api/releases/:id/history", () =>
         HttpResponse.json({
-          items: [{ id: "v1", version: 1 }],
+          items: [{ id: "v1", version_number: 1, entity_type: "release", entity_id: "rel1", changed_by_user_id: null, change_source: "system", contribution_id: null, created_at: "2026-01-01T00:00:00Z" }],
           total: 1,
           limit: 10,
           offset: 0,
@@ -31,20 +31,27 @@ describe("releases api client", () => {
       ),
     );
     const result = await getReleaseHistory("rel1");
-    expect(result.items[0].version).toBe(1);
+    expect(result.items[0].version_number).toBe(1);
   });
 
   it("gets a specific release version", async () => {
     server.use(
       http.get("/api/releases/:id/history/:version", ({ params }) =>
         HttpResponse.json({
-          version: parseInt(params.version as string, 10),
-          changed_fields: [],
+          id: "v1",
+          entity_type: "release",
+          entity_id: "rel1",
+          version_number: parseInt(params.version as string, 10),
+          changed_by_user_id: null,
+          change_source: "system",
+          contribution_id: null,
+          created_at: "2026-01-01T00:00:00Z",
+          snapshot: { format: "hardcover" },
         }),
       ),
     );
     const result = await getReleaseVersion("rel1", 1);
-    expect(result.version).toBe(1);
+    expect(result.version_number).toBe(1);
   });
 
   describe("getReleaseReviews", () => {
