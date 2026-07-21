@@ -317,3 +317,157 @@ export interface ContributionResponse {
   created_at: string;
   updated_at: string;
 }
+
+// --- Collections domain types ---
+
+export interface CollectionResponse {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  is_public: boolean;
+  cover_image_url: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CollectionItemResponse {
+  id: string;
+  collection_id: string;
+  book_id: string | null;
+  release_id: string | null;
+  position: number;
+  added_at: string;
+  note: string | null;
+}
+
+export interface CollectionDetailResponse extends CollectionResponse {
+  items: Page<CollectionItemResponse>;
+}
+
+export interface CreateCollectionPayload {
+  name: string;
+  description?: string | null;
+  is_public?: boolean;
+  cover_image_url?: string | null;
+}
+
+export interface UpdateCollectionPayload {
+  name?: string;
+  description?: string | null;
+  is_public?: boolean;
+  cover_image_url?: string | null;
+}
+
+export interface AddCollectionItemPayload {
+  book_id?: string | null;
+  release_id?: string | null;
+  note?: string | null;
+}
+
+export interface UpdateCollectionItemPayload {
+  position?: number;
+  note?: string | null;
+}
+
+export interface CollectionListParams {
+  skip?: number;
+  limit?: number;
+}
+
+export interface CollectionItemListParams {
+  items_skip?: number;
+  items_limit?: number;
+}
+
+// --- Reviews domain types (extends Block 2's ReviewResponse) ---
+
+export interface CreateReviewPayload {
+  book_id?: string | null;
+  release_id?: string | null;
+  rating?: number | null;
+  title?: string | null;
+  body?: string | null;
+  is_public?: boolean;
+  contains_spoilers?: boolean;
+}
+
+export interface UpdateReviewPayload {
+  rating?: number | null;
+  title?: string | null;
+  body?: string | null;
+  is_public?: boolean;
+  contains_spoilers?: boolean;
+}
+
+// --- Statuses domain types ---
+
+export type BookStatusKind =
+  | "owned"
+  | "wishlist"
+  | "pre_order"
+  | "lent_out"
+  | "borrowed"
+  | "gifted_away"
+  | "sold"
+  | "lost";
+
+export interface BookStatusResponse {
+  id: string;
+  user_id: string;
+  book_id: string | null;
+  release_id: string | null;
+  status: BookStatusKind;
+  acquired_at: string | null;
+  notes: string | null;
+  lent_to_user_id: string | null;
+  lent_to_name: string | null;
+  lent_at: string | null;
+  returned_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateStatusPayload {
+  book_id?: string | null;
+  release_id?: string | null;
+  status: BookStatusKind;
+  notes?: string | null;
+}
+
+export interface UpdateStatusPayload {
+  status?: BookStatusKind;
+  notes?: string | null;
+}
+
+export interface LendStatusPayload {
+  lent_to_user_id?: string | null;
+  lent_to_name?: string | null;
+}
+
+export type StatusViewSort = "acquired_at" | "title";
+
+export interface StatusViewParams {
+  sort?: StatusViewSort;
+  skip?: number;
+  limit?: number;
+}
+
+// --- Share domain types ---
+
+export interface ChatMessageResponse {
+  id: string;
+  thread_id: string;
+  sender_id: string;
+  body: string;
+  attachment_book_id: string | null;
+  attachment_collection_id: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface SharePayload {
+  friend_id: string;
+  message: string;
+}
