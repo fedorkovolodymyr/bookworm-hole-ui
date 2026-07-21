@@ -226,6 +226,9 @@
     "newCollection": "New collection",
     "empty": "You haven't created any collections yet.",
     "loading": "Loading collections...",
+    "card": {
+      "publicBadge": "Public"
+    },
     "form": {
       "nameLabel": "Name",
       "descriptionLabel": "Description",

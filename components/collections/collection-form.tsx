@@ -35,7 +35,11 @@ export function CollectionForm({
       is_public: isPublic,
       cover_image_url: coverImageUrl || null,
     };
-    mutation.mutate(payload as never, { onSuccess });
+    if (isEditing) {
+      updateCollection.mutate(payload, { onSuccess });
+    } else {
+      createCollection.mutate(payload, { onSuccess });
+    }
   }
 
   return (

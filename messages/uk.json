@@ -226,6 +226,9 @@
     "newCollection": "Нова колекція",
     "empty": "Ви ще не створили жодної колекції.",
     "loading": "Завантаження колекцій...",
+    "card": {
+      "publicBadge": "Публічна"
+    },
     "form": {
       "nameLabel": "Назва",
       "descriptionLabel": "Опис",
