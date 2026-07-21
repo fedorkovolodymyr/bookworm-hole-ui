@@ -1,8 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { http, HttpResponse } from "msw";
+import { server } from "@/tests/mocks/server";
 import { ReviewCard } from "./review-card";
 import enMessages from "@/messages/en.json";
 import type { ReviewResponse } from "@/lib/api/types";
@@ -60,5 +62,37 @@ describe("ReviewCard", () => {
     renderCard({ currentUserId: "u1", onEdit });
     await user.click(screen.getByRole("button", { name: /edit review/i }));
     expect(onEdit).toHaveBeenCalled();
+  });
+
+  it("opens a confirmation dialog instead of deleting immediately", async () => {
+    const user = userEvent.setup();
+    renderCard({ currentUserId: "u1" });
+    await user.click(screen.getByRole("button", { name: /delete review/i }));
+    expect(screen.getByText(/delete this review/i)).toBeInTheDocument();
+    expect(screen.getByText(/cannot be undone/i)).toBeInTheDocument();
+  });
+
+  it("only triggers the delete mutation after confirming in the dialog", async () => {
+    const deleteHandler = vi.fn();
+    server.use(
+      http.delete("/api/reviews/:id", ({ params }) => {
+        deleteHandler(params.id);
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const user = userEvent.setup();
+    renderCard({ currentUserId: "u1" });
+    await user.click(screen.getByRole("button", { name: /delete review/i }));
+
+    const dialog = screen.getByRole("dialog");
+    const confirmButton = within(dialog).getByRole("button", { name: /delete review/i });
+    await user.click(confirmButton);
+
+    await waitFor(() => {
+      expect(deleteHandler).toHaveBeenCalledWith("r1");
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
   });
 });

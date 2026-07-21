@@ -1,8 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { StarIcon } from "lucide-react";
 import { useDeleteReview } from "@/hooks/useReviews";
 import type { ReviewResponse } from "@/lib/api/types";
@@ -18,6 +28,7 @@ export function ReviewCard({
 }) {
   const t = useTranslations("reviews");
   const deleteReview = useDeleteReview();
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const isOwnReview = currentUserId !== undefined && review.user_id === currentUserId;
 
   return (
@@ -38,14 +49,30 @@ export function ReviewCard({
           <Button variant="ghost" size="sm" onClick={onEdit}>
             {t("editReview")}
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => deleteReview.mutate(review.id)}
-            disabled={deleteReview.isPending}
-          >
-            {t("deleteReview")}
-          </Button>
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+            <DialogTrigger render={<Button variant="ghost" size="sm" />}>
+              {t("deleteReview")}
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("deleteConfirmTitle")}</DialogTitle>
+                <DialogDescription>{t("deleteConfirmDescription")}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="destructive"
+                  disabled={deleteReview.isPending}
+                  onClick={() =>
+                    deleteReview.mutate(review.id, {
+                      onSuccess: () => setDeleteOpen(false),
+                    })
+                  }
+                >
+                  {t("deleteReview")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
     </div>
