@@ -1,18 +1,22 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ReviewCard } from "./review-card";
 import type { ReviewResponse } from "@/lib/api/types";
 
 export function ReviewList({
   reviews,
   isLoading,
+  currentUserId,
+  onEdit,
 }: {
   reviews: ReviewResponse[];
   isLoading: boolean;
+  currentUserId?: string;
+  onEdit: (review: ReviewResponse) => void;
 }) {
-  const t = useTranslations("catalog.reviews");
+  const t = useTranslations("reviews");
 
   if (isLoading) {
     return (
@@ -31,16 +35,12 @@ export function ReviewList({
   return (
     <div className="flex flex-col gap-4">
       {reviews.map((review) => (
-        <div
+        <ReviewCard
           key={review.id}
-          className="border-border flex flex-col gap-1 border-b pb-4 last:border-b-0"
-        >
-          <div className="flex items-center gap-2">
-            {review.title && <p className="font-medium">{review.title}</p>}
-            {review.contains_spoilers && <Badge variant="outline">{t("spoilerWarning")}</Badge>}
-          </div>
-          {review.body && <p className="text-muted-foreground text-sm">{review.body}</p>}
-        </div>
+          review={review}
+          currentUserId={currentUserId}
+          onEdit={() => onEdit(review)}
+        />
       ))}
     </div>
   );
