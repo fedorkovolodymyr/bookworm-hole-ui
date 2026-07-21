@@ -38,7 +38,9 @@ export function ReviewForm({
   const [title, setTitle] = React.useState(review?.title ?? "");
   const [body, setBody] = React.useState(review?.body ?? "");
   const [isPublic, setIsPublic] = React.useState(review?.is_public ?? true);
-  const [containsSpoilers, setContainsSpoilers] = React.useState(review?.contains_spoilers ?? false);
+  const [containsSpoilers, setContainsSpoilers] = React.useState(
+    review?.contains_spoilers ?? false,
+  );
 
   const createReview = useCreateReview();
   const updateReview = useUpdateReview(review?.id ?? "");
@@ -47,7 +49,13 @@ export function ReviewForm({
   function handleSubmit() {
     if (isEditing) {
       updateReview.mutate(
-        { rating, title: title || null, body: body || null, is_public: isPublic, contains_spoilers: containsSpoilers },
+        {
+          rating,
+          title: title || null,
+          body: body || null,
+          is_public: isPublic,
+          contains_spoilers: containsSpoilers,
+        },
         { onSuccess },
       );
       return;
@@ -110,7 +118,9 @@ export function ReviewForm({
       </label>
       {mutation.error && (
         <p className="text-destructive text-sm">
-          {isExactlyOneOfError(mutation.error) ? t("exactlyOneRequired") : extractErrorMessage(mutation.error)}
+          {isExactlyOneOfError(mutation.error)
+            ? t("exactlyOneRequired")
+            : extractErrorMessage(mutation.error)}
         </p>
       )}
       <Button disabled={mutation.isPending} onClick={handleSubmit}>

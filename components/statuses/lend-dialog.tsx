@@ -46,13 +46,21 @@ export function LendDialog({
             <label htmlFor="lend-friend-id" className="text-sm font-medium">
               {t("friendIdLabel")}
             </label>
-            <Input id="lend-friend-id" value={friendUserId} onChange={(e) => setFriendUserId(e.target.value)} />
+            <Input
+              id="lend-friend-id"
+              value={friendUserId}
+              onChange={(e) => setFriendUserId(e.target.value)}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="lend-friend-name" className="text-sm font-medium">
               {t("orNameLabel")}
             </label>
-            <Input id="lend-friend-name" value={friendName} onChange={(e) => setFriendName(e.target.value)} />
+            <Input
+              id="lend-friend-name"
+              value={friendName}
+              onChange={(e) => setFriendName(e.target.value)}
+            />
           </div>
           {lendStatus.error && (
             <p className="text-destructive text-sm">{extractErrorMessage(lendStatus.error)}</p>

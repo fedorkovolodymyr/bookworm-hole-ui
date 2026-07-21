@@ -38,7 +38,11 @@ describe("reviews api client", () => {
         HttpResponse.json(
           {
             detail: [
-              { type: "value_error", loc: ["body"], msg: "Value error, exactly one of book_id or release_id is required" },
+              {
+                type: "value_error",
+                loc: ["body"],
+                msg: "Value error, exactly one of book_id or release_id is required",
+              },
             ],
           },
           { status: 422 },

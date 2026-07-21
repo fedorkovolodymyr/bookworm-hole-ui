@@ -92,7 +92,9 @@ export default function BookDetailPage({ params }: { params: Promise<{ id: strin
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>{editingReview ? reviewsT("editReview") : reviewsT("writeReview")}</DialogTitle>
+                  <DialogTitle>
+                    {editingReview ? reviewsT("editReview") : reviewsT("writeReview")}
+                  </DialogTitle>
                 </DialogHeader>
                 <ReviewForm
                   bookId={editingReview ? undefined : book.id}

@@ -25,7 +25,9 @@ describe("useShareBook", () => {
 describe("useShareCollection", () => {
   it("shares a collection", async () => {
     server.use(
-      http.post("/api/share/collection/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })),
+      http.post("/api/share/collection/:id", () =>
+        HttpResponse.json({ id: "m1", thread_id: "t1" }),
+      ),
     );
     const { result } = renderHook(() => useShareCollection(), { wrapper });
     result.current.mutate({ collectionId: "c1", payload: { friend_id: "f1", message: "hi" } });

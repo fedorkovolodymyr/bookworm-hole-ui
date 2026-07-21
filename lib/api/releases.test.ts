@@ -23,7 +23,18 @@ describe("releases api client", () => {
     server.use(
       http.get("/api/releases/:id/history", () =>
         HttpResponse.json({
-          items: [{ id: "v1", version_number: 1, entity_type: "release", entity_id: "rel1", changed_by_user_id: null, change_source: "system", contribution_id: null, created_at: "2026-01-01T00:00:00Z" }],
+          items: [
+            {
+              id: "v1",
+              version_number: 1,
+              entity_type: "release",
+              entity_id: "rel1",
+              changed_by_user_id: null,
+              change_source: "system",
+              contribution_id: null,
+              created_at: "2026-01-01T00:00:00Z",
+            },
+          ],
           total: 1,
           limit: 10,
           offset: 0,

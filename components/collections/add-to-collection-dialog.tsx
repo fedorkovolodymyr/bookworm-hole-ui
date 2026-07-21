@@ -45,7 +45,13 @@ function AddToCollectionItem({
   );
 }
 
-export function AddToCollectionDialog({ bookId, releaseId }: { bookId?: string; releaseId?: string }) {
+export function AddToCollectionDialog({
+  bookId,
+  releaseId,
+}: {
+  bookId?: string;
+  releaseId?: string;
+}) {
   const t = useTranslations("collections.addToCollection");
   const { data: collectionsPage } = useCollections();
   const collections = collectionsPage?.items ?? [];

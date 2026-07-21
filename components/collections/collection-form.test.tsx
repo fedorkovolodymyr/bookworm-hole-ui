@@ -30,7 +30,9 @@ describe("CollectionForm", () => {
 
   it("submits a new collection and calls onSuccess", async () => {
     server.use(
-      http.post("/api/collections", () => HttpResponse.json({ id: "c1", name: "Favorites" }, { status: 201 })),
+      http.post("/api/collections", () =>
+        HttpResponse.json({ id: "c1", name: "Favorites" }, { status: 201 }),
+      ),
     );
     const onSuccess = vi.fn();
     const user = userEvent.setup();

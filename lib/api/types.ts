@@ -404,14 +404,7 @@ export interface UpdateReviewPayload {
 // --- Statuses domain types ---
 
 export type BookStatusKind =
-  | "owned"
-  | "wishlist"
-  | "pre_order"
-  | "lent_out"
-  | "borrowed"
-  | "gifted_away"
-  | "sold"
-  | "lost";
+  "owned" | "wishlist" | "pre_order" | "lent_out" | "borrowed" | "gifted_away" | "sold" | "lost";
 
 export interface BookStatusResponse {
   id: string;

@@ -21,7 +21,12 @@ describe("useCollections", () => {
   it("fetches a page of collections", async () => {
     server.use(
       http.get("/api/collections", () =>
-        HttpResponse.json({ items: [{ id: "c1", name: "Favorites" }], total: 1, limit: 10, offset: 0 }),
+        HttpResponse.json({
+          items: [{ id: "c1", name: "Favorites" }],
+          total: 1,
+          limit: 10,
+          offset: 0,
+        }),
       ),
     );
     const { result } = renderHook(() => useCollections(), { wrapper });
@@ -38,7 +43,9 @@ describe("useCollection", () => {
 
   it("surfaces a 404", async () => {
     server.use(
-      http.get("/api/collections/:id", () => HttpResponse.json({ detail: "Not found" }, { status: 404 })),
+      http.get("/api/collections/:id", () =>
+        HttpResponse.json({ detail: "Not found" }, { status: 404 }),
+      ),
     );
     const { result } = renderHook(() => useCollection("missing"), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -48,7 +55,9 @@ describe("useCollection", () => {
 describe("useCreateCollection", () => {
   it("creates a collection and invalidates the list", async () => {
     server.use(
-      http.post("/api/collections", () => HttpResponse.json({ id: "c1", name: "New" }, { status: 201 })),
+      http.post("/api/collections", () =>
+        HttpResponse.json({ id: "c1", name: "New" }, { status: 201 }),
+      ),
     );
     const { result } = renderHook(() => useCreateCollection(), { wrapper });
     result.current.mutate({ name: "New" });

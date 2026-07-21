@@ -59,10 +59,7 @@ export async function updateCollectionItem(
   itemId: string,
   payload: UpdateCollectionItemPayload,
 ): Promise<CollectionItemResponse> {
-  const { data } = await apiClient.patch(
-    `/collections/${collectionId}/items/${itemId}`,
-    payload,
-  );
+  const { data } = await apiClient.patch(`/collections/${collectionId}/items/${itemId}`, payload);
   return data;
 }
 

@@ -21,7 +21,9 @@ function renderDialog(props: Partial<React.ComponentProps<typeof ShareDialog>> =
 
 describe("ShareDialog", () => {
   it("shares a book with a friend and message", async () => {
-    server.use(http.post("/api/share/book/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })));
+    server.use(
+      http.post("/api/share/book/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })),
+    );
     const user = userEvent.setup();
     renderDialog();
     await user.click(screen.getByRole("button", { name: /^share$/i }));
@@ -32,7 +34,11 @@ describe("ShareDialog", () => {
   });
 
   it("shares a collection when kind is collection", async () => {
-    server.use(http.post("/api/share/collection/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })));
+    server.use(
+      http.post("/api/share/collection/:id", () =>
+        HttpResponse.json({ id: "m1", thread_id: "t1" }),
+      ),
+    );
     const user = userEvent.setup();
     renderDialog({ kind: "collection", targetId: "c1" });
     await user.click(screen.getByRole("button", { name: /^share$/i }));

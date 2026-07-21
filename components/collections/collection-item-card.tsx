@@ -31,10 +31,22 @@ export function CollectionItemCard({
           {item.note && <p className="text-muted-foreground text-sm">{item.note}</p>}
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" disabled={isFirst} onClick={onMoveUp} aria-label={t("moveUp")}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            disabled={isFirst}
+            onClick={onMoveUp}
+            aria-label={t("moveUp")}
+          >
             <ChevronUpIcon />
           </Button>
-          <Button variant="ghost" size="icon-sm" disabled={isLast} onClick={onMoveDown} aria-label={t("moveDown")}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            disabled={isLast}
+            onClick={onMoveDown}
+            aria-label={t("moveDown")}
+          >
             <ChevronDownIcon />
           </Button>
           <Button variant="ghost" size="icon-sm" onClick={onRemove} aria-label={t("removeItem")}>

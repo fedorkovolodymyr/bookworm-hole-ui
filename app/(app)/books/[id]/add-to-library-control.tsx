@@ -19,7 +19,9 @@ export function AddToLibraryControl({ bookId }: { bookId: string }) {
 
   return (
     <Select
-      onValueChange={(value) => createStatus.mutate({ book_id: bookId, status: value as BookStatusKind })}
+      onValueChange={(value) =>
+        createStatus.mutate({ book_id: bookId, status: value as BookStatusKind })
+      }
     >
       <SelectTrigger aria-label={t("pageTitle")}>
         <SelectValue placeholder={t("pageTitle")} />

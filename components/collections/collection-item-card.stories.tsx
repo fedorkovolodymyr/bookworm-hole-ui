@@ -29,7 +29,14 @@ const baseItem = {
 };
 
 export const Default: StoryObj<typeof CollectionItemCard> = {
-  args: { item: baseItem, isFirst: false, isLast: false, onMoveUp: () => {}, onMoveDown: () => {}, onRemove: () => {} },
+  args: {
+    item: baseItem,
+    isFirst: false,
+    isLast: false,
+    onMoveUp: () => {},
+    onMoveDown: () => {},
+    onRemove: () => {},
+  },
 };
 export const FirstItem: StoryObj<typeof CollectionItemCard> = {
   args: { ...Default.args, isFirst: true },

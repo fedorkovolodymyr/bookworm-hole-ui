@@ -38,7 +38,9 @@ const baseReview = {
   updated_at: "2020-01-01T00:00:00Z",
 };
 
-export const AsViewer: StoryObj<typeof ReviewCard> = { args: { review: baseReview, onEdit: () => {} } };
+export const AsViewer: StoryObj<typeof ReviewCard> = {
+  args: { review: baseReview, onEdit: () => {} },
+};
 export const AsAuthor: StoryObj<typeof ReviewCard> = {
   args: { review: baseReview, currentUserId: "u1", onEdit: () => {} },
 };

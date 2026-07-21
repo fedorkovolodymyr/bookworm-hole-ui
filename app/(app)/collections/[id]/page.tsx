@@ -54,7 +54,12 @@ function DraggableCollectionItem({
   item: CollectionItemResponse;
   children: React.ReactNode;
 }) {
-  const { attributes, listeners, setNodeRef: setDraggableRef, isDragging } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setDraggableRef,
+    isDragging,
+  } = useDraggable({
     id: item.id,
   });
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: item.id });
@@ -203,7 +208,11 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
           <p className="text-muted-foreground">{t("detail.emptyItems")}</p>
         )}
         {orderedItems.length > 0 && (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
             <div className="flex flex-col gap-2">
               {orderedItems.map((item, index) => (
                 <DraggableCollectionItem key={item.id} item={item}>

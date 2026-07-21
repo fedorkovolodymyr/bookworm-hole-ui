@@ -30,9 +30,11 @@
 ### Task 1: Add Collections/Reviews/Statuses/Share domain types
 
 **Files:**
+
 - Modify: `lib/api/types.ts` (append new sections at end of file)
 
 **Interfaces:**
+
 - Produces: `CollectionResponse`, `CollectionDetailResponse`, `CollectionItemResponse`, `CreateCollectionPayload`, `UpdateCollectionPayload`, `AddCollectionItemPayload`, `UpdateCollectionItemPayload`, `CollectionListParams`, `CreateReviewPayload`, `UpdateReviewPayload`, `BookStatusKind`, `BookStatusResponse`, `CreateStatusPayload`, `UpdateStatusPayload`, `LendStatusPayload`, `StatusViewParams`, `ChatMessageResponse`, `SharePayload` — used by every subsequent task in this plan.
 
 - [ ] **Step 1: Append the new type sections**
@@ -124,14 +126,7 @@ export interface UpdateReviewPayload {
 // --- Statuses domain types ---
 
 export type BookStatusKind =
-  | "owned"
-  | "wishlist"
-  | "pre_order"
-  | "lent_out"
-  | "borrowed"
-  | "gifted_away"
-  | "sold"
-  | "lost";
+  "owned" | "wishlist" | "pre_order" | "lent_out" | "borrowed" | "gifted_away" | "sold" | "lost";
 
 export interface BookStatusResponse {
   id: string;
@@ -210,10 +205,12 @@ git commit -m "feat(collections): add collections/reviews/statuses/share domain 
 ### Task 2: `lib/api/collections.ts`
 
 **Files:**
+
 - Create: `lib/api/collections.ts`
 - Test: `lib/api/collections.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient` from `lib/api/client.ts`; types from Task 1 (`CollectionResponse`, `CollectionDetailResponse`, `CollectionItemResponse`, `CreateCollectionPayload`, `UpdateCollectionPayload`, `AddCollectionItemPayload`, `UpdateCollectionItemPayload`, `CollectionListParams`, `CollectionItemListParams`, `Page`).
 - Produces: `listCollections(params)`, `getCollection(id, params)`, `createCollection(payload)`, `updateCollection(id, payload)`, `deleteCollection(id)`, `addCollectionItem(collectionId, payload)`, `updateCollectionItem(collectionId, itemId, payload)`, `removeCollectionItem(collectionId, itemId)`, `reorderCollectionItems(collectionId, itemIds)` — consumed by Task 5 hooks.
 
@@ -240,7 +237,12 @@ describe("collections api client", () => {
   it("lists collections", async () => {
     server.use(
       http.get("/api/collections", () =>
-        HttpResponse.json({ items: [{ id: "c1", name: "Favorites" }], total: 1, limit: 10, offset: 0 }),
+        HttpResponse.json({
+          items: [{ id: "c1", name: "Favorites" }],
+          total: 1,
+          limit: 10,
+          offset: 0,
+        }),
       ),
     );
     const result = await listCollections();
@@ -307,7 +309,10 @@ describe("collections api client", () => {
 
   it("removes a collection item", async () => {
     server.use(
-      http.delete("/api/collections/:id/items/:itemId", () => new HttpResponse(null, { status: 204 })),
+      http.delete(
+        "/api/collections/:id/items/:itemId",
+        () => new HttpResponse(null, { status: 204 }),
+      ),
     );
     await expect(removeCollectionItem("c1", "i1")).resolves.toBeUndefined();
   });
@@ -391,10 +396,7 @@ export async function updateCollectionItem(
   itemId: string,
   payload: UpdateCollectionItemPayload,
 ): Promise<CollectionItemResponse> {
-  const { data } = await apiClient.patch(
-    `/collections/${collectionId}/items/${itemId}`,
-    payload,
-  );
+  const { data } = await apiClient.patch(`/collections/${collectionId}/items/${itemId}`, payload);
   return data;
 }
 
@@ -427,12 +429,14 @@ git commit -m "feat(collections): add collections API client"
 ### Task 3: `lib/api/reviews.ts` + extend `lib/api/books.ts` with release reviews
 
 **Files:**
+
 - Create: `lib/api/reviews.ts`
 - Test: `lib/api/reviews.test.ts`
 - Create: `lib/api/releases.ts` addition — check if `lib/api/releases.ts` already exists first (it does, from Block 2); modify it to add `getReleaseReviews`.
 - Test: modify `lib/api/releases.test.ts` if it exists, else create `lib/api/releases.test.ts`.
 
 **Interfaces:**
+
 - Consumes: `apiClient`; types from Task 1 (`CreateReviewPayload`, `UpdateReviewPayload`); `ReviewResponse`, `ReviewSort`, `Page` from Block 2's `lib/api/types.ts`.
 - Produces: `createReview(payload)`, `getReview(id)`, `updateReview(id, payload)`, `deleteReview(id)`, `getReleaseReviews(releaseId, params)` — consumed by Task 5 hooks.
 
@@ -484,7 +488,11 @@ describe("reviews api client", () => {
         HttpResponse.json(
           {
             detail: [
-              { type: "value_error", loc: ["body"], msg: "Value error, exactly one of book_id or release_id is required" },
+              {
+                type: "value_error",
+                loc: ["body"],
+                msg: "Value error, exactly one of book_id or release_id is required",
+              },
             ],
           },
           { status: 422 },
@@ -585,10 +593,12 @@ git commit -m "feat(reviews): add reviews API client and release-reviews endpoin
 ### Task 4: `lib/api/statuses.ts`
 
 **Files:**
+
 - Create: `lib/api/statuses.ts`
 - Test: `lib/api/statuses.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`; types from Task 1 (`BookStatusResponse`, `BookStatusKind`, `CreateStatusPayload`, `UpdateStatusPayload`, `LendStatusPayload`, `StatusViewParams`, `Page`).
 - Produces: `listStatuses(status?)`, `createStatus(payload)`, `updateStatus(id, payload)`, `deleteStatus(id)`, `lendStatus(id, payload)`, `returnStatus(id)`, `getLibrary(params)`, `getWishlist(params)`, `getLentOut(params)`, `getBorrowed(params)` — consumed by Task 5 hooks.
 
@@ -678,10 +688,18 @@ describe("statuses api client", () => {
 
   it("fetches library, wishlist, lent-out, borrowed as paginated views", async () => {
     server.use(
-      http.get("/api/me/library", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
-      http.get("/api/me/wishlist", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
-      http.get("/api/me/lent-out", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
-      http.get("/api/me/borrowed", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
+      http.get("/api/me/library", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
+      http.get("/api/me/wishlist", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
+      http.get("/api/me/lent-out", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
+      http.get("/api/me/borrowed", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
     );
     await expect(getLibrary()).resolves.toMatchObject({ items: [] });
     await expect(getWishlist()).resolves.toMatchObject({ items: [] });
@@ -777,12 +795,14 @@ git commit -m "feat(statuses): add statuses API client with library/wishlist/len
 ### Task 5: `lib/api/share.ts` and `lib/api/friends-content.ts`
 
 **Files:**
+
 - Create: `lib/api/share.ts`
 - Test: `lib/api/share.test.ts`
 - Create: `lib/api/friends-content.ts`
 - Test: `lib/api/friends-content.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`; types from Task 1 (`ChatMessageResponse`, `SharePayload`); `CollectionResponse`, `BookStatusResponse`, `Page` from `lib/api/types.ts`.
 - Produces: `shareBook(bookId, payload)`, `shareCollection(collectionId, payload)`, `getFriendCollections(userId, params)`, `getFriendLibrary(userId, params)` — consumed by Task 5 (hooks task, same number reused below is a typo-guard: this is Task 5 of Phase 1, hooks are Task 6).
 
@@ -948,10 +968,12 @@ git commit -m "feat(share): add share and friend-content API clients"
 ### Task 6: `hooks/useCollections.ts`
 
 **Files:**
+
 - Create: `hooks/useCollections.ts`
 - Test: `hooks/useCollections.test.tsx`
 
 **Interfaces:**
+
 - Consumes: all functions from `lib/api/collections.ts` (Task 2); types from `lib/api/types.ts`.
 - Produces: `useCollections(params?)`, `useCollection(id, params?)`, `useCreateCollection()`, `useUpdateCollection()`, `useDeleteCollection()`, `useAddCollectionItem(collectionId)`, `useUpdateCollectionItem(collectionId)`, `useRemoveCollectionItem(collectionId)`, `useReorderCollectionItems(collectionId)` — consumed by Phase 3 components/pages.
 
@@ -981,7 +1003,12 @@ describe("useCollections", () => {
   it("fetches a page of collections", async () => {
     server.use(
       http.get("/api/collections", () =>
-        HttpResponse.json({ items: [{ id: "c1", name: "Favorites" }], total: 1, limit: 10, offset: 0 }),
+        HttpResponse.json({
+          items: [{ id: "c1", name: "Favorites" }],
+          total: 1,
+          limit: 10,
+          offset: 0,
+        }),
       ),
     );
     const { result } = renderHook(() => useCollections(), { wrapper });
@@ -998,7 +1025,9 @@ describe("useCollection", () => {
 
   it("surfaces a 404", async () => {
     server.use(
-      http.get("/api/collections/:id", () => HttpResponse.json({ detail: "Not found" }, { status: 404 })),
+      http.get("/api/collections/:id", () =>
+        HttpResponse.json({ detail: "Not found" }, { status: 404 }),
+      ),
     );
     const { result } = renderHook(() => useCollection("missing"), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -1008,7 +1037,9 @@ describe("useCollection", () => {
 describe("useCreateCollection", () => {
   it("creates a collection and invalidates the list", async () => {
     server.use(
-      http.post("/api/collections", () => HttpResponse.json({ id: "c1", name: "New" }, { status: 201 })),
+      http.post("/api/collections", () =>
+        HttpResponse.json({ id: "c1", name: "New" }, { status: 201 }),
+      ),
     );
     const { result } = renderHook(() => useCreateCollection(), { wrapper });
     result.current.mutate({ name: "New" });
@@ -1175,12 +1206,14 @@ git commit -m "feat(collections): add useCollections query/mutation hooks"
 ### Task 7: `hooks/useReviews.ts`
 
 **Files:**
+
 - Create: `hooks/useReviews.ts`
 - Test: `hooks/useReviews.test.tsx`
 - Modify: `hooks/useBooks.ts` — no change needed (already has `useBookReviews`); confirm import compatibility only.
 - Create (if not present) a `useReleaseReviews` hook: check whether `hooks/useReleases.ts` exists (it does, per Block 2) and add it there instead of a new file.
 
 **Interfaces:**
+
 - Consumes: `createReview`, `getReview`, `updateReview`, `deleteReview` from `lib/api/reviews.ts` (Task 3); `getReleaseReviews` from `lib/api/releases.ts` (Task 3).
 - Produces: `useReview(id)`, `useCreateReview()`, `useUpdateReview(id)`, `useDeleteReview()`, and (added to `hooks/useReleases.ts`) `useReleaseReviews(releaseId, params?)` — consumed by Phase 3 review components.
 
@@ -1228,7 +1261,14 @@ describe("useCreateReview", () => {
     server.use(
       http.post("/api/reviews", () =>
         HttpResponse.json(
-          { detail: [{ msg: "Value error, exactly one of book_id or release_id is required", loc: ["body"] }] },
+          {
+            detail: [
+              {
+                msg: "Value error, exactly one of book_id or release_id is required",
+                loc: ["body"],
+              },
+            ],
+          },
           { status: 422 },
         ),
       ),
@@ -1375,10 +1415,12 @@ git commit -m "feat(reviews): add useReviews hooks and useReleaseReviews"
 ### Task 8: `hooks/useStatuses.ts`
 
 **Files:**
+
 - Create: `hooks/useStatuses.ts`
 - Test: `hooks/useStatuses.test.tsx`
 
 **Interfaces:**
+
 - Consumes: all functions from `lib/api/statuses.ts` (Task 4).
 - Produces: `useStatuses(status?)`, `useLibrary(params?)`, `useWishlist(params?)`, `useLentOut(params?)`, `useBorrowed(params?)`, `useCreateStatus()`, `useUpdateStatus(id)`, `useDeleteStatus()`, `useLendStatus(id)`, `useReturnStatus(id)` — consumed by Phase 3 status components/pages.
 
@@ -1406,7 +1448,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 
 describe("useStatuses", () => {
   it("fetches all statuses", async () => {
-    server.use(http.get("/api/me/statuses", () => HttpResponse.json([{ id: "s1", status: "owned" }])));
+    server.use(
+      http.get("/api/me/statuses", () => HttpResponse.json([{ id: "s1", status: "owned" }])),
+    );
     const { result } = renderHook(() => useStatuses(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.[0].id).toBe("s1");
@@ -1514,15 +1558,24 @@ export function useLibrary(params: StatusViewParams = {}) {
 }
 
 export function useWishlist(params: StatusViewParams = {}) {
-  return useQuery({ queryKey: ["statuses", "wishlist", params], queryFn: () => getWishlist(params) });
+  return useQuery({
+    queryKey: ["statuses", "wishlist", params],
+    queryFn: () => getWishlist(params),
+  });
 }
 
 export function useLentOut(params: StatusViewParams = {}) {
-  return useQuery({ queryKey: ["statuses", "lent-out", params], queryFn: () => getLentOut(params) });
+  return useQuery({
+    queryKey: ["statuses", "lent-out", params],
+    queryFn: () => getLentOut(params),
+  });
 }
 
 export function useBorrowed(params: StatusViewParams = {}) {
-  return useQuery({ queryKey: ["statuses", "borrowed", params], queryFn: () => getBorrowed(params) });
+  return useQuery({
+    queryKey: ["statuses", "borrowed", params],
+    queryFn: () => getBorrowed(params),
+  });
 }
 
 export function useCreateStatus() {
@@ -1583,12 +1636,14 @@ git commit -m "feat(statuses): add useStatuses hooks with library/wishlist/lent-
 ### Task 9: `hooks/useShare.ts` and `hooks/useFriendContent.ts`
 
 **Files:**
+
 - Create: `hooks/useShare.ts`
 - Test: `hooks/useShare.test.tsx`
 - Create: `hooks/useFriendContent.ts`
 - Test: `hooks/useFriendContent.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `shareBook`, `shareCollection` from `lib/api/share.ts`; `getFriendCollections`, `getFriendLibrary` from `lib/api/friends-content.ts` (both Task 5).
 - Produces: `useShareBook()`, `useShareCollection()`, `useFriendCollections(userId, params?)`, `useFriendLibrary(userId, params?)` — consumed by Phase 3 share/friend-shelf components.
 
@@ -1622,7 +1677,9 @@ describe("useShareBook", () => {
 describe("useShareCollection", () => {
   it("shares a collection", async () => {
     server.use(
-      http.post("/api/share/collection/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })),
+      http.post("/api/share/collection/:id", () =>
+        HttpResponse.json({ id: "m1", thread_id: "t1" }),
+      ),
     );
     const { result } = renderHook(() => useShareCollection(), { wrapper });
     result.current.mutate({ collectionId: "c1", payload: { friend_id: "f1", message: "hi" } });
@@ -1770,14 +1827,17 @@ Every component below follows the `.tsx` + `.stories.tsx` + `.test.tsx` trio and
 established in Block 2 (see `components/catalog/book-card.tsx`,
 `components/catalog/suggest-edit-dialog.tsx` for the reference patterns — form
 dialogs mirror `suggest-edit-dialog.tsx`'s controlled-input + `extractErrorMessage`
-+ `DialogFooter` structure).
+
+- `DialogFooter` structure).
 
 ### Task 10: Add message namespaces for collections/reviews/statuses/share
 
 **Files:**
+
 - Modify: `messages/en.json`, `messages/uk.json`
 
 **Interfaces:**
+
 - Produces: top-level namespaces `collections`, `reviews`, `statuses`, `share` — consumed by every component task below via `useTranslations("<namespace>...")`.
 
 - [ ] **Step 1: Add the `collections` namespace to both files**
@@ -1914,6 +1974,7 @@ git commit -m "feat(i18n): add collections/reviews/statuses/share message namesp
 ### Task 11: Install `@dnd-kit/core`
 
 **Files:**
+
 - Modify: `package.json`, `pnpm-lock.yaml`
 - Modify: `pnpm-workspace.yaml` (only if the install triggers a build-script approval prompt)
 
@@ -1944,10 +2005,12 @@ git commit -m "chore: add @dnd-kit/core for collection item reordering"
 ### Task 12: `components/collections/collection-card.tsx` + `collection-form.tsx`
 
 **Files:**
+
 - Create: `components/collections/collection-card.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/collections/collection-form.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `CollectionResponse` type; `useCreateCollection`, `useUpdateCollection` hooks (Task 6); `extractErrorMessage` from `lib/api/errors.ts`.
 - Produces: `<CollectionCard collection={CollectionResponse} />` (links to `/collections/{id}`); `<CollectionForm collection?={CollectionResponse} onSuccess={() => void} />` (create when no `collection` prop, edit when present) — consumed by Task 16 (`app/(app)/collections/page.tsx`) and Task 17 (`app/(app)/collections/[id]/page.tsx`).
 
@@ -2116,7 +2179,9 @@ describe("CollectionForm", () => {
 
   it("submits a new collection and calls onSuccess", async () => {
     server.use(
-      http.post("/api/collections", () => HttpResponse.json({ id: "c1", name: "Favorites" }, { status: 201 })),
+      http.post("/api/collections", () =>
+        HttpResponse.json({ id: "c1", name: "Favorites" }, { status: 201 }),
+      ),
     );
     const onSuccess = vi.fn();
     const user = userEvent.setup();
@@ -2304,10 +2369,12 @@ git commit -m "feat(collections): add CollectionCard and CollectionForm componen
 ### Task 13: `components/collections/collection-item-card.tsx` + `add-to-collection-dialog.tsx`
 
 **Files:**
+
 - Create: `components/collections/collection-item-card.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/collections/add-to-collection-dialog.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `CollectionItemResponse` type; `useUpdateCollectionItem`, `useRemoveCollectionItem` (Task 6, item card); `useCollections`, `useAddCollectionItem`, `useCreateCollection` (Task 6, add-dialog).
 - Produces: `<CollectionItemCard item={CollectionItemResponse} onMoveUp={() => void} onMoveDown={() => void} isFirst={boolean} isLast={boolean} onRemove={() => void} onNoteChange={(note: string) => void} />` (pure/controlled — parent owns reorder state, see Task 17); `<AddToCollectionDialog bookId?={string} releaseId?={string} />` — consumed by Task 17 (collection detail page) and Task 18 (book detail page "Add to collection" button).
 
@@ -2430,10 +2497,22 @@ export function CollectionItemCard({
           {item.note && <p className="text-muted-foreground text-sm">{item.note}</p>}
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" disabled={isFirst} onClick={onMoveUp} aria-label={t("moveUp")}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            disabled={isFirst}
+            onClick={onMoveUp}
+            aria-label={t("moveUp")}
+          >
             <ChevronUpIcon />
           </Button>
-          <Button variant="ghost" size="icon-sm" disabled={isLast} onClick={onMoveDown} aria-label={t("moveDown")}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            disabled={isLast}
+            onClick={onMoveDown}
+            aria-label={t("moveDown")}
+          >
             <ChevronDownIcon />
           </Button>
           <Button variant="ghost" size="icon-sm" onClick={onRemove} aria-label={t("removeItem")}>
@@ -2486,7 +2565,14 @@ const baseItem = {
 };
 
 export const Default: StoryObj<typeof CollectionItemCard> = {
-  args: { item: baseItem, isFirst: false, isLast: false, onMoveUp: () => {}, onMoveDown: () => {}, onRemove: () => {} },
+  args: {
+    item: baseItem,
+    isFirst: false,
+    isLast: false,
+    onMoveUp: () => {},
+    onMoveDown: () => {},
+    onRemove: () => {},
+  },
 };
 export const FirstItem: StoryObj<typeof CollectionItemCard> = {
   args: { ...Default.args, isFirst: true },
@@ -2525,7 +2611,12 @@ describe("AddToCollectionDialog", () => {
   it("lists the user's collections and adds the book on selection", async () => {
     server.use(
       http.get("/api/collections", () =>
-        HttpResponse.json({ items: [{ id: "c1", name: "Favorites" }], total: 1, limit: 10, offset: 0 }),
+        HttpResponse.json({
+          items: [{ id: "c1", name: "Favorites" }],
+          total: 1,
+          limit: 10,
+          offset: 0,
+        }),
       ),
       http.post("/api/collections/:id/items", () =>
         HttpResponse.json({ id: "i1", collection_id: "c1", book_id: "b1" }, { status: 201 }),
@@ -2541,12 +2632,16 @@ describe("AddToCollectionDialog", () => {
 
   it("shows an empty state when the user has no collections", async () => {
     server.use(
-      http.get("/api/collections", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
+      http.get("/api/collections", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
     );
     const user = userEvent.setup();
     renderDialog();
     await user.click(screen.getByRole("button", { name: /add to collection/i }));
-    await waitFor(() => expect(screen.getByText(/don't have any collections/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/don't have any collections/i)).toBeInTheDocument(),
+    );
   });
 });
 ```
@@ -2607,7 +2702,13 @@ function AddToCollectionItem({
   );
 }
 
-export function AddToCollectionDialog({ bookId, releaseId }: { bookId?: string; releaseId?: string }) {
+export function AddToCollectionDialog({
+  bookId,
+  releaseId,
+}: {
+  bookId?: string;
+  releaseId?: string;
+}) {
   const t = useTranslations("collections.addToCollection");
   const { data: collectionsPage } = useCollections();
   const collections = collectionsPage?.items ?? [];
@@ -2688,11 +2789,13 @@ git commit -m "feat(collections): add CollectionItemCard and AddToCollectionDial
 ### Task 14: `components/reviews/review-card.tsx` + `review-list.tsx` (retires `components/catalog/review-list.tsx`)
 
 **Files:**
+
 - Create: `components/reviews/review-card.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/reviews/review-list.tsx`, `.stories.tsx`, `.test.tsx`
 - Delete: `components/catalog/review-list.tsx`, `components/catalog/review-list.stories.tsx`, `components/catalog/review-list.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ReviewResponse` type; `useDeleteReview` (Task 7).
 - Produces: `<ReviewCard review={ReviewResponse} currentUserId?={string} onEdit={() => void} />` (shows edit/delete only when `review.user_id === currentUserId`); `<ReviewList reviews={ReviewResponse[]} isLoading={boolean} currentUserId?={string} onEdit={(review: ReviewResponse) => void} />` — consumed by Task 18 (book detail page) and Task 15 (my-reviews page). This directly replaces Block 2's `components/catalog/review-list.tsx` per the approved spec addendum.
 
@@ -2879,7 +2982,9 @@ const baseReview = {
   updated_at: "2020-01-01T00:00:00Z",
 };
 
-export const AsViewer: StoryObj<typeof ReviewCard> = { args: { review: baseReview, onEdit: () => {} } };
+export const AsViewer: StoryObj<typeof ReviewCard> = {
+  args: { review: baseReview, onEdit: () => {} },
+};
 export const AsAuthor: StoryObj<typeof ReviewCard> = {
   args: { review: baseReview, currentUserId: "u1", onEdit: () => {} },
 };
@@ -3041,8 +3146,12 @@ const meta: Meta<typeof ReviewList> = {
 };
 export default meta;
 
-export const Loading: StoryObj<typeof ReviewList> = { args: { reviews: [], isLoading: true, onEdit: () => {} } };
-export const Empty: StoryObj<typeof ReviewList> = { args: { reviews: [], isLoading: false, onEdit: () => {} } };
+export const Loading: StoryObj<typeof ReviewList> = {
+  args: { reviews: [], isLoading: true, onEdit: () => {} },
+};
+export const Empty: StoryObj<typeof ReviewList> = {
+  args: { reviews: [], isLoading: false, onEdit: () => {} },
+};
 export const WithReviews: StoryObj<typeof ReviewList> = {
   args: {
     isLoading: false,
@@ -3085,9 +3194,11 @@ git commit -m "feat(reviews): add ReviewCard and ReviewList, retire catalog's re
 ### Task 15: `components/reviews/review-form.tsx`
 
 **Files:**
+
 - Create: `components/reviews/review-form.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useCreateReview`, `useUpdateReview` (Task 7); `extractErrorMessage`.
 - Produces: `<ReviewForm bookId?={string} releaseId?={string} review?={ReviewResponse} onSuccess={() => void} />` (create mode needs exactly one of `bookId`/`releaseId`; edit mode takes `review` and ignores id props) — consumed by Task 18 (book detail "write a review") and Task 16 (my-reviews management view, edit mode).
 
@@ -3155,7 +3266,14 @@ describe("ReviewForm", () => {
     server.use(
       http.post("/api/reviews", () =>
         HttpResponse.json(
-          { detail: [{ msg: "Value error, exactly one of book_id or release_id is required", loc: ["body"] }] },
+          {
+            detail: [
+              {
+                msg: "Value error, exactly one of book_id or release_id is required",
+                loc: ["body"],
+              },
+            ],
+          },
           { status: 422 },
         ),
       ),
@@ -3163,7 +3281,9 @@ describe("ReviewForm", () => {
     const user = userEvent.setup();
     renderForm();
     await user.click(screen.getByRole("button", { name: /post review/i }));
-    await waitFor(() => expect(screen.getByText(/pick a book or a specific edition/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/pick a book or a specific edition/i)).toBeInTheDocument(),
+    );
   });
 });
 ```
@@ -3223,7 +3343,9 @@ export function ReviewForm({
   const [title, setTitle] = React.useState(review?.title ?? "");
   const [body, setBody] = React.useState(review?.body ?? "");
   const [isPublic, setIsPublic] = React.useState(review?.is_public ?? true);
-  const [containsSpoilers, setContainsSpoilers] = React.useState(review?.contains_spoilers ?? false);
+  const [containsSpoilers, setContainsSpoilers] = React.useState(
+    review?.contains_spoilers ?? false,
+  );
 
   const createReview = useCreateReview();
   const updateReview = useUpdateReview(review?.id ?? "");
@@ -3232,7 +3354,13 @@ export function ReviewForm({
   function handleSubmit() {
     if (isEditing) {
       updateReview.mutate(
-        { rating, title: title || null, body: body || null, is_public: isPublic, contains_spoilers: containsSpoilers },
+        {
+          rating,
+          title: title || null,
+          body: body || null,
+          is_public: isPublic,
+          contains_spoilers: containsSpoilers,
+        },
         { onSuccess },
       );
       return;
@@ -3295,7 +3423,9 @@ export function ReviewForm({
       </label>
       {mutation.error && (
         <p className="text-destructive text-sm">
-          {isExactlyOneOfError(mutation.error) ? t("exactlyOneRequired") : extractErrorMessage(mutation.error)}
+          {isExactlyOneOfError(mutation.error)
+            ? t("exactlyOneRequired")
+            : extractErrorMessage(mutation.error)}
         </p>
       )}
       <Button disabled={mutation.isPending} onClick={handleSubmit}>
@@ -3374,10 +3504,12 @@ git commit -m "feat(reviews): add ReviewForm component"
 ### Task 16: `components/statuses/status-badge.tsx` + `status-list-item.tsx`
 
 **Files:**
+
 - Create: `components/statuses/status-badge.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/statuses/status-list-item.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `BookStatusResponse`, `BookStatusKind` types.
 - Produces: `<StatusBadge status={BookStatusKind} />`; `<StatusListItem status={BookStatusResponse} onChangeStatus={() => void} onLend={() => void} onReturn={() => void} />` (shows "Lend to..." only for `owned`/`wishlist`-ish states with no active lend, "Mark returned" only for `lent_out`) — consumed by Task 19 (`app/(app)/library/page.tsx`).
 
@@ -3654,10 +3786,12 @@ git commit -m "feat(statuses): add StatusBadge and StatusListItem components"
 ### Task 17: `components/statuses/lend-dialog.tsx` + `return-confirm-dialog.tsx`
 
 **Files:**
+
 - Create: `components/statuses/lend-dialog.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/statuses/return-confirm-dialog.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useLendStatus`, `useReturnStatus` (Task 8); `extractErrorMessage`.
 - Produces: `<LendDialog statusId={string} open={boolean} onOpenChange={(open: boolean) => void} />`; `<ReturnConfirmDialog statusId={string} open={boolean} onOpenChange={(open: boolean) => void} />` — consumed by Task 19 (`app/(app)/library/page.tsx`).
 
@@ -3760,13 +3894,21 @@ export function LendDialog({
             <label htmlFor="lend-friend-id" className="text-sm font-medium">
               {t("friendIdLabel")}
             </label>
-            <Input id="lend-friend-id" value={friendUserId} onChange={(e) => setFriendUserId(e.target.value)} />
+            <Input
+              id="lend-friend-id"
+              value={friendUserId}
+              onChange={(e) => setFriendUserId(e.target.value)}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="lend-friend-name" className="text-sm font-medium">
               {t("orNameLabel")}
             </label>
-            <Input id="lend-friend-name" value={friendName} onChange={(e) => setFriendName(e.target.value)} />
+            <Input
+              id="lend-friend-name"
+              value={friendName}
+              onChange={(e) => setFriendName(e.target.value)}
+            />
           </div>
           {lendStatus.error && (
             <p className="text-destructive text-sm">{extractErrorMessage(lendStatus.error)}</p>
@@ -3849,7 +3991,9 @@ function renderDialog(props: Partial<React.ComponentProps<typeof ReturnConfirmDi
 describe("ReturnConfirmDialog", () => {
   it("confirms the return and calls onOpenChange(false) on success", async () => {
     server.use(
-      http.post("/api/me/statuses/:id/return", () => HttpResponse.json({ id: "s1", status: "owned" })),
+      http.post("/api/me/statuses/:id/return", () =>
+        HttpResponse.json({ id: "s1", status: "owned" }),
+      ),
     );
     const onOpenChange = vi.fn();
     const user = userEvent.setup();
@@ -3970,9 +4114,11 @@ git commit -m "feat(statuses): add LendDialog and ReturnConfirmDialog components
 ### Task 18: `components/share/share-dialog.tsx`
 
 **Files:**
+
 - Create: `components/share/share-dialog.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useShareBook`, `useShareCollection` (Task 9); `sonner`'s `toast` (already a dependency, see `components/ui/sonner.tsx`); `extractErrorMessage`.
 - Produces: `<ShareDialog kind="book" | "collection" targetId={string} />` (self-contained trigger button + dialog) — consumed by Task 18 (book detail page) and Task 17 (collection detail page).
 
@@ -4007,7 +4153,9 @@ function renderDialog(props: Partial<React.ComponentProps<typeof ShareDialog>> =
 
 describe("ShareDialog", () => {
   it("shares a book with a friend and message", async () => {
-    server.use(http.post("/api/share/book/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })));
+    server.use(
+      http.post("/api/share/book/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })),
+    );
     const user = userEvent.setup();
     renderDialog();
     await user.click(screen.getByRole("button", { name: /^share$/i }));
@@ -4018,7 +4166,11 @@ describe("ShareDialog", () => {
   });
 
   it("shares a collection when kind is collection", async () => {
-    server.use(http.post("/api/share/collection/:id", () => HttpResponse.json({ id: "m1", thread_id: "t1" })));
+    server.use(
+      http.post("/api/share/collection/:id", () =>
+        HttpResponse.json({ id: "m1", thread_id: "t1" }),
+      ),
+    );
     const user = userEvent.setup();
     renderDialog({ kind: "collection", targetId: "c1" });
     await user.click(screen.getByRole("button", { name: /^share$/i }));
@@ -4073,7 +4225,8 @@ export function ShareDialog({ kind, targetId }: { kind: "book" | "collection"; t
 
   function handleSubmit() {
     const payload = { friend_id: friendId, message };
-    const args = kind === "book" ? { bookId: targetId, payload } : { collectionId: targetId, payload };
+    const args =
+      kind === "book" ? { bookId: targetId, payload } : { collectionId: targetId, payload };
     mutation.mutate(args as never, {
       onSuccess: () => {
         toast.success(t("success"));
@@ -4096,13 +4249,21 @@ export function ShareDialog({ kind, targetId }: { kind: "book" | "collection"; t
             <label htmlFor="share-friend-id" className="text-sm font-medium">
               {t("friendIdLabel")}
             </label>
-            <Input id="share-friend-id" value={friendId} onChange={(e) => setFriendId(e.target.value)} />
+            <Input
+              id="share-friend-id"
+              value={friendId}
+              onChange={(e) => setFriendId(e.target.value)}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="share-message" className="text-sm font-medium">
               {t("messageLabel")}
             </label>
-            <Textarea id="share-message" value={message} onChange={(e) => setMessage(e.target.value)} />
+            <Textarea
+              id="share-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
           </div>
           {mutation.error && (
             <p className="text-destructive text-sm">{extractErrorMessage(mutation.error)}</p>
@@ -4172,11 +4333,13 @@ git commit -m "feat(share): add ShareDialog component"
 ### Task 19: `app/(app)/collections/page.tsx` and `app/(app)/collections/[id]/page.tsx`
 
 **Files:**
+
 - Create: `app/(app)/collections/page.tsx`
 - Create: `app/(app)/collections/[id]/page.tsx`
 - Modify: `proxy.ts` (add `/collections` to `PROTECTED_PATHS`)
 
 **Interfaces:**
+
 - Consumes: `useCollections`, `useCollection`, `useDeleteCollection`, `useReorderCollectionItems`, `useRemoveCollectionItem`, `useUpdateCollectionItem` (Task 6); `CollectionCard`, `CollectionForm` (Task 12); `CollectionItemCard` (Task 13); `ShareDialog` (Task 18); `@dnd-kit/core` (Task 11).
 - Produces: `/collections` route (grid + "New collection" dialog) and `/collections/[id]` route (detail, drag-reorder, edit/delete) — terminal UI surface for this task, nothing downstream consumes these pages directly.
 
@@ -4347,12 +4510,16 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{collection.name}</h1>
-          {collection.description && <p className="text-muted-foreground">{collection.description}</p>}
+          {collection.description && (
+            <p className="text-muted-foreground">{collection.description}</p>
+          )}
         </div>
         <div className="flex gap-2">
           <ShareDialog kind="collection" targetId={collection.id} />
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
-            <DialogTrigger render={<Button variant="outline" size="sm" />}>{t("editButton")}</DialogTrigger>
+            <DialogTrigger render={<Button variant="outline" size="sm" />}>
+              {t("editButton")}
+            </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Edit collection</DialogTitle>
@@ -4374,7 +4541,9 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                   variant="destructive"
                   disabled={deleteCollection.isPending}
                   onClick={() =>
-                    deleteCollection.mutate(collection.id, { onSuccess: () => router.push("/collections") })
+                    deleteCollection.mutate(collection.id, {
+                      onSuccess: () => router.push("/collections"),
+                    })
                   }
                 >
                   {t("deleteButton")}
@@ -4427,9 +4596,11 @@ git commit -m "feat(collections): add collections list and detail pages with dra
 ### Task 20: Wire reviews, "Add to collection", and "Add to library" into `app/(app)/books/[id]/page.tsx`
 
 **Files:**
+
 - Modify: `app/(app)/books/[id]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `ReviewList`, `ReviewForm` (Tasks 14–15); `AddToCollectionDialog` (Task 13); `ShareDialog` (Task 18); `useMe` (existing, Block 1); `useCreateStatus` (Task 8).
 - Produces: updated book detail page, including a status-kind `Select` + "Add to library" button (the only entry point that creates a `BookStatusResponse` anywhere in this block's UI surface — Task 21's `/library` page only reads/updates/lends/returns existing statuses, it has no create affordance). Task 23's e2e depends on this button existing.
 
@@ -4541,7 +4712,9 @@ export default function BookDetailPage({ params }: { params: Promise<{ id: strin
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>{editingReview ? reviewsT("editReview") : reviewsT("writeReview")}</DialogTitle>
+                  <DialogTitle>
+                    {editingReview ? reviewsT("editReview") : reviewsT("writeReview")}
+                  </DialogTitle>
                 </DialogHeader>
                 <ReviewForm
                   bookId={editingReview ? undefined : book.id}
@@ -4603,7 +4776,9 @@ export function AddToLibraryControl({ bookId }: { bookId: string }) {
 
   return (
     <Select
-      onValueChange={(value) => createStatus.mutate({ book_id: bookId, status: value as BookStatusKind })}
+      onValueChange={(value) =>
+        createStatus.mutate({ book_id: bookId, status: value as BookStatusKind })
+      }
     >
       <SelectTrigger aria-label={t("pageTitle")}>
         <SelectValue placeholder={t("pageTitle")} />
@@ -4684,9 +4859,11 @@ git commit -m "feat(reviews): wire review CRUD, add-to-collection, add-to-librar
 ### Task 21: `app/(app)/library/page.tsx`
 
 **Files:**
+
 - Create: `app/(app)/library/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useLibrary`, `useWishlist`, `useLentOut`, `useBorrowed`, `useUpdateStatus` (Task 8); `StatusListItem` (Task 16); `LendDialog`, `ReturnConfirmDialog` (Task 17); shadcn `Tabs`, `Select` (existing Block 0 primitives).
 - Produces: `/library` route (terminal UI surface).
 
@@ -4734,11 +4911,7 @@ const STATUS_KINDS: BookStatusKind[] = [
   "lost",
 ];
 
-function StatusTabPanel({
-  query,
-}: {
-  query: ReturnType<typeof useLibrary>;
-}) {
+function StatusTabPanel({ query }: { query: ReturnType<typeof useLibrary> }) {
   const t = useTranslations("statuses");
   const kindT = useTranslations("statuses.kind");
   const updateStatus = useUpdateStatus("");
@@ -4869,9 +5042,11 @@ git commit -m "feat(statuses): add library page with tabs, lend/return actions"
 ### Task 22: Friend-shelf read-only view
 
 **Files:**
+
 - Create: `app/(app)/friends/[userId]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useFriendCollections`, `useFriendLibrary` (Task 9); `CollectionCard` (Task 12); `StatusListItem` (Task 16, rendered with no-op handlers to disable actions).
 - Produces: `/friends/[userId]` route (terminal UI surface). Per the spec, this coordinates with Block 5's friend-profile shell once it exists — for now it's a standalone route, not yet linked from anywhere in the nav (no friend list exists until Block 5).
 
@@ -4892,10 +5067,16 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
   const { userId } = use(params);
   const t = useTranslations("collections");
   const statusesT = useTranslations("statuses");
-  const { data: collectionsPage, isPending: collectionsPending, isError: collectionsError } =
-    useFriendCollections(userId);
-  const { data: libraryPage, isPending: libraryPending, isError: libraryError } =
-    useFriendLibrary(userId);
+  const {
+    data: collectionsPage,
+    isPending: collectionsPending,
+    isError: collectionsError,
+  } = useFriendCollections(userId);
+  const {
+    data: libraryPage,
+    isPending: libraryPending,
+    isError: libraryError,
+  } = useFriendLibrary(userId);
 
   return (
     <div className="flex flex-col gap-8">
@@ -4906,13 +5087,16 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
         {!collectionsPending && !collectionsError && collectionsPage?.items.length === 0 && (
           <p className="text-muted-foreground">{t("empty")}</p>
         )}
-        {!collectionsPending && !collectionsError && collectionsPage && collectionsPage.items.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {collectionsPage.items.map((collection) => (
-              <CollectionCard key={collection.id} collection={collection} />
-            ))}
-          </div>
-        )}
+        {!collectionsPending &&
+          !collectionsError &&
+          collectionsPage &&
+          collectionsPage.items.length > 0 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {collectionsPage.items.map((collection) => (
+                <CollectionCard key={collection.id} collection={collection} />
+              ))}
+            </div>
+          )}
       </section>
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{statusesT("tabs.library")}</h2>
@@ -4968,9 +5152,11 @@ git commit -m "feat(social): add read-only friend shelf page (collections + libr
 ### Task 23: Playwright happy-path e2e
 
 **Files:**
+
 - Create: `e2e/collections-reviews.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `test`/`expect` from `e2e/fixtures.ts` (existing); the full page surface built in Phase 4, including Task 20's `AddToLibraryControl` as the status-create entry point.
 
 - [ ] **Step 1: Write the happy-path spec**
@@ -5037,21 +5223,33 @@ test.describe("collections and reviews happy path", () => {
     // Move to the library page, change wishlist -> owned via "Change status".
     await page.goto("/library");
     await page.getByRole("tab", { name: /wishlist/i }).click();
-    await page.getByRole("button", { name: /change status/i }).first().click();
+    await page
+      .getByRole("button", { name: /change status/i })
+      .first()
+      .click();
     await page.getByRole("combobox").click();
     await page.getByRole("option", { name: "Owned" }).click();
     await page.getByRole("tab", { name: /^library$/i }).click();
     await expect(page.getByText("Owned")).toBeVisible();
 
     // Lend it to a friend by free-text name, then mark it returned.
-    await page.getByRole("button", { name: /lend to/i }).first().click();
+    await page
+      .getByRole("button", { name: /lend to/i })
+      .first()
+      .click();
     await page.getByLabel(/or a name/i).fill("A Friend");
     await page.getByRole("button", { name: /^lend$/i }).click();
     await expect(page.getByText("A Friend")).toBeVisible();
 
     await page.getByRole("tab", { name: /lent out/i }).click();
-    await page.getByRole("button", { name: /mark returned/i }).first().click();
-    await page.getByRole("button", { name: /mark returned/i }).last().click();
+    await page
+      .getByRole("button", { name: /mark returned/i })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: /mark returned/i })
+      .last()
+      .click();
   });
 });
 ```
@@ -5093,4 +5291,3 @@ open a PR via `gh pr create`.
 git push -u origin block-3-collections-reviews
 gh pr create --title "Block 3: Collections & Reviews" --body "..."
 ```
-

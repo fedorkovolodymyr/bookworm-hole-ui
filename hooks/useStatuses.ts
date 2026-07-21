@@ -35,15 +35,24 @@ export function useLibrary(params: StatusViewParams = {}) {
 }
 
 export function useWishlist(params: StatusViewParams = {}) {
-  return useQuery({ queryKey: ["statuses", "wishlist", params], queryFn: () => getWishlist(params) });
+  return useQuery({
+    queryKey: ["statuses", "wishlist", params],
+    queryFn: () => getWishlist(params),
+  });
 }
 
 export function useLentOut(params: StatusViewParams = {}) {
-  return useQuery({ queryKey: ["statuses", "lent-out", params], queryFn: () => getLentOut(params) });
+  return useQuery({
+    queryKey: ["statuses", "lent-out", params],
+    queryFn: () => getLentOut(params),
+  });
 }
 
 export function useBorrowed(params: StatusViewParams = {}) {
-  return useQuery({ queryKey: ["statuses", "borrowed", params], queryFn: () => getBorrowed(params) });
+  return useQuery({
+    queryKey: ["statuses", "borrowed", params],
+    queryFn: () => getBorrowed(params),
+  });
 }
 
 export function useCreateStatus() {

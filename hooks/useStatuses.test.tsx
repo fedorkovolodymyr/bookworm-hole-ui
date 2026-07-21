@@ -18,7 +18,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 
 describe("useStatuses", () => {
   it("fetches all statuses", async () => {
-    server.use(http.get("/api/me/statuses", () => HttpResponse.json([{ id: "s1", status: "owned" }])));
+    server.use(
+      http.get("/api/me/statuses", () => HttpResponse.json([{ id: "s1", status: "owned" }])),
+    );
     const { result } = renderHook(() => useStatuses(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.[0].id).toBe("s1");

@@ -17,7 +17,12 @@ describe("collections api client", () => {
   it("lists collections", async () => {
     server.use(
       http.get("/api/collections", () =>
-        HttpResponse.json({ items: [{ id: "c1", name: "Favorites" }], total: 1, limit: 10, offset: 0 }),
+        HttpResponse.json({
+          items: [{ id: "c1", name: "Favorites" }],
+          total: 1,
+          limit: 10,
+          offset: 0,
+        }),
       ),
     );
     const result = await listCollections();
@@ -84,7 +89,10 @@ describe("collections api client", () => {
 
   it("removes a collection item", async () => {
     server.use(
-      http.delete("/api/collections/:id/items/:itemId", () => new HttpResponse(null, { status: 204 })),
+      http.delete(
+        "/api/collections/:id/items/:itemId",
+        () => new HttpResponse(null, { status: 204 }),
+      ),
     );
     await expect(removeCollectionItem("c1", "i1")).resolves.toBeUndefined();
   });

@@ -80,10 +80,18 @@ describe("statuses api client", () => {
 
   it("fetches library, wishlist, lent-out, borrowed as paginated views", async () => {
     server.use(
-      http.get("/api/me/library", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
-      http.get("/api/me/wishlist", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
-      http.get("/api/me/lent-out", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
-      http.get("/api/me/borrowed", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
+      http.get("/api/me/library", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
+      http.get("/api/me/wishlist", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
+      http.get("/api/me/lent-out", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
+      http.get("/api/me/borrowed", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
     );
     await expect(getLibrary()).resolves.toMatchObject({ items: [] });
     await expect(getWishlist()).resolves.toMatchObject({ items: [] });

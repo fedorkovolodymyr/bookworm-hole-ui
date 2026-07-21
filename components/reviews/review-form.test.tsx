@@ -58,7 +58,14 @@ describe("ReviewForm", () => {
     server.use(
       http.post("/api/reviews", () =>
         HttpResponse.json(
-          { detail: [{ msg: "Value error, exactly one of book_id or release_id is required", loc: ["body"] }] },
+          {
+            detail: [
+              {
+                msg: "Value error, exactly one of book_id or release_id is required",
+                loc: ["body"],
+              },
+            ],
+          },
           { status: 422 },
         ),
       ),
@@ -66,6 +73,8 @@ describe("ReviewForm", () => {
     const user = userEvent.setup();
     renderForm();
     await user.click(screen.getByRole("button", { name: /post review/i }));
-    await waitFor(() => expect(screen.getByText(/pick a book or a specific edition/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/pick a book or a specific edition/i)).toBeInTheDocument(),
+    );
   });
 });

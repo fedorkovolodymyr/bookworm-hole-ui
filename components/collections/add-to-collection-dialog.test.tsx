@@ -24,7 +24,12 @@ describe("AddToCollectionDialog", () => {
   it("lists the user's collections and adds the book on selection", async () => {
     server.use(
       http.get("/api/collections", () =>
-        HttpResponse.json({ items: [{ id: "c1", name: "Favorites" }], total: 1, limit: 10, offset: 0 }),
+        HttpResponse.json({
+          items: [{ id: "c1", name: "Favorites" }],
+          total: 1,
+          limit: 10,
+          offset: 0,
+        }),
       ),
       http.post("/api/collections/:id/items", () =>
         HttpResponse.json({ id: "i1", collection_id: "c1", book_id: "b1" }, { status: 201 }),
@@ -40,11 +45,15 @@ describe("AddToCollectionDialog", () => {
 
   it("shows an empty state when the user has no collections", async () => {
     server.use(
-      http.get("/api/collections", () => HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 })),
+      http.get("/api/collections", () =>
+        HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 }),
+      ),
     );
     const user = userEvent.setup();
     renderDialog();
     await user.click(screen.getByRole("button", { name: /add to collection/i }));
-    await waitFor(() => expect(screen.getByText(/don't have any collections/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/don't have any collections/i)).toBeInTheDocument(),
+    );
   });
 });

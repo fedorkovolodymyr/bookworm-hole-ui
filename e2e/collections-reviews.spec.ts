@@ -58,20 +58,32 @@ test.describe("collections and reviews happy path", () => {
     // Move to the library page, change wishlist -> owned via "Change status".
     await page.goto("/library");
     await page.getByRole("tab", { name: /wishlist/i }).click();
-    await page.getByRole("button", { name: /change status/i }).first().click();
+    await page
+      .getByRole("button", { name: /change status/i })
+      .first()
+      .click();
     await page.getByRole("combobox").click();
     await page.getByRole("option", { name: "Owned" }).click();
     await page.getByRole("tab", { name: /^library$/i }).click();
     await expect(page.getByText("Owned")).toBeVisible();
 
     // Lend it to a friend by free-text name, then mark it returned.
-    await page.getByRole("button", { name: /lend to/i }).first().click();
+    await page
+      .getByRole("button", { name: /lend to/i })
+      .first()
+      .click();
     await page.getByLabel(/or a name/i).fill("A Friend");
     await page.getByRole("button", { name: /^lend$/i }).click();
     await expect(page.getByText("A Friend")).toBeVisible();
 
     await page.getByRole("tab", { name: /lent out/i }).click();
-    await page.getByRole("button", { name: /mark returned/i }).first().click();
-    await page.getByRole("button", { name: /mark returned/i }).last().click();
+    await page
+      .getByRole("button", { name: /mark returned/i })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: /mark returned/i })
+      .last()
+      .click();
   });
 });

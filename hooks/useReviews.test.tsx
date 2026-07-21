@@ -39,7 +39,14 @@ describe("useCreateReview", () => {
     server.use(
       http.post("/api/reviews", () =>
         HttpResponse.json(
-          { detail: [{ msg: "Value error, exactly one of book_id or release_id is required", loc: ["body"] }] },
+          {
+            detail: [
+              {
+                msg: "Value error, exactly one of book_id or release_id is required",
+                loc: ["body"],
+              },
+            ],
+          },
           { status: 422 },
         ),
       ),

@@ -24,8 +24,12 @@ const meta: Meta<typeof ReviewList> = {
 };
 export default meta;
 
-export const Loading: StoryObj<typeof ReviewList> = { args: { reviews: [], isLoading: true, onEdit: () => {} } };
-export const Empty: StoryObj<typeof ReviewList> = { args: { reviews: [], isLoading: false, onEdit: () => {} } };
+export const Loading: StoryObj<typeof ReviewList> = {
+  args: { reviews: [], isLoading: true, onEdit: () => {} },
+};
+export const Empty: StoryObj<typeof ReviewList> = {
+  args: { reviews: [], isLoading: false, onEdit: () => {} },
+};
 export const WithReviews: StoryObj<typeof ReviewList> = {
   args: {
     isLoading: false,

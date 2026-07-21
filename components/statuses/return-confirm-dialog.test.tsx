@@ -23,7 +23,9 @@ function renderDialog(props: Partial<React.ComponentProps<typeof ReturnConfirmDi
 describe("ReturnConfirmDialog", () => {
   it("confirms the return and calls onOpenChange(false) on success", async () => {
     server.use(
-      http.post("/api/me/statuses/:id/return", () => HttpResponse.json({ id: "s1", status: "owned" })),
+      http.post("/api/me/statuses/:id/return", () =>
+        HttpResponse.json({ id: "s1", status: "owned" }),
+      ),
     );
     const onOpenChange = vi.fn();
     const user = userEvent.setup();

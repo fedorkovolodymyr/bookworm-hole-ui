@@ -34,11 +34,7 @@ const STATUS_KINDS: BookStatusKind[] = [
   "lost",
 ];
 
-function StatusTabPanel({
-  query,
-}: {
-  query: ReturnType<typeof useLibrary>;
-}) {
+function StatusTabPanel({ query }: { query: ReturnType<typeof useLibrary> }) {
   const t = useTranslations("statuses");
   const kindT = useTranslations("statuses.kind");
   const [changingId, setChangingId] = React.useState<string | null>(null);

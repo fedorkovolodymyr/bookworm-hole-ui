@@ -29,7 +29,8 @@ export function ShareDialog({ kind, targetId }: { kind: "book" | "collection"; t
 
   function handleSubmit() {
     const payload = { friend_id: friendId, message };
-    const args = kind === "book" ? { bookId: targetId, payload } : { collectionId: targetId, payload };
+    const args =
+      kind === "book" ? { bookId: targetId, payload } : { collectionId: targetId, payload };
     mutation.mutate(args as never, {
       onSuccess: () => {
         toast.success(t("success"));
@@ -52,13 +53,21 @@ export function ShareDialog({ kind, targetId }: { kind: "book" | "collection"; t
             <label htmlFor="share-friend-id" className="text-sm font-medium">
               {t("friendIdLabel")}
             </label>
-            <Input id="share-friend-id" value={friendId} onChange={(e) => setFriendId(e.target.value)} />
+            <Input
+              id="share-friend-id"
+              value={friendId}
+              onChange={(e) => setFriendId(e.target.value)}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="share-message" className="text-sm font-medium">
               {t("messageLabel")}
             </label>
-            <Textarea id="share-message" value={message} onChange={(e) => setMessage(e.target.value)} />
+            <Textarea
+              id="share-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
           </div>
           {mutation.error && (
             <p className="text-destructive text-sm">{extractErrorMessage(mutation.error)}</p>
