@@ -10,7 +10,8 @@
     "somethingWentWrong": "Something went wrong. Please try again.",
     "language": "Language",
     "english": "English",
-    "ukrainian": "Ukrainian"
+    "ukrainian": "Ukrainian",
+    "notAvailable": "Not available."
   },
   "auth": {
     "login": {
@@ -220,5 +221,113 @@
     "fieldChanged": "changed",
     "fieldRemoved": "removed",
     "noDiff": "No differences between these versions."
+  },
+  "collections": {
+    "pageTitle": "My collections",
+    "newCollection": "New collection",
+    "empty": "You haven't created any collections yet.",
+    "loading": "Loading collections...",
+    "card": {
+      "publicBadge": "Public"
+    },
+    "form": {
+      "nameLabel": "Name",
+      "descriptionLabel": "Description",
+      "isPublicLabel": "Make this collection public",
+      "coverImageLabel": "Cover image URL",
+      "createTitle": "New collection",
+      "editTitle": "Edit collection",
+      "submitCreate": "Create collection",
+      "submitEdit": "Save changes",
+      "submitting": "Saving..."
+    },
+    "detail": {
+      "itemsTitle": "Items",
+      "emptyItems": "No items in this collection yet.",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "deleteConfirmTitle": "Delete this collection?",
+      "deleteConfirmDescription": "This removes the collection and all its items. This cannot be undone.",
+      "removeItem": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "noteLabel": "Note",
+      "shareButton": "Share"
+    },
+    "addToCollection": {
+      "trigger": "Add to collection",
+      "title": "Add to a collection",
+      "noCollections": "You don't have any collections yet.",
+      "createNew": "Create a new collection",
+      "added": "Added to {name}."
+    }
+  },
+  "reviews": {
+    "sectionTitle": "Reviews",
+    "empty": "No reviews yet.",
+    "loading": "Loading reviews...",
+    "spoilerWarning": "Contains spoilers",
+    "writeReview": "Write a review",
+    "editReview": "Edit review",
+    "deleteReview": "Delete review",
+    "deleteConfirmTitle": "Delete this review?",
+    "deleteConfirmDescription": "This cannot be undone.",
+    "form": {
+      "ratingLabel": "Rating",
+      "titleLabel": "Title",
+      "bodyLabel": "Review",
+      "isPublicLabel": "Make this review public",
+      "containsSpoilersLabel": "Contains spoilers",
+      "submitCreate": "Post review",
+      "submitEdit": "Save changes",
+      "submitting": "Saving...",
+      "exactlyOneRequired": "Pick a book or a specific edition, not both."
+    },
+    "myReviewsTitle": "My reviews"
+  },
+  "statuses": {
+    "pageTitle": "My books",
+    "tabs": {
+      "library": "Library",
+      "wishlist": "Wishlist",
+      "lentOut": "Lent out",
+      "borrowed": "Borrowed"
+    },
+    "empty": "Nothing here yet.",
+    "loading": "Loading...",
+    "changeStatus": "Change status",
+    "lendAction": "Lend to...",
+    "returnAction": "Mark returned",
+    "kind": {
+      "owned": "Owned",
+      "wishlist": "Wishlist",
+      "pre_order": "Pre-ordered",
+      "lent_out": "Lent out",
+      "borrowed": "Borrowed",
+      "gifted_away": "Gifted away",
+      "sold": "Sold",
+      "lost": "Lost"
+    },
+    "lendDialog": {
+      "title": "Lend this book",
+      "friendIdLabel": "Friend's user ID",
+      "orNameLabel": "Or a name",
+      "submit": "Lend",
+      "submitting": "Lending..."
+    },
+    "returnDialog": {
+      "title": "Mark as returned?",
+      "description": "This clears the lend record and keeps the book in your library.",
+      "confirm": "Mark returned"
+    }
+  },
+  "share": {
+    "trigger": "Share",
+    "dialogTitle": "Share with a friend",
+    "friendIdLabel": "Friend's user ID",
+    "messageLabel": "Message",
+    "submit": "Send",
+    "submitting": "Sending...",
+    "success": "Shared!"
   }
 }

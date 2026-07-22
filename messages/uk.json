@@ -10,7 +10,8 @@
     "somethingWentWrong": "Щось пішло не так. Спробуйте ще раз.",
     "language": "Мова",
     "english": "Англійська",
-    "ukrainian": "Українська"
+    "ukrainian": "Українська",
+    "notAvailable": "Недоступно."
   },
   "auth": {
     "login": {
@@ -220,5 +221,113 @@
     "fieldChanged": "змінено",
     "fieldRemoved": "видалено",
     "noDiff": "Немає відмінностей між цими версіями."
+  },
+  "collections": {
+    "pageTitle": "Мої колекції",
+    "newCollection": "Нова колекція",
+    "empty": "Ви ще не створили жодної колекції.",
+    "loading": "Завантаження колекцій...",
+    "card": {
+      "publicBadge": "Публічна"
+    },
+    "form": {
+      "nameLabel": "Назва",
+      "descriptionLabel": "Опис",
+      "isPublicLabel": "Зробити цю колекцію публічною",
+      "coverImageLabel": "URL обкладинки",
+      "createTitle": "Нова колекція",
+      "editTitle": "Редагувати колекцію",
+      "submitCreate": "Створити колекцію",
+      "submitEdit": "Зберегти зміни",
+      "submitting": "Збереження..."
+    },
+    "detail": {
+      "itemsTitle": "Елементи",
+      "emptyItems": "У цій колекції ще немає елементів.",
+      "editButton": "Редагувати",
+      "deleteButton": "Видалити",
+      "deleteConfirmTitle": "Видалити цю колекцію?",
+      "deleteConfirmDescription": "Це видалить колекцію та всі її елементи. Цю дію неможливо скасувати.",
+      "removeItem": "Видалити",
+      "moveUp": "Вгору",
+      "moveDown": "Вниз",
+      "noteLabel": "Примітка",
+      "shareButton": "Поділитися"
+    },
+    "addToCollection": {
+      "trigger": "Додати до колекції",
+      "title": "Додати до колекції",
+      "noCollections": "У вас ще немає колекцій.",
+      "createNew": "Створити нову колекцію",
+      "added": "Додано до {name}."
+    }
+  },
+  "reviews": {
+    "sectionTitle": "Відгуки",
+    "empty": "Ще немає відгуків.",
+    "loading": "Завантаження відгуків...",
+    "spoilerWarning": "Містить спойлери",
+    "writeReview": "Написати відгук",
+    "editReview": "Редагувати відгук",
+    "deleteReview": "Видалити відгук",
+    "deleteConfirmTitle": "Видалити цей відгук?",
+    "deleteConfirmDescription": "Цю дію неможливо скасувати.",
+    "form": {
+      "ratingLabel": "Оцінка",
+      "titleLabel": "Назва",
+      "bodyLabel": "Відгук",
+      "isPublicLabel": "Зробити цей відгук публічним",
+      "containsSpoilersLabel": "Містить спойлери",
+      "submitCreate": "Опублікувати відгук",
+      "submitEdit": "Зберегти зміни",
+      "submitting": "Збереження...",
+      "exactlyOneRequired": "Виберіть книгу або конкретне видання, але не обидва."
+    },
+    "myReviewsTitle": "Мої відгуки"
+  },
+  "statuses": {
+    "pageTitle": "Мої книги",
+    "tabs": {
+      "library": "Бібліотека",
+      "wishlist": "Список бажань",
+      "lentOut": "Позичено",
+      "borrowed": "Отримано в позику"
+    },
+    "empty": "Тут ще нічого немає.",
+    "loading": "Завантаження...",
+    "changeStatus": "Змінити статус",
+    "lendAction": "Позичити...",
+    "returnAction": "Позначити як повернену",
+    "kind": {
+      "owned": "Власна",
+      "wishlist": "Список бажань",
+      "pre_order": "Передзамовлення",
+      "lent_out": "Позичена",
+      "borrowed": "Отримана в позику",
+      "gifted_away": "Подарована",
+      "sold": "Продана",
+      "lost": "Втрачена"
+    },
+    "lendDialog": {
+      "title": "Позичити цю книгу",
+      "friendIdLabel": "ID друга",
+      "orNameLabel": "Або ім'я",
+      "submit": "Позичити",
+      "submitting": "Позичення..."
+    },
+    "returnDialog": {
+      "title": "Позначити як повернену?",
+      "description": "Це видалить запис про позику та збереже книгу у вашій бібліотеці.",
+      "confirm": "Позначити як повернену"
+    }
+  },
+  "share": {
+    "trigger": "Поділитися",
+    "dialogTitle": "Поділитися з другом",
+    "friendIdLabel": "ID друга",
+    "messageLabel": "Повідомлення",
+    "submit": "Надіслати",
+    "submitting": "Надсилання...",
+    "success": "Поділилися!"
   }
 }
