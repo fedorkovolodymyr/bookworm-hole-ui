@@ -36,9 +36,17 @@ apiClient.interceptors.response.use(
         await refreshPromise;
         refreshPromise = null;
         return apiClient(originalRequest);
-      } catch {
+      } catch (refreshError) {
         refreshPromise = null;
-        if (typeof window !== "undefined") {
+        // "No refresh token" means the visitor was never logged in (e.g. a
+        // guest browsing a public page) — that's expected, not a session
+        // expiry, so don't redirect. Any other failure (expired/invalid
+        // refresh token) means a real session lapsed and redirecting to
+        // login is correct.
+        const detail = axios.isAxiosError(refreshError)
+          ? (refreshError.response?.data as { detail?: string } | undefined)?.detail
+          : undefined;
+        if (detail !== "No refresh token" && typeof window !== "undefined") {
           window.location.href = "/login";
         }
       }
