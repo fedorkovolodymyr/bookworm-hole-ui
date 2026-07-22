@@ -2,6 +2,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import Cookies from "js-cookie";
 import type { AxiosError } from "axios";
+import { NO_REFRESH_TOKEN_DETAIL } from "@/lib/auth/constants";
 
 vi.mock("js-cookie", () => ({
   default: { get: vi.fn() },
@@ -79,7 +80,7 @@ describe("apiClient response interceptor", () => {
     const { apiClient } = await import("./client");
     vi.spyOn(apiClient, "post").mockRejectedValue({
       isAxiosError: true,
-      response: { status: 401, data: { detail: "No refresh token" } },
+      response: { status: 401, data: { detail: NO_REFRESH_TOKEN_DETAIL } },
       toJSON: () => ({}),
     });
 

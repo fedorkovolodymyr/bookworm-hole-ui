@@ -1,6 +1,7 @@
 // lib/api/client.ts
 import axios from "axios";
 import Cookies from "js-cookie";
+import { NO_REFRESH_TOKEN_DETAIL } from "@/lib/auth/constants";
 
 export const apiClient = axios.create({
   baseURL: "/api",
@@ -46,7 +47,7 @@ apiClient.interceptors.response.use(
         const detail = axios.isAxiosError(refreshError)
           ? (refreshError.response?.data as { detail?: string } | undefined)?.detail
           : undefined;
-        if (detail !== "No refresh token" && typeof window !== "undefined") {
+        if (detail !== NO_REFRESH_TOKEN_DETAIL && typeof window !== "undefined") {
           window.location.href = "/login";
         }
       }
