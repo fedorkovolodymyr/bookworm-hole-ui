@@ -10,33 +10,20 @@ self-contained "my reading" domain under the `me` router). Covers starting
 and stopping a reading session, listing/editing/deleting past sessions,
 and a stats/streak/timeline dashboard.
 
-## API Blocker
+## API Blocker (RESOLVED)
 
-`GET /me/reading/streak` and `GET /me/reading/timeline` both 500 for
-every user (including a fresh user with zero sessions) — these are raw
-SQL bugs in `app/repositories/reading_stats_repository.py`, not
-data-dependent:
+`GET /me/reading/streak` and `GET /me/reading/timeline` previously 500'd
+for every user — raw SQL bugs in
+`app/repositories/reading_stats_repository.py`. Filed as
+[fedorkovolodymyr/bookworm-hole-api#141](https://github.com/fedorkovolodymyr/bookworm-hole-api/issues/141),
+now **closed**. Re-verified live on 2026-07-22 against a fresh test user:
 
-- `get_streak` (repo line ~109): the `streak_lengths` CTE's
-  `GROUP BY` clause doesn't account for the `MAX(session_date) as
-max_date` column correctly — Postgres raises `GroupingError: column
-"streak_lengths.max_date" must appear in the GROUP BY clause or be used
-in an aggregate function`.
-- `get_timeline` (repo line ~155): the query casts bound parameters
-  inline as `:from_date::date` / `:to_date::date` inside
-  `generate_series(...)`, which asyncpg's SQL parser cannot handle —
-  `PostgresSyntaxError: syntax error at or near ":"`.
+- `GET /me/reading/streak` → 200 `{"current_streak_days":0,"longest_streak_days":0}`
+- `GET /me/reading/timeline?from_date=2026-07-01&to_date=2026-07-22` → 200, `TimelineResponse` with one `TimelineEntry` per day, all-zero for a fresh user.
+- `GET /me/reading/stats` → 200, all-zero, as before.
 
-Filed as
-[fedorkovolodymyr/bookworm-hole-api#141](https://github.com/fedorkovolodymyr/bookworm-hole-api/issues/141).
-**Blocks** the streak display and the sessions-over-time/timeline chart in
-the stats dashboard — do not merge the Block 4 implementation PR until
-issue #141 is closed and both endpoints have been re-verified end-to-end
-against the fixed API. `GET /me/reading/stats` (period totals) is
-unaffected and already verified working; the stats dashboard's summary
-tiles and the streak-calendar/timeline chart can be built and reviewed in
-Storybook against mocked data in the meantime, but must not be wired to
-the live endpoints (or merged) until unblocked.
+No remaining blocker — both hooks and components can wire directly to
+the live endpoints; no mock-only gating needed.
 
 ## Real API surface (verified against running OpenAPI schema; live-tested where noted)
 
@@ -84,17 +71,20 @@ Registered a fresh test user (`POST /auth/register`), used the returned
 - `GET /me/reading/sessions` → 200, `[]`.
 - `GET /me/reading/stats` (default `period=month`) → 200, all-zero
   `ReadingStatsResponse`, matches schema.
-- `GET /me/reading/streak` → 500 (see API Blocker, issue #141).
-- `GET /me/reading/timeline?from_date=...&to_date=...` → 500 (see API
-  Blocker, issue #141).
+- `GET /me/reading/streak` → 200, all-zero `StreakResponse` (was 500,
+  see API Blocker — since fixed and re-verified 2026-07-22).
+- `GET /me/reading/timeline?from_date=...&to_date=...` → 200,
+  `TimelineResponse` with a zero-value entry per day (was 500, same
+  fix/re-verification).
 
-Did not exercise `start`/`stop`/`PATCH`/`DELETE` live: the local DB's
-`books`/`releases` tables are empty (`GET /books/` returns `{"items":
-[], "total": 0}`), so there is no real `release_id` to start a session
-against. Their request/response shapes above are taken directly from the
-OpenAPI schema; implementation should re-verify these four once Block 2
-(Catalog) has seeded or created at least one release, or once a shared
-seed/fixture exists.
+Did not exercise `start`/`stop`/`PATCH`/`DELETE` live: as of 2026-07-22
+the local DB has 2 books (`GET /books/` returns 2 items) but neither has
+any releases (`GET /books/{id}` shows `"releases": []`), so there is
+still no real `release_id` to start a session against. Their
+request/response shapes above are taken directly from the OpenAPI
+schema; implementation should re-verify these four once a release exists
+(create one via the catalog/admin API if needed, or once shared
+seed/fixture data exists).
 
 ## Architecture
 
@@ -115,10 +105,9 @@ seed/fixture exists.
   - `useUpdateSession()` / `useDeleteSession()` — mutations, invalidate
     `["reading", "sessions"]`.
   - `useReadingStats(period)` — query, keyed by period.
-  - `useReadingStreak()` — query (blocked on API#141 — hook can exist and
-    be tested against mocks, but not enabled against the live API until
-    unblocked).
-  - `useReadingTimeline(fromDate, toDate)` — query (same #141 blocker).
+  - `useReadingStreak()` — query, wired directly to the live endpoint.
+  - `useReadingTimeline(fromDate, toDate)` — query, wired directly to the
+    live endpoint.
 - `components/reading/` — presentational components (Storybook-covered):
   `ActiveSessionCard` (shows in-progress session + a "Stop" button),
   `StartSessionForm` (release picker + optional starting position),
@@ -161,10 +150,9 @@ started_at`), pages read, notes. Each item has an edit action (opens a
     validator, accessible contrast, consistent light/dark handling) rather
     than inventing one-off styling. Do not over-design beyond these two
     chart types for this block.
-  - Both charts are wired to `useReadingTimeline` — **blocked on API#141**
-    until the timeline endpoint stops 500ing; build the components against
-    mocked `TimelineEntry[]` fixtures in Storybook now, wire to the live
-    hook once unblocked.
+  - Both charts are wired to `useReadingTimeline` against the live
+    endpoint; Storybook stories still cover them against mocked
+    `TimelineEntry[]` fixtures for isolated visual review/regression.
 - Reading nav entry (Block 0's header already has a `Reading` placeholder
   link) now points at `/reading`.
 
@@ -175,8 +163,8 @@ started_at`), pages read, notes. Each item has an edit action (opens a
 - 422 (bad `period`/date query params) surfaces as an inline form/filter
   error near the control that produced it (period selector, date range
   picker), not a global toast.
-- 500s (currently `streak`/`timeline`, API#141) must **not** be silently
-  swallowed into an empty/zero state that looks like real data — render
+- Any 500 (e.g. a regression on `streak`/`timeline`) must **not** be
+  silently swallowed into an empty/zero state that looks like real data — render
   an explicit "Unable to load this data right now" inline error state
   distinct from the true "no sessions yet" empty state (which returns a
   clean 200 with zero values, per live-tested `stats` behavior). Reusing
@@ -197,21 +185,16 @@ started_at`), pages read, notes. Each item has an edit action (opens a
 - Vitest + RTL: `StartSessionForm`, `ActiveSessionCard` (stop flow),
   `SessionHistoryItem` (edit/delete), `ReadingStatsSummary`,
   `ReadingStreakBadge`, `ReadingTimelineChart` — render, empty state vs.
-  populated state, error state. Mock API with `msw`; timeline/streak
-  component tests use mocked success responses (not live) since the real
-  endpoints currently 500.
+  populated state, error state. Mock API with `msw`, including a mocked
+  500 branch for timeline/streak to cover the distinct error state.
 - Hook tests: `useReading.ts` hooks against mocked API success + error
   (422, 500) branches, including the distinct "empty" vs "error" cases
   called out above.
-- Playwright: happy-path e2e — once Block 2 provides seed/fixture
-  releases, start a session → stop it → see it in history → see stats
-  reflect it. Streak/timeline chart e2e assertions blocked until API#141
-  is fixed.
-- Re-verification checklist before this block's PR can merge: API#141
-  closed, `GET /me/reading/streak` and `GET /me/reading/timeline` both
-  return 200 with correct shapes against the live API, hooks re-pointed
-  from mocks to live calls, Storybook stories left in place as
-  regression/visual coverage.
+- Playwright: happy-path e2e — start a session → stop it → see it in
+  history → see stats/streak/timeline reflect it. Requires a real
+  `release_id`; if no release exists yet in the seed/fixture data at
+  implementation time, create one via the catalog API first (or flag for
+  follow-up once Block 2 seed data exists).
 
 ## Out of Scope (this block)
 
@@ -225,5 +208,6 @@ started_at`), pages read, notes. Each item has an edit action (opens a
   audit as a potential missing feature if product wants it later.
 - Social/friend reading activity feed — that's `friends`/`status_views`
   territory (Blocks 3/5), not this block.
-- Fixing the API bugs themselves — tracked in
-  fedorkovolodymyr/bookworm-hole-api#141, out of scope for this UI repo.
+- Fixing the API bugs themselves — was tracked in
+  fedorkovolodymyr/bookworm-hole-api#141, resolved on the API side prior
+  to this block's implementation.
