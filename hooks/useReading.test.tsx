@@ -118,3 +118,53 @@ describe("useReadingTimeline", () => {
     expect(result.current.data?.items).toEqual([]);
   });
 });
+
+describe("invalidation", () => {
+  it("useStartSession invalidates useActiveSessions and causes refetch", async () => {
+    // Create a shared QueryClient for this test so both hooks use the same instance
+    const sharedQueryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const testWrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={sharedQueryClient}>{children}</QueryClientProvider>
+    );
+
+    // Track number of times the active sessions endpoint is called
+    let callCount = 0;
+    server.use(
+      http.get("/api/me/reading/active", () => {
+        callCount++;
+        // First call returns empty, second call returns a session
+        if (callCount === 1) {
+          return HttpResponse.json([]);
+        }
+        return HttpResponse.json([{ id: "s1", release_id: "r1" }]);
+      }),
+    );
+    server.use(
+      http.post("/api/me/reading/start", () =>
+        HttpResponse.json({ id: "s1", release_id: "r1" }, { status: 201 }),
+      ),
+    );
+
+    // First: fetch active sessions (should be empty)
+    const { result: activeResult } = renderHook(() => useActiveSessions(), {
+      wrapper: testWrapper,
+    });
+    await waitFor(() => expect(activeResult.current.isSuccess).toBe(true));
+    expect(activeResult.current.data).toEqual([]);
+
+    // Second: start a session, which should invalidate active sessions
+    const { result: mutationResult } = renderHook(() => useStartSession(), {
+      wrapper: testWrapper,
+    });
+    mutationResult.current.mutate({ release_id: "r1" });
+    await waitFor(() => expect(mutationResult.current.isSuccess).toBe(true));
+
+    // After mutation succeeds, activeResult should refetch and update
+    await waitFor(() => {
+      expect(activeResult.current.data).toEqual([{ id: "s1", release_id: "r1" }]);
+    });
+    expect(callCount).toBe(2); // Confirm endpoint was called twice
+  });
+});
