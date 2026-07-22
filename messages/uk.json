@@ -329,5 +329,90 @@
     "submit": "Надіслати",
     "submitting": "Надсилання...",
     "success": "Поділилися!"
+  },
+  "reading": {
+    "pageTitle": "Читання",
+    "activeSection": {
+      "title": "Зараз читаю",
+      "empty": "Зараз ви нічого не читаєте.",
+      "startAction": "Почати сесію",
+      "stopAction": "Завершити"
+    },
+    "startForm": {
+      "title": "Почати читання",
+      "releaseLabel": "Книга",
+      "releasePlaceholder": "Виберіть книгу зі своєї бібліотеки",
+      "positionStartLabel": "Початкова позиція (необов'язково)",
+      "positionUnitLabel": "Одиниця позиції",
+      "unit": {
+        "page": "Сторінка",
+        "percent": "Відсоток",
+        "location": "Місце",
+        "timestamp": "Час"
+      },
+      "submit": "Почати",
+      "submitting": "Починаємо..."
+    },
+    "stopForm": {
+      "title": "Завершити читання",
+      "positionEndLabel": "Кінцева позиція (необов'язково)",
+      "notesLabel": "Нотатки (необов'язково)",
+      "submit": "Завершити",
+      "submitting": "Завершуємо..."
+    },
+    "history": {
+      "title": "Історія сесій",
+      "empty": "Ще немає сесій читання.",
+      "loading": "Завантаження сесій...",
+      "editAction": "Редагувати",
+      "deleteAction": "Видалити",
+      "deleteConfirmTitle": "Видалити цю сесію?",
+      "deleteConfirmDescription": "Цю дію не можна скасувати.",
+      "confirmDelete": "Видалити"
+    },
+    "editForm": {
+      "title": "Редагувати сесію",
+      "startedAtLabel": "Початок",
+      "endedAtLabel": "Кінець",
+      "positionStartLabel": "Початкова позиція",
+      "positionEndLabel": "Кінцева позиція",
+      "positionUnitLabel": "Одиниця позиції",
+      "pagesReadLabel": "Прочитано сторінок",
+      "notesLabel": "Нотатки",
+      "submit": "Зберегти зміни",
+      "submitting": "Зберігаємо..."
+    },
+    "stats": {
+      "title": "Статистика",
+      "periodLabel": "Період",
+      "period": {
+        "week": "Цей тиждень",
+        "month": "Цей місяць",
+        "year": "Цей рік",
+        "all": "Весь час"
+      },
+      "totalMinutes": "Всього хвилин",
+      "totalSessions": "Сесії",
+      "uniqueBooks": "Унікальні книги",
+      "totalPages": "Прочитано сторінок",
+      "loadError": "Не вдалося завантажити статистику."
+    },
+    "streak": {
+      "title": "Серія",
+      "current": "Поточна серія",
+      "longest": "Найдовша серія",
+      "days": "{count, plural, one {# день} few {# дні} many {# днів} other {# дня}}",
+      "loadError": "Не вдалося завантажити серію."
+    },
+    "timeline": {
+      "title": "Активність",
+      "heatmapTitle": "Активність читання",
+      "chartTitle": "Хвилин на день",
+      "empty": "У цьому діапазоні ще немає активності.",
+      "loadError": "Не вдалося завантажити активність."
+    },
+    "errors": {
+      "generic": "Щось пішло не так. Спробуйте ще раз."
+    }
   }
 }

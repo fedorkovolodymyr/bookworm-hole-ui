@@ -329,5 +329,90 @@
     "submit": "Send",
     "submitting": "Sending...",
     "success": "Shared!"
+  },
+  "reading": {
+    "pageTitle": "Reading",
+    "activeSection": {
+      "title": "Currently reading",
+      "empty": "You're not reading anything right now.",
+      "startAction": "Start a session",
+      "stopAction": "Stop"
+    },
+    "startForm": {
+      "title": "Start reading",
+      "releaseLabel": "Book",
+      "releasePlaceholder": "Choose a book from your library",
+      "positionStartLabel": "Starting position (optional)",
+      "positionUnitLabel": "Position unit",
+      "unit": {
+        "page": "Page",
+        "percent": "Percent",
+        "location": "Location",
+        "timestamp": "Timestamp"
+      },
+      "submit": "Start",
+      "submitting": "Starting..."
+    },
+    "stopForm": {
+      "title": "Stop reading",
+      "positionEndLabel": "Ending position (optional)",
+      "notesLabel": "Notes (optional)",
+      "submit": "Stop",
+      "submitting": "Stopping..."
+    },
+    "history": {
+      "title": "Session history",
+      "empty": "No reading sessions yet.",
+      "loading": "Loading sessions...",
+      "editAction": "Edit",
+      "deleteAction": "Delete",
+      "deleteConfirmTitle": "Delete this session?",
+      "deleteConfirmDescription": "This can't be undone.",
+      "confirmDelete": "Delete"
+    },
+    "editForm": {
+      "title": "Edit session",
+      "startedAtLabel": "Started at",
+      "endedAtLabel": "Ended at",
+      "positionStartLabel": "Starting position",
+      "positionEndLabel": "Ending position",
+      "positionUnitLabel": "Position unit",
+      "pagesReadLabel": "Pages read",
+      "notesLabel": "Notes",
+      "submit": "Save changes",
+      "submitting": "Saving..."
+    },
+    "stats": {
+      "title": "Stats",
+      "periodLabel": "Period",
+      "period": {
+        "week": "This week",
+        "month": "This month",
+        "year": "This year",
+        "all": "All time"
+      },
+      "totalMinutes": "Total minutes",
+      "totalSessions": "Sessions",
+      "uniqueBooks": "Unique books",
+      "totalPages": "Pages read",
+      "loadError": "Unable to load stats right now."
+    },
+    "streak": {
+      "title": "Streak",
+      "current": "Current streak",
+      "longest": "Longest streak",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "loadError": "Unable to load streak right now."
+    },
+    "timeline": {
+      "title": "Activity",
+      "heatmapTitle": "Reading activity",
+      "chartTitle": "Minutes per day",
+      "empty": "No reading activity in this range yet.",
+      "loadError": "Unable to load activity right now."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }
