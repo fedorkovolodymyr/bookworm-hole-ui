@@ -39,6 +39,11 @@
       "verifying": "Verifying your email...",
       "invalid": "This verification link is invalid or expired.",
       "success": "Your email has been verified."
+    },
+    "emailVerification": {
+      "prompt": "Please verify your email address.",
+      "sent": "Verification email sent.",
+      "resend": "Resend verification email"
     }
   },
   "profile": {
@@ -329,6 +334,17 @@
     "submit": "Send",
     "submitting": "Sending...",
     "success": "Shared!"
+  },
+  "shell": {
+    "nav": {
+      "browse": "Browse",
+      "collections": "Collections"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "logOut": "Log out"
+    },
+    "signIn": "Sign in"
   },
   "reading": {
     "pageTitle": "Reading",

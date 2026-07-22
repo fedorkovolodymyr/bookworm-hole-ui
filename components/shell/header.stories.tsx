@@ -1,9 +1,11 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "@/lib/theme-provider";
 import type { UserProfileResponse } from "@/lib/api/types";
 import { Header } from "./header";
+import enMessages from "@/messages/en.json";
 
 // `msw-storybook-addon` isn't installed in this project's Storybook setup, and the
 // existing `tests/mocks/server` uses msw's node `setupServer`, which doesn't run in
@@ -20,11 +22,13 @@ function withQueryClient(me: UserProfileResponse | null) {
     });
 
     return (
-      <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <Story />
-        </QueryClientProvider>
-      </ThemeProvider>
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <Story />
+          </QueryClientProvider>
+        </ThemeProvider>
+      </NextIntlClientProvider>
     );
   };
 }

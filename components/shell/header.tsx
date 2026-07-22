@@ -19,6 +19,7 @@ export function Header() {
   const { data: me } = useMe();
   const logout = useLogout();
   const t = useTranslations("catalog.myContributions");
+  const tShell = useTranslations("shell");
 
   return (
     <header className="border-border flex h-16 items-center justify-between border-b px-4 sm:px-6">
@@ -27,10 +28,10 @@ export function Header() {
       </Link>
       <nav className="hidden items-center gap-6 sm:flex">
         <Link href="/books" className="text-muted-foreground hover:text-foreground text-sm">
-          Browse
+          {tShell("nav.browse")}
         </Link>
         <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
-          Collections
+          {tShell("nav.collections")}
         </Link>
       </nav>
       <div className="flex items-center gap-2">
@@ -49,16 +50,20 @@ export function Header() {
               }
             />
             <DropdownMenuContent>
-              <DropdownMenuItem render={<Link href="/profile" />}>Profile</DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/profile" />}>
+                {tShell("userMenu.profile")}
+              </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/contributions" />}>
                 {t("navLink")}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => logout.mutate()}>Log out</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout.mutate()}>
+                {tShell("userMenu.logOut")}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Button size="sm" nativeButton={false} render={<Link href="/login" />}>
-            Sign in
+            {tShell("signIn")}
           </Button>
         )}
       </div>
