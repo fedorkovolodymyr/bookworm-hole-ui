@@ -82,6 +82,20 @@ describe("POST /api/[...path]", () => {
     const body = await response.json();
     expect(body.id).toBe("c1");
   });
+
+  it("returns a clean 400 on a malformed JSON body instead of throwing", async () => {
+    const { POST } = await import("./route");
+    const req = new NextRequest("http://localhost/api/collections", {
+      method: "POST",
+      headers: { cookie: "access_token=at; csrf_token=abc", "x-csrf-token": "abc" },
+      body: "{not valid json",
+    });
+    const response = await POST(req, makeParams(["collections"]));
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.detail).toBe("Invalid JSON body");
+    expect(request_).not.toHaveBeenCalled();
+  });
 });
 
 describe("DELETE /api/[...path]", () => {

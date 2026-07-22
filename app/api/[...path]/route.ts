@@ -23,7 +23,13 @@ async function proxy(request: NextRequest, path: string[]): Promise<NextResponse
   let body: unknown;
   if (MUTATING_METHODS.has(request.method)) {
     const text = await request.text();
-    body = text ? JSON.parse(text) : undefined;
+    if (text) {
+      try {
+        body = JSON.parse(text);
+      } catch {
+        return NextResponse.json({ detail: "Invalid JSON body" }, { status: 400 });
+      }
+    }
   }
 
   try {
