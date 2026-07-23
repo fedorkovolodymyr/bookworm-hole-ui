@@ -6,7 +6,7 @@ import { isAxiosError } from "@/lib/api/errors";
 
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
-async function proxy(request: NextRequest, path: string[]): Promise<NextResponse> {
+async function proxy(request: NextRequest): Promise<NextResponse> {
   if (MUTATING_METHODS.has(request.method)) {
     const csrfCookie = request.cookies.get("csrf_token")?.value;
     const csrfHeader = request.headers.get("x-csrf-token");
@@ -17,7 +17,11 @@ async function proxy(request: NextRequest, path: string[]): Promise<NextResponse
 
   const accessToken = getAccessToken(request);
   const client = createServerApiClient(accessToken);
-  const targetPath = `/${path.join("/")}`;
+  // Derive the target path from the raw pathname (not the `path` segments array) so a
+  // trailing slash on the incoming request (e.g. /api/chat/threads/) is preserved when
+  // forwarded upstream — Next.js's [...path] catch-all never includes a trailing empty
+  // segment, so path.join("/") would silently drop it.
+  const targetPath = request.nextUrl.pathname.replace(/^\/api/, "");
   const search = request.nextUrl.search;
 
   let body: unknown;
@@ -52,42 +56,22 @@ async function proxy(request: NextRequest, path: string[]): Promise<NextResponse
   }
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> },
-) {
-  const { path } = await params;
-  return proxy(request, path);
+export async function GET(request: NextRequest) {
+  return proxy(request);
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> },
-) {
-  const { path } = await params;
-  return proxy(request, path);
+export async function POST(request: NextRequest) {
+  return proxy(request);
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> },
-) {
-  const { path } = await params;
-  return proxy(request, path);
+export async function PATCH(request: NextRequest) {
+  return proxy(request);
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> },
-) {
-  const { path } = await params;
-  return proxy(request, path);
+export async function PUT(request: NextRequest) {
+  return proxy(request);
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> },
-) {
-  const { path } = await params;
-  return proxy(request, path);
+export async function DELETE(request: NextRequest) {
+  return proxy(request);
 }
