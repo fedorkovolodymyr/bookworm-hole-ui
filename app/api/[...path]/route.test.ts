@@ -11,16 +11,12 @@ vi.mock("@/lib/api/server-client", () => ({
   createServerApiClient: () => ({ request: request_ }),
 }));
 
-function makeParams(path: string[]) {
-  return { params: Promise.resolve({ path }) };
-}
-
 describe("GET /api/[...path]", () => {
   it("forwards the path and query string, returning the upstream body", async () => {
     request_.mockResolvedValueOnce({ data: { items: [{ id: "b1" }] }, status: 200 });
     const { GET } = await import("./route");
     const req = new NextRequest("http://localhost/api/books?title=Dune");
-    const response = await GET(req, makeParams(["books"]));
+    const response = await GET(req);
     expect(request_).toHaveBeenCalledWith(
       expect.objectContaining({ url: "/books?title=Dune", method: "GET" }),
     );
@@ -32,7 +28,7 @@ describe("GET /api/[...path]", () => {
     request_.mockResolvedValueOnce({ data: { id: "c1" }, status: 200 });
     const { GET } = await import("./route");
     const req = new NextRequest("http://localhost/api/collections/c1/items");
-    await GET(req, makeParams(["collections", "c1", "items"]));
+    await GET(req);
     expect(request_).toHaveBeenCalledWith(
       expect.objectContaining({ url: "/collections/c1/items", method: "GET" }),
     );
@@ -42,7 +38,7 @@ describe("GET /api/[...path]", () => {
     request_.mockRejectedValueOnce({ response: { status: 404, data: { detail: "Not found" } } });
     const { GET } = await import("./route");
     const req = new NextRequest("http://localhost/api/books/missing");
-    const response = await GET(req, makeParams(["books", "missing"]));
+    const response = await GET(req);
     expect(response.status).toBe(404);
     const body = await response.json();
     expect(body.detail).toBe("Not found");
@@ -57,7 +53,7 @@ describe("POST /api/[...path]", () => {
       headers: { cookie: "access_token=at; csrf_token=abc" },
       body: JSON.stringify({ name: "Favorites" }),
     });
-    const response = await POST(req, makeParams(["collections"]));
+    const response = await POST(req);
     expect(response.status).toBe(403);
     expect(request_).not.toHaveBeenCalled();
   });
@@ -70,7 +66,7 @@ describe("POST /api/[...path]", () => {
       headers: { cookie: "access_token=at; csrf_token=abc", "x-csrf-token": "abc" },
       body: JSON.stringify({ name: "Favorites" }),
     });
-    const response = await POST(req, makeParams(["collections"]));
+    const response = await POST(req);
     expect(request_).toHaveBeenCalledWith(
       expect.objectContaining({
         url: "/collections",
@@ -90,7 +86,7 @@ describe("POST /api/[...path]", () => {
       headers: { cookie: "access_token=at; csrf_token=abc", "x-csrf-token": "abc" },
       body: "{not valid json",
     });
-    const response = await POST(req, makeParams(["collections"]));
+    const response = await POST(req);
     expect(response.status).toBe(400);
     const body = await response.json();
     expect(body.detail).toBe("Invalid JSON body");
@@ -106,7 +102,7 @@ describe("DELETE /api/[...path]", () => {
       method: "DELETE",
       headers: { cookie: "access_token=at; csrf_token=abc", "x-csrf-token": "abc" },
     });
-    const response = await DELETE(req, makeParams(["collections", "c1"]));
+    const response = await DELETE(req);
     expect(response.status).toBe(204);
   });
 });
