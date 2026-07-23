@@ -47,10 +47,11 @@ describe("Header", () => {
     expect(await screen.findByRole("button", { name: /Alice/ })).toBeInTheDocument();
   });
 
-  it("renders nav links for Browse, Collections, and Reading", () => {
+  it("renders nav links for Browse, Collections, Reading, and Friends", () => {
     renderHeader();
     expect(screen.getByRole("link", { name: "Browse" })).toHaveAttribute("href", "/books");
     expect(screen.getByRole("link", { name: "Collections" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Reading" })).toHaveAttribute("href", "/reading");
+    expect(screen.getByRole("link", { name: "Friends" })).toHaveAttribute("href", "/friends");
   });
 });

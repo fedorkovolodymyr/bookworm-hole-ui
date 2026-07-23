@@ -36,6 +36,9 @@ export function Header() {
         <Link href="/reading" className="text-muted-foreground hover:text-foreground text-sm">
           {tShell("nav.reading")}
         </Link>
+        <Link href="/friends" className="text-muted-foreground hover:text-foreground text-sm">
+          {tShell("nav.friends")}
+        </Link>
       </nav>
       <div className="flex items-center gap-2">
         <LocaleSwitcher />

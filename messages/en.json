@@ -339,7 +339,8 @@
     "nav": {
       "browse": "Browse",
       "collections": "Collections",
-      "reading": "Reading"
+      "reading": "Reading",
+      "friends": "Friends"
     },
     "userMenu": {
       "profile": "Profile",
@@ -429,6 +430,62 @@
       "chartTitle": "Minutes per day",
       "empty": "No reading activity in this range yet.",
       "loadError": "Unable to load activity right now."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "friends": {
+    "pageTitle": "Friends",
+    "tabs": {
+      "friends": "Friends",
+      "requests": "Requests",
+      "findPeople": "Find people"
+    },
+    "list": {
+      "empty": "You haven't added any friends yet.",
+      "since": "Friends since {date}",
+      "viewProfile": "View profile",
+      "unfriendAction": "Unfriend",
+      "blockAction": "Block"
+    },
+    "requests": {
+      "incomingTitle": "Incoming",
+      "incomingEmpty": "No incoming friend requests.",
+      "outgoingTitle": "Outgoing",
+      "outgoingEmpty": "No outgoing friend requests.",
+      "acceptAction": "Accept",
+      "declineAction": "Decline",
+      "pendingBadge": "Pending"
+    },
+    "findForm": {
+      "label": "Username",
+      "placeholder": "Enter an exact username",
+      "submit": "Find",
+      "submitting": "Searching...",
+      "notFound": "No user found with that username.",
+      "sendRequestAction": "Send friend request",
+      "requestSent": "Friend request sent."
+    },
+    "unfriendDialog": {
+      "title": "Unfriend this person?",
+      "description": "You can send a new friend request later if you change your mind.",
+      "confirm": "Unfriend"
+    },
+    "blockDialog": {
+      "title": "Block this person?",
+      "description": "Blocked users can't send you friend requests.",
+      "confirm": "Block"
+    },
+    "profile": {
+      "notAvailable": "This profile isn't available right now.",
+      "friendActions": {
+        "unfriend": "Unfriend",
+        "block": "Block",
+        "unblock": "Unblock"
+      },
+      "reviewsTitle": "Reviews",
+      "reviewsEmpty": "No reviews yet."
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
