@@ -27,7 +27,9 @@ describe("useAi hooks", () => {
   });
 
   it("useSummary surfaces AiFeatureUnavailableError", async () => {
-    vi.mocked(aiApi.generateSummary).mockRejectedValue(new aiApi.AiFeatureUnavailableError("summary"));
+    vi.mocked(aiApi.generateSummary).mockRejectedValue(
+      new aiApi.AiFeatureUnavailableError("summary"),
+    );
     const { result } = renderHook(() => useSummary(), { wrapper });
     result.current.mutate({ text: "x" });
     await waitFor(() => expect(result.current.isError).toBe(true));

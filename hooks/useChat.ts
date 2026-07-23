@@ -59,9 +59,7 @@ export function useSendMessage(threadId: string) {
       queryClient.setQueryData(
         messagesKey,
         (
-          data:
-            | { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] }
-            | undefined,
+          data: { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] } | undefined,
         ) => {
           if (!data) return data;
           const [firstPage, ...rest] = data.pages;
@@ -79,18 +77,13 @@ export function useSendMessage(threadId: string) {
       queryClient.setQueryData(
         messagesKey,
         (
-          data:
-            | { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] }
-            | undefined,
+          data: { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] } | undefined,
         ) => {
           if (!data) return data;
           const [firstPage, ...rest] = data.pages;
           return {
             ...data,
-            pages: [
-              firstPage.map((m) => (m.id === context?.tempId ? message : m)),
-              ...rest,
-            ],
+            pages: [firstPage.map((m) => (m.id === context?.tempId ? message : m)), ...rest],
           };
         },
       );

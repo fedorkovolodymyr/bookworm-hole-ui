@@ -32,7 +32,10 @@ describe("ChatThreadPage", () => {
     vi.clearAllMocks();
     vi.mocked(meHooks.useMe).mockReturnValue({ data: { id: "u1" } } as never);
     vi.mocked(chatHooks.useMarkThreadRead).mockReturnValue({ mutate: vi.fn() } as never);
-    vi.mocked(chatHooks.useSendMessage).mockReturnValue({ mutate: vi.fn(), isPending: false } as never);
+    vi.mocked(chatHooks.useSendMessage).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+    } as never);
   });
 
   it("renders messages oldest-first", async () => {
@@ -44,8 +47,26 @@ describe("ChatThreadPage", () => {
       data: {
         pages: [
           [
-            { id: "m2", thread_id: "t1", sender_id: "u2", body: "second", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
-            { id: "m1", thread_id: "t1", sender_id: "u1", body: "first", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
+            {
+              id: "m2",
+              thread_id: "t1",
+              sender_id: "u2",
+              body: "second",
+              attachment_book_id: null,
+              attachment_collection_id: null,
+              read_at: null,
+              created_at: "x",
+            },
+            {
+              id: "m1",
+              thread_id: "t1",
+              sender_id: "u1",
+              body: "first",
+              attachment_book_id: null,
+              attachment_collection_id: null,
+              read_at: null,
+              created_at: "x",
+            },
           ],
         ],
       },

@@ -1,7 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ThreadListItem } from "./thread-list-item";
 
-const friend = { user_id: "u2", username: "bee", display_name: "Bee", avatar_url: null, since: "x" };
+const friend = {
+  user_id: "u2",
+  username: "bee",
+  display_name: "Bee",
+  avatar_url: null,
+  since: "x",
+};
 const baseThread = {
   id: "t1",
   user_a_id: "u1",

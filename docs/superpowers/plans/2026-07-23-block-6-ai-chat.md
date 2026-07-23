@@ -29,9 +29,11 @@ The spec's UI Surface section describes an attachment chip (mini `BookCard`/`Col
 ### Task 1: Chat & AI domain types
 
 **Files:**
+
 - Modify: `lib/api/types.ts` (append at end of file)
 
 **Interfaces:**
+
 - Produces: `ChatThreadResponse`, `ChatThreadWithLastMessageResponse`, `ChatMessageResponse`, `StartChatThreadPayload`, `SendChatMessagePayload`, `ListMessagesParams`, `RecommendRequest`, `RecommendResponse`, `SummaryRequest`, `SummaryResponse`, `TagSuggestRequest`, `TagSuggestResponse` — used by Tasks 2 and 3.
 
 - [ ] **Step 1: Append the new types**
@@ -122,14 +124,16 @@ git commit -m "feat(chat,ai): add chat and ai domain types"
 ### Task 2: Chat API client + business-rule-401 handling
 
 **Files:**
+
 - Create: `lib/api/chat.ts`
 - Create: `lib/api/chat.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient` (`lib/api/client.ts`), `ChatThreadResponse`, `ChatThreadWithLastMessageResponse`, `ChatMessageResponse`, `StartChatThreadPayload`, `SendChatMessagePayload`, `ListMessagesParams` (Task 1).
 - Produces: `startThread(recipientId: string): Promise<ChatThreadResponse>`, `listThreads(): Promise<ChatThreadWithLastMessageResponse[]>`, `getThreadMessages(threadId: string, params?: ListMessagesParams): Promise<ChatMessageResponse[]>`, `sendMessage(threadId: string, payload: SendChatMessagePayload): Promise<ChatMessageResponse>`, `markThreadRead(threadId: string): Promise<void>`, `ChatFriendRequiredError` (thrown by `startThread` on the business-rule 401) — used by Task 4 hooks.
 
-**Why `startThread` doesn't need special interceptor plumbing:** `apiClient`'s response interceptor (`lib/api/client.ts:29-33`) only auto-retries a 401 when `!originalRequest._retry`. It always calls `apiClient(originalRequest)` again after a refresh attempt, or falls through to `Promise.reject(error)` on refresh failure — in both cases the rejected/resolved promise still reaches the original caller. The redirect-to-login side effect only fires if the *refresh call itself* fails with something other than "no refresh token" (`client.ts:47-52`). For a logged-in user hitting `startThread`'s business-rule 401, the refresh call will succeed (their session is valid), the original `/chat/threads` POST will be retried, and will 401 again — but `_retry` is now `true` so the interceptor does not loop; it rejects with the original 401 error. So no redirect happens, but there IS one wasted refresh round-trip per business-rule rejection. Catch the specific `detail` string in `startThread` and rethrow a typed error so callers don't need to inspect raw axios errors.
+**Why `startThread` doesn't need special interceptor plumbing:** `apiClient`'s response interceptor (`lib/api/client.ts:29-33`) only auto-retries a 401 when `!originalRequest._retry`. It always calls `apiClient(originalRequest)` again after a refresh attempt, or falls through to `Promise.reject(error)` on refresh failure — in both cases the rejected/resolved promise still reaches the original caller. The redirect-to-login side effect only fires if the _refresh call itself_ fails with something other than "no refresh token" (`client.ts:47-52`). For a logged-in user hitting `startThread`'s business-rule 401, the refresh call will succeed (their session is valid), the original `/chat/threads` POST will be retried, and will 401 again — but `_retry` is now `true` so the interceptor does not loop; it rejects with the original 401 error. So no redirect happens, but there IS one wasted refresh round-trip per business-rule rejection. Catch the specific `detail` string in `startThread` and rethrow a typed error so callers don't need to inspect raw axios errors.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -196,7 +200,16 @@ describe("chat API client", () => {
 
   it("sendMessage posts the message body", async () => {
     vi.mocked(apiClient.post).mockResolvedValue({
-      data: { id: "m1", thread_id: "t1", sender_id: "u1", body: "hi", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
+      data: {
+        id: "m1",
+        thread_id: "t1",
+        sender_id: "u1",
+        body: "hi",
+        attachment_book_id: null,
+        attachment_collection_id: null,
+        read_at: null,
+        created_at: "x",
+      },
     });
     await sendMessage("t1", { body: "hi" });
     expect(apiClient.post).toHaveBeenCalledWith("/chat/threads/t1/messages", { body: "hi" });
@@ -302,10 +315,12 @@ git commit -m "feat(chat): add chat API client"
 ### Task 3: AI API client
 
 **Files:**
+
 - Create: `lib/api/ai.ts`
 - Create: `lib/api/ai.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`, `isAxiosError` (`lib/api/errors.ts`), `RecommendRequest`, `RecommendResponse`, `SummaryRequest`, `SummaryResponse`, `TagSuggestRequest`, `TagSuggestResponse` (Task 1).
 - Produces: `recommendBooks(req: RecommendRequest): Promise<RecommendResponse>`, `generateSummary(req: SummaryRequest): Promise<SummaryResponse>`, `suggestTags(req: TagSuggestRequest): Promise<TagSuggestResponse>`, `AiFeatureUnavailableError` — used by Task 5 hooks.
 
@@ -335,9 +350,14 @@ describe("ai API client", () => {
 
   it("recommendBooks throws AiFeatureUnavailableError on 501", async () => {
     vi.mocked(apiClient.post).mockRejectedValue({
-      response: { status: 501, data: { detail: "AI recommendation feature is not implemented yet" } },
+      response: {
+        status: 501,
+        data: { detail: "AI recommendation feature is not implemented yet" },
+      },
     });
-    await expect(recommendBooks({ user_id: "u1" })).rejects.toBeInstanceOf(AiFeatureUnavailableError);
+    await expect(recommendBooks({ user_id: "u1" })).rejects.toBeInstanceOf(
+      AiFeatureUnavailableError,
+    );
   });
 
   it("generateSummary posts to /ai/summary", async () => {
@@ -456,14 +476,17 @@ git commit -m "feat(ai): add ai API client"
 ### Task 4: Chat TanStack Query hooks
 
 **Files:**
+
 - Create: `hooks/useChat.ts`
 - Create: `hooks/useChat.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `startThread`, `listThreads`, `getThreadMessages`, `sendMessage`, `markThreadRead`, `ChatFriendRequiredError` (Task 2); `ChatMessageResponse`, `SendChatMessagePayload` (Task 1).
 - Produces: `useThreads()`, `useThreadMessages(threadId: string)`, `useStartThread()`, `useSendMessage(threadId: string)`, `useMarkThreadRead()` — used by Task 6/7/8 components and pages.
 
 **Notes:**
+
 - `useThreads()`: `useQuery({ queryKey: ["chat", "threads"], queryFn: listThreads, refetchInterval: 20000 })`.
 - `useThreadMessages(threadId)`: `useInfiniteQuery` with `initialPageParam: undefined`, `getNextPageParam` reading the **oldest** message's `id` (API returns newest-first per the spec's "reverse-chronological" note — treat the last item in each returned page as oldest), `refetchInterval: 20000` only when there's no `before` cursor pagination in flight (keep simple: always poll page 1 by also invalidating `["chat", "threads", threadId, "messages"]` on the base query — simplest correct approach: just set `refetchInterval: 20000` on the infinite query, TanStack Query will refetch all currently-loaded pages).
 - `useSendMessage(threadId)`: optimistic append using `queryClient.setQueryData` on the infinite query's first page, temp id via `crypto.randomUUID()`, replaced with server id in `onSuccess`, reverted in `onError`; `onSettled` invalidates `["chat", "threads"]`.
@@ -478,7 +501,13 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as chatApi from "@/lib/api/chat";
-import { useThreads, useThreadMessages, useStartThread, useSendMessage, useMarkThreadRead } from "./useChat";
+import {
+  useThreads,
+  useThreadMessages,
+  useStartThread,
+  useSendMessage,
+  useMarkThreadRead,
+} from "./useChat";
 
 vi.mock("@/lib/api/chat");
 
@@ -496,7 +525,14 @@ describe("useChat hooks", () => {
 
   it("useThreads fetches the thread list", async () => {
     vi.mocked(chatApi.listThreads).mockResolvedValue([
-      { id: "t1", user_a_id: "u1", user_b_id: "u2", last_message_at: null, created_at: "x", last_message: null },
+      {
+        id: "t1",
+        user_a_id: "u1",
+        user_b_id: "u2",
+        last_message_at: null,
+        created_at: "x",
+        last_message: null,
+      },
     ]);
     const { result } = renderHook(() => useThreads(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -505,7 +541,16 @@ describe("useChat hooks", () => {
 
   it("useThreadMessages fetches the first page", async () => {
     vi.mocked(chatApi.getThreadMessages).mockResolvedValue([
-      { id: "m1", thread_id: "t1", sender_id: "u1", body: "hi", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
+      {
+        id: "m1",
+        thread_id: "t1",
+        sender_id: "u1",
+        body: "hi",
+        attachment_book_id: null,
+        attachment_collection_id: null,
+        read_at: null,
+        created_at: "x",
+      },
     ]);
     const { result } = renderHook(() => useThreadMessages("t1"), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -515,7 +560,11 @@ describe("useChat hooks", () => {
 
   it("useStartThread calls startThread with recipientId", async () => {
     vi.mocked(chatApi.startThread).mockResolvedValue({
-      id: "t1", user_a_id: "u1", user_b_id: "u2", last_message_at: null, created_at: "x",
+      id: "t1",
+      user_a_id: "u1",
+      user_b_id: "u2",
+      last_message_at: null,
+      created_at: "x",
     });
     const { result } = renderHook(() => useStartThread(), { wrapper });
     result.current.mutate("u2");
@@ -525,7 +574,14 @@ describe("useChat hooks", () => {
 
   it("useSendMessage calls sendMessage with the thread id and payload", async () => {
     vi.mocked(chatApi.sendMessage).mockResolvedValue({
-      id: "m2", thread_id: "t1", sender_id: "u1", body: "hey", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x",
+      id: "m2",
+      thread_id: "t1",
+      sender_id: "u1",
+      body: "hey",
+      attachment_book_id: null,
+      attachment_collection_id: null,
+      read_at: null,
+      created_at: "x",
     });
     const { result } = renderHook(() => useSendMessage("t1"), { wrapper });
     result.current.mutate({ body: "hey" });
@@ -613,9 +669,7 @@ export function useSendMessage(threadId: string) {
       queryClient.setQueryData(
         messagesKey,
         (
-          data:
-            | { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] }
-            | undefined,
+          data: { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] } | undefined,
         ) => {
           if (!data) return data;
           const [firstPage, ...rest] = data.pages;
@@ -633,18 +687,13 @@ export function useSendMessage(threadId: string) {
       queryClient.setQueryData(
         messagesKey,
         (
-          data:
-            | { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] }
-            | undefined,
+          data: { pages: ChatMessageResponse[][]; pageParams: (string | undefined)[] } | undefined,
         ) => {
           if (!data) return data;
           const [firstPage, ...rest] = data.pages;
           return {
             ...data,
-            pages: [
-              firstPage.map((m) => (m.id === context?.tempId ? message : m)),
-              ...rest,
-            ],
+            pages: [firstPage.map((m) => (m.id === context?.tempId ? message : m)), ...rest],
           };
         },
       );
@@ -689,10 +738,12 @@ git commit -m "feat(chat): add useChat TanStack Query hooks"
 ### Task 5: AI TanStack Query hooks
 
 **Files:**
+
 - Create: `hooks/useAi.ts`
 - Create: `hooks/useAi.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `recommendBooks`, `generateSummary`, `suggestTags`, `AiFeatureUnavailableError` (Task 3).
 - Produces: `useRecommendations()`, `useSummary()`, `useTagSuggestions()` — mutations, used by Task 9 components.
 
@@ -729,7 +780,9 @@ describe("useAi hooks", () => {
   });
 
   it("useSummary surfaces AiFeatureUnavailableError", async () => {
-    vi.mocked(aiApi.generateSummary).mockRejectedValue(new aiApi.AiFeatureUnavailableError("summary"));
+    vi.mocked(aiApi.generateSummary).mockRejectedValue(
+      new aiApi.AiFeatureUnavailableError("summary"),
+    );
     const { result } = renderHook(() => useSummary(), { wrapper });
     result.current.mutate({ text: "x" });
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -800,10 +853,12 @@ git commit -m "feat(ai): add useAi TanStack Query hooks"
 ### Task 6: i18n strings for chat and ai domains
 
 **Files:**
+
 - Modify: `messages/en.json`
 - Modify: `messages/uk.json`
 
 **Interfaces:**
+
 - Produces: `chat.*` and `ai.*` translation keys — consumed by Tasks 7-10's components via `useTranslations("chat")` / `useTranslations("ai")`.
 
 - [ ] **Step 1: Add the `chat` and `ai` top-level keys to `messages/en.json`**
@@ -926,11 +981,13 @@ git commit -m "feat(chat,ai): add chat and ai i18n strings"
 ### Task 7: Chat components — ThreadListItem, MessageBubble, ChatComposer
 
 **Files:**
+
 - Create: `components/chat/thread-list-item.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/chat/message-bubble.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/chat/chat-composer.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ChatThreadWithLastMessageResponse`, `ChatMessageResponse` (Task 1), `FriendResponse` (existing, `lib/api/types.ts:542`), `Avatar`/`AvatarFallback`/`AvatarImage` (`components/ui/avatar.tsx`), `Textarea` (`components/ui/textarea.tsx`), `Button` (`components/ui/button.tsx`).
 - Produces: `ThreadListItem({ thread, friend, currentUserId, onClick }: { thread: ChatThreadWithLastMessageResponse; friend: FriendResponse | undefined; currentUserId: string; onClick: () => void })`, `MessageBubble({ message, isOwn }: { message: ChatMessageResponse; isOwn: boolean })`, `ChatComposer({ onSend, isSending }: { onSend: (body: string) => void; isSending: boolean })` — used by Task 8's pages.
 
@@ -993,7 +1050,13 @@ import { NextIntlClientProvider } from "next-intl";
 import en from "@/messages/en.json";
 import { ThreadListItem } from "./thread-list-item";
 
-const friend = { user_id: "u2", username: "bee", display_name: "Bee", avatar_url: null, since: "x" };
+const friend = {
+  user_id: "u2",
+  username: "bee",
+  display_name: "Bee",
+  avatar_url: null,
+  since: "x",
+};
 const thread = {
   id: "t1",
   user_a_id: "u1",
@@ -1061,7 +1124,13 @@ describe("ThreadListItem", () => {
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThreadListItem } from "./thread-list-item";
 
-const friend = { user_id: "u2", username: "bee", display_name: "Bee", avatar_url: null, since: "x" };
+const friend = {
+  user_id: "u2",
+  username: "bee",
+  display_name: "Bee",
+  avatar_url: null,
+  since: "x",
+};
 const baseThread = {
   id: "t1",
   user_a_id: "u1",
@@ -1343,10 +1412,12 @@ git commit -m "feat(chat): add ThreadListItem, MessageBubble, ChatComposer compo
 ### Task 8: Chat pages — thread list and thread view
 
 **Files:**
+
 - Create: `app/(app)/chat/page.tsx`, `app/(app)/chat/page.test.tsx`
 - Create: `app/(app)/chat/[threadId]/page.tsx`, `app/(app)/chat/[threadId]/page.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useThreads`, `useThreadMessages`, `useSendMessage`, `useMarkThreadRead` (Task 4), `useFriends` (existing `hooks/useFriends.ts`), `useMe` (existing `hooks/useMe.ts`), `ThreadListItem`, `MessageBubble`, `ChatComposer` (Task 7), `Skeleton` (`components/ui/skeleton.tsx`).
 - Produces: `ChatThreadsPage` (route `/chat`), `ChatThreadPage` (route `/chat/[threadId]`) — the `[threadId]` route is linked from Task 9's friend-profile "Message" button.
 
@@ -1574,7 +1645,10 @@ describe("ChatThreadPage", () => {
     vi.clearAllMocks();
     vi.mocked(meHooks.useMe).mockReturnValue({ data: { id: "u1" } } as never);
     vi.mocked(chatHooks.useMarkThreadRead).mockReturnValue({ mutate: vi.fn() } as never);
-    vi.mocked(chatHooks.useSendMessage).mockReturnValue({ mutate: vi.fn(), isPending: false } as never);
+    vi.mocked(chatHooks.useSendMessage).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+    } as never);
   });
 
   it("renders messages oldest-first", () => {
@@ -1586,8 +1660,26 @@ describe("ChatThreadPage", () => {
       data: {
         pages: [
           [
-            { id: "m2", thread_id: "t1", sender_id: "u2", body: "second", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
-            { id: "m1", thread_id: "t1", sender_id: "u1", body: "first", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
+            {
+              id: "m2",
+              thread_id: "t1",
+              sender_id: "u2",
+              body: "second",
+              attachment_book_id: null,
+              attachment_collection_id: null,
+              read_at: null,
+              created_at: "x",
+            },
+            {
+              id: "m1",
+              thread_id: "t1",
+              sender_id: "u1",
+              body: "first",
+              attachment_book_id: null,
+              attachment_collection_id: null,
+              read_at: null,
+              created_at: "x",
+            },
           ],
         ],
       },
@@ -1638,12 +1730,14 @@ git commit -m "feat(chat): add chat thread list and thread view pages"
 ### Task 9: "Message" button on friend profile + header nav link
 
 **Files:**
+
 - Modify: `app/(app)/friends/[userId]/page.tsx`
 - Modify: `app/(app)/friends/[userId]/page.test.tsx`
 - Modify: `components/shell/header.tsx`
 - Modify: `components/shell/header.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useStartThread` (Task 4), `ChatFriendRequiredError` (Task 2), `useThreads` (Task 4, for the header's unread badge).
 - Produces: friend-profile page navigates to `/chat/[threadId]` on successful `startThread`; header shows a "Chat" nav link with an unread-count badge.
 
@@ -1732,7 +1826,8 @@ const threads = useThreads();
 const unreadCount =
   me && threads.data
     ? threads.data.filter(
-        (t) => t.last_message && t.last_message.sender_id !== me.id && t.last_message.read_at === null,
+        (t) =>
+          t.last_message && t.last_message.sender_id !== me.id && t.last_message.read_at === null,
       ).length
     : 0;
 ```
@@ -1778,11 +1873,13 @@ git commit -m "feat(chat): add Message button on friend profile and Chat nav lin
 ### Task 10: AI panel components — RecommendationsPanel, SummaryPanel, TagSuggestPanel
 
 **Files:**
+
 - Create: `components/ai/recommendations-panel.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/ai/summary-panel.tsx`, `.stories.tsx`, `.test.tsx`
 - Create: `components/ai/tag-suggest-panel.tsx`, `.stories.tsx`, `.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useRecommendations`, `useSummary`, `useTagSuggestions` (Task 5), `AiFeatureUnavailableError` (Task 3), `Card`/`CardContent`/`CardHeader`/`CardTitle` (`components/ui/card.tsx`), `Button`, `Textarea`, `Badge` (`components/ui/badge.tsx`).
 - Produces: `RecommendationsPanel()`, `SummaryPanel()`, `TagSuggestPanel({ bookId, bookLabel }: { bookId: string; bookLabel: string })` — used by Task 11's AI page. `TagSuggestPanel` takes a pre-selected book (id + label) as props rather than embedding Block 2's book-search component, since the spec's "book picker" isn't a well-defined shared component yet — keep this panel's book selection out of scope and accept it as a prop; the page (Task 11) is responsible for letting the user pick a book via a simple text input of a book id for now (documented as a known simplification, not silently dropped).
 
@@ -2228,10 +2325,12 @@ git commit -m "feat(ai): add RecommendationsPanel, SummaryPanel, TagSuggestPanel
 ### Task 11: AI page
 
 **Files:**
+
 - Create: `app/(app)/ai/page.tsx`
 - Create: `app/(app)/ai/page.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `RecommendationsPanel`, `SummaryPanel`, `TagSuggestPanel` (Task 10), `Input` (`components/ui/input.tsx`).
 
 - [ ] **Step 1: `app/(app)/ai/page.tsx`**
@@ -2332,9 +2431,11 @@ git commit -m "feat(ai): add AI tools page"
 ### Task 12: Playwright e2e — chat happy path + AI coming-soon check
 
 **Files:**
+
 - Create or extend: `e2e/chat.spec.ts` (check the actual e2e directory name/location by looking at Block 5's e2e test file location first — `git log --follow` or `find . -name '*.spec.ts' -not -path '*/node_modules/*'` — match its exact structure/helpers rather than assuming)
 
 **Interfaces:**
+
 - Consumes: whatever Playwright test setup/helpers Block 5's e2e test (`test(friends): add e2e happy-path test for friend request flow`, commit `82261e8`) already established (fixtures for registering/logging in two users, base URL config, etc.) — read that file in full before writing this one so conventions match exactly.
 
 - [ ] **Step 1: Read Block 5's e2e test for conventions**

@@ -20,9 +20,14 @@ describe("ai API client", () => {
 
   it("recommendBooks throws AiFeatureUnavailableError on 501", async () => {
     vi.mocked(apiClient.post).mockRejectedValue({
-      response: { status: 501, data: { detail: "AI recommendation feature is not implemented yet" } },
+      response: {
+        status: 501,
+        data: { detail: "AI recommendation feature is not implemented yet" },
+      },
     });
-    await expect(recommendBooks({ user_id: "u1" })).rejects.toBeInstanceOf(AiFeatureUnavailableError);
+    await expect(recommendBooks({ user_id: "u1" })).rejects.toBeInstanceOf(
+      AiFeatureUnavailableError,
+    );
   });
 
   it("generateSummary posts to /ai/summary", async () => {

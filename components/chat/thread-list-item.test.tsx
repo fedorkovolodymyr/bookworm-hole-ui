@@ -4,7 +4,13 @@ import { NextIntlClientProvider } from "next-intl";
 import en from "@/messages/en.json";
 import { ThreadListItem } from "./thread-list-item";
 
-const friend = { user_id: "u2", username: "bee", display_name: "Bee", avatar_url: null, since: "x" };
+const friend = {
+  user_id: "u2",
+  username: "bee",
+  display_name: "Bee",
+  avatar_url: null,
+  since: "x",
+};
 const thread = {
   id: "t1",
   user_a_id: "u1",

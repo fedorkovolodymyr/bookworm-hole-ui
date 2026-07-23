@@ -59,7 +59,16 @@ describe("chat API client", () => {
 
   it("sendMessage posts the message body", async () => {
     vi.mocked(apiClient.post).mockResolvedValue({
-      data: { id: "m1", thread_id: "t1", sender_id: "u1", body: "hi", attachment_book_id: null, attachment_collection_id: null, read_at: null, created_at: "x" },
+      data: {
+        id: "m1",
+        thread_id: "t1",
+        sender_id: "u1",
+        body: "hi",
+        attachment_book_id: null,
+        attachment_collection_id: null,
+        read_at: null,
+        created_at: "x",
+      },
     });
     await sendMessage("t1", { body: "hi" });
     expect(apiClient.post).toHaveBeenCalledWith("/chat/threads/t1/messages", { body: "hi" });
