@@ -1,15 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { NextIntlClientProvider } from "next-intl";
 import { AppQueryProvider } from "@/lib/query-client";
 import { EmailVerificationBanner } from "./email-verification-banner";
+import enMessages from "@/messages/en.json";
 
 const meta: Meta<typeof EmailVerificationBanner> = {
   title: "Auth/EmailVerificationBanner",
   component: EmailVerificationBanner,
   decorators: [
     (Story) => (
-      <AppQueryProvider>
-        <Story />
-      </AppQueryProvider>
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <AppQueryProvider>
+          <Story />
+        </AppQueryProvider>
+      </NextIntlClientProvider>
     ),
   ],
 };

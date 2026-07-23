@@ -464,3 +464,73 @@ export interface SharePayload {
   friend_id: string;
   message: string;
 }
+
+// --- Reading domain types ---
+
+export type PositionUnit = "page" | "percent" | "location" | "timestamp";
+
+export interface ReadingSessionResponse {
+  id: string;
+  user_id: string;
+  release_id: string;
+  started_at: string;
+  ended_at: string | null;
+  position_start: number | null;
+  position_end: number | null;
+  position_unit: PositionUnit | null;
+  pages_read: number | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateReadingSessionPayload {
+  release_id: string;
+  position_start?: number | null;
+  position_unit?: PositionUnit | null;
+}
+
+export interface StopReadingSessionPayload {
+  release_id: string;
+  position_end?: number | null;
+  notes?: string | null;
+}
+
+export interface UpdateReadingSessionPayload {
+  started_at?: string;
+  ended_at?: string | null;
+  position_start?: number | null;
+  position_end?: number | null;
+  position_unit?: PositionUnit | null;
+  pages_read?: number | null;
+  notes?: string | null;
+}
+
+export type ReadingStatsPeriod = "week" | "month" | "year" | "all";
+
+export interface ReadingStatsResponse {
+  total_minutes: number;
+  total_sessions: number;
+  unique_books: number;
+  total_pages: number;
+}
+
+export interface StreakResponse {
+  current_streak_days: number;
+  longest_streak_days: number;
+}
+
+export interface TimelineEntry {
+  date: string;
+  total_minutes: number;
+  sessions: number;
+  pages_read: number;
+}
+
+export interface TimelineResponse {
+  items: TimelineEntry[];
+}
+
+export interface ReadingSessionListParams {
+  release_id?: string;
+}
