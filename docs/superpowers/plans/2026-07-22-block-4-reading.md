@@ -932,7 +932,7 @@ Expected: PASS.
 Create `components/reading/active-session-card.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ActiveSessionCard } from "./active-session-card";
 
 const meta: Meta<typeof ActiveSessionCard> = {
@@ -1168,7 +1168,7 @@ Expected: PASS.
 Create `components/reading/start-session-form.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { StartSessionForm } from "./start-session-form";
 
 const meta: Meta<typeof StartSessionForm> = {
@@ -1529,7 +1529,7 @@ Expected: PASS.
 Create `components/reading/stop-session-form.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { StopSessionForm } from "./stop-session-form";
 
 const meta: Meta<typeof StopSessionForm> = {
@@ -1548,7 +1548,7 @@ export const Default: Story = {
 Create `components/reading/session-history-item.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SessionHistoryItem } from "./session-history-item";
 
 const meta: Meta<typeof SessionHistoryItem> = {
@@ -1584,7 +1584,7 @@ export const Default: Story = {
 Create `components/reading/session-history-list.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SessionHistoryList } from "./session-history-list";
 
 const meta: Meta<typeof SessionHistoryList> = {
@@ -1931,7 +1931,7 @@ Expected: PASS.
 Create `components/reading/edit-session-form.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { EditSessionForm } from "./edit-session-form";
 
 const meta: Meta<typeof EditSessionForm> = {
@@ -1966,7 +1966,7 @@ export const Default: Story = {
 Create `components/reading/delete-session-dialog.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DeleteSessionDialog } from "./delete-session-dialog";
 
 const meta: Meta<typeof DeleteSessionDialog> = {
@@ -2219,7 +2219,7 @@ Expected: PASS.
 Create `components/reading/reading-stats-summary.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ReadingStatsSummary } from "./reading-stats-summary";
 
 const meta: Meta<typeof ReadingStatsSummary> = {
@@ -2238,7 +2238,7 @@ export const Default: Story = {
 Create `components/reading/reading-streak-badge.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ReadingStreakBadge } from "./reading-streak-badge";
 
 const meta: Meta<typeof ReadingStreakBadge> = {
@@ -2441,7 +2441,7 @@ Expected: PASS.
 Create `components/reading/reading-timeline-chart.stories.tsx`:
 
 ```typescript
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ReadingTimelineChart } from "./reading-timeline-chart";
 
 const meta: Meta<typeof ReadingTimelineChart> = {

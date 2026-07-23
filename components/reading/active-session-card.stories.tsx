@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ActiveSessionCard } from "./active-session-card";
 
 const meta: Meta<typeof ActiveSessionCard> = {
