@@ -38,6 +38,21 @@ describe("useLibrary", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.items[0].id).toBe("s1");
   });
+
+  it("does not fetch when enabled is false", async () => {
+    let requestCount = 0;
+    server.use(
+      http.get("/api/me/library", () => {
+        requestCount += 1;
+        return HttpResponse.json({ items: [], total: 0, limit: 10, offset: 0 });
+      }),
+    );
+    const { result } = renderHook(() => useLibrary({}, { enabled: false }), { wrapper });
+    await waitFor(() => expect(result.current.fetchStatus).toBe("idle"));
+    expect(result.current.isPending).toBe(true);
+    expect(result.current.isSuccess).toBe(false);
+    expect(requestCount).toBe(0);
+  });
 });
 
 describe("useCreateStatus", () => {

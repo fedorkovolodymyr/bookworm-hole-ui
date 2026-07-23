@@ -31,7 +31,7 @@ export function StartSessionForm({
   const [positionStart, setPositionStart] = React.useState("");
   const [positionUnit, setPositionUnit] = React.useState<PositionUnit | "">("");
 
-  const library = useLibrary();
+  const library = useLibrary({}, { enabled: !releaseId });
   const startSession = useStartSession();
   const releaseOptions = releaseId
     ? []
