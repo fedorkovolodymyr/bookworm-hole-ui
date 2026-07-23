@@ -340,7 +340,8 @@
       "browse": "Browse",
       "collections": "Collections",
       "reading": "Reading",
-      "friends": "Friends"
+      "friends": "Friends",
+      "chat": "Chat"
     },
     "userMenu": {
       "profile": "Profile",
@@ -489,6 +490,47 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
+    }
+  },
+  "chat": {
+    "pageTitle": "Chat",
+    "threadList": {
+      "empty": "No conversations yet.",
+      "unread": "Unread"
+    },
+    "thread": {
+      "placeholder": "Write a message...",
+      "send": "Send",
+      "sending": "Sending...",
+      "loadEarlier": "Load earlier messages",
+      "notFound": "This conversation is no longer available.",
+      "backToThreads": "Back to conversations"
+    },
+    "messageButton": "Message",
+    "friendRequiredError": "You can only message your friends."
+  },
+  "ai": {
+    "pageTitle": "AI Tools",
+    "comingSoon": "Coming soon",
+    "recommendations": {
+      "title": "Recommendations",
+      "countLabel": "Number of recommendations",
+      "submit": "Get recommendations",
+      "submitting": "Getting recommendations...",
+      "empty": "No recommendations yet."
+    },
+    "summary": {
+      "title": "Summary",
+      "inputLabel": "Text to summarize",
+      "submit": "Summarize",
+      "submitting": "Summarizing..."
+    },
+    "tagSuggest": {
+      "title": "Tag suggestions",
+      "bookLabel": "Book",
+      "submit": "Suggest tags",
+      "submitting": "Suggesting tags...",
+      "empty": "No tags suggested yet."
     }
   }
 }

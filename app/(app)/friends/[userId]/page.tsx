@@ -2,9 +2,12 @@
 
 import * as React from "react";
 import { use } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useFriendCollections, useFriendLibrary } from "@/hooks/useFriendContent";
 import { useFriends } from "@/hooks/useFriends";
+import { useStartThread } from "@/hooks/useChat";
+import { ChatFriendRequiredError } from "@/lib/api/chat";
 import { CollectionCard } from "@/components/collections/collection-card";
 import { StatusListItem } from "@/components/statuses/status-list-item";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,16 +19,32 @@ import { BlockUserDialog } from "@/components/friends/block-user-dialog";
 
 export default function FriendShelfPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = use(params);
+  const router = useRouter();
   const t = useTranslations("collections");
   const statusesT = useTranslations("statuses");
   const commonT = useTranslations("common");
   const friendsT = useTranslations("friends.profile.friendActions");
+  const chatT = useTranslations("chat");
 
   const friends = useFriends();
   const friend = friends.data?.find((f) => f.user_id === userId);
 
   const [unfriendOpen, setUnfriendOpen] = React.useState(false);
   const [blockOpen, setBlockOpen] = React.useState(false);
+  const [messageError, setMessageError] = React.useState<string | null>(null);
+  const startThread = useStartThread();
+
+  function handleMessage() {
+    setMessageError(null);
+    startThread.mutate(userId, {
+      onSuccess: (thread) => router.push(`/chat/${thread.id}`),
+      onError: (error) => {
+        if (error instanceof ChatFriendRequiredError) {
+          setMessageError(chatT("friendRequiredError"));
+        }
+      },
+    });
+  }
 
   const {
     data: collectionsPage,
@@ -56,6 +75,14 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMessage}
+                disabled={startThread.isPending}
+              >
+                {chatT("messageButton")}
+              </Button>
               <Button variant="outline" size="sm" onClick={() => setUnfriendOpen(true)}>
                 {friendsT("unfriend")}
               </Button>
@@ -66,6 +93,7 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
           </CardContent>
         </Card>
       )}
+      {messageError && <p className="text-destructive text-sm">{messageError}</p>}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{t("pageTitle")}</h2>

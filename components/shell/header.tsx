@@ -14,12 +14,24 @@ import { ThemeToggle } from "@/components/shell/theme-toggle";
 import { LocaleSwitcher } from "@/components/shell/locale-switcher";
 import { useMe } from "@/hooks/useMe";
 import { useLogout } from "@/hooks/useAuth";
+import { useThreads } from "@/hooks/useChat";
 
 export function Header() {
   const { data: me } = useMe();
   const logout = useLogout();
+  const threads = useThreads();
   const t = useTranslations("catalog.myContributions");
   const tShell = useTranslations("shell");
+
+  const unreadCount =
+    me && threads.data
+      ? threads.data.filter(
+          (thread) =>
+            thread.last_message &&
+            thread.last_message.sender_id !== me.id &&
+            thread.last_message.read_at === null,
+        ).length
+      : 0;
 
   return (
     <header className="border-border flex h-16 items-center justify-between border-b px-4 sm:px-6">
@@ -38,6 +50,14 @@ export function Header() {
         </Link>
         <Link href="/friends" className="text-muted-foreground hover:text-foreground text-sm">
           {tShell("nav.friends")}
+        </Link>
+        <Link href="/chat" className="text-muted-foreground hover:text-foreground text-sm">
+          {tShell("nav.chat")}
+          {unreadCount > 0 && (
+            <span className="bg-primary text-primary-foreground ml-1 rounded-full px-1.5 py-0.5 text-xs">
+              {unreadCount}
+            </span>
+          )}
         </Link>
       </nav>
       <div className="flex items-center gap-2">
