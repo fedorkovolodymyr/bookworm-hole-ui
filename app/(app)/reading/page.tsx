@@ -39,13 +39,9 @@ export default function ReadingPage() {
   const tStats = useTranslations("reading.stats");
   const [period, setPeriod] = React.useState<ReadingStatsPeriod>("month");
   const [startDialogOpen, setStartDialogOpen] = React.useState(false);
-  const [stoppingSession, setStoppingSession] = React.useState<ReadingSessionResponse | null>(
-    null,
-  );
+  const [stoppingSession, setStoppingSession] = React.useState<ReadingSessionResponse | null>(null);
   const [editingSession, setEditingSession] = React.useState<ReadingSessionResponse | null>(null);
-  const [deletingSession, setDeletingSession] = React.useState<ReadingSessionResponse | null>(
-    null,
-  );
+  const [deletingSession, setDeletingSession] = React.useState<ReadingSessionResponse | null>(null);
 
   const activeSessions = useActiveSessions();
   const sessions = useSessions();

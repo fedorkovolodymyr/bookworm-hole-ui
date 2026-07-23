@@ -24,9 +24,11 @@
 ### Task 1: Reading domain types
 
 **Files:**
+
 - Modify: `lib/api/types.ts` (append a new `// --- Reading domain types ---` section at the end of the file)
 
 **Interfaces:**
+
 - Consumes: nothing (pure type definitions).
 - Produces: `PositionUnit`, `ReadingSessionResponse`, `CreateReadingSessionPayload`, `StopReadingSessionPayload`, `UpdateReadingSessionPayload`, `ReadingStatsPeriod`, `ReadingStatsResponse`, `StreakResponse`, `TimelineEntry`, `TimelineResponse`, `ReadingSessionListParams` — exact shapes below, used by every later task.
 
@@ -123,10 +125,12 @@ git commit -m "feat(reading): add reading domain types"
 ### Task 2: Reading API client
 
 **Files:**
+
 - Create: `lib/api/reading.ts`
 - Create: `lib/api/reading.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient` from `lib/api/client.ts`; types from Task 1 (`ReadingSessionResponse`, `CreateReadingSessionPayload`, `StopReadingSessionPayload`, `UpdateReadingSessionPayload`, `ReadingStatsPeriod`, `ReadingStatsResponse`, `StreakResponse`, `TimelineResponse`, `ReadingSessionListParams`).
 - Produces: `getActiveSessions()`, `getSessions(params?)`, `startSession(payload)`, `stopSession(payload)`, `updateSession(sessionId, payload)`, `deleteSession(sessionId)`, `getStats(period?)`, `getStreak()`, `getTimeline(fromDate, toDate)` — exact names/signatures every later task calls.
 
@@ -153,9 +157,7 @@ import {
 describe("reading API client", () => {
   it("getActiveSessions fetches /me/reading/active", async () => {
     server.use(
-      http.get("/api/me/reading/active", () =>
-        HttpResponse.json([{ id: "s1", ended_at: null }]),
-      ),
+      http.get("/api/me/reading/active", () => HttpResponse.json([{ id: "s1", ended_at: null }])),
     );
     const result = await getActiveSessions();
     expect(result[0].id).toBe("s1");
@@ -204,7 +206,9 @@ describe("reading API client", () => {
   });
 
   it("deleteSession deletes /me/reading/sessions/:id", async () => {
-    server.use(http.delete("/api/me/reading/sessions/s1", () => new HttpResponse(null, { status: 204 })));
+    server.use(
+      http.delete("/api/me/reading/sessions/s1", () => new HttpResponse(null, { status: 204 })),
+    );
     await expect(deleteSession("s1")).resolves.toBeUndefined();
   });
 
@@ -213,7 +217,12 @@ describe("reading API client", () => {
       http.get("/api/me/reading/stats", ({ request }) => {
         const url = new URL(request.url);
         expect(url.searchParams.get("period")).toBe("year");
-        return HttpResponse.json({ total_minutes: 10, total_sessions: 1, unique_books: 1, total_pages: 5 });
+        return HttpResponse.json({
+          total_minutes: 10,
+          total_sessions: 1,
+          unique_books: 1,
+          total_pages: 5,
+        });
       }),
     );
     const result = await getStats("year");
@@ -343,10 +352,12 @@ git commit -m "feat(reading): add reading API client"
 ### Task 3: useReading TanStack Query hooks
 
 **Files:**
+
 - Create: `hooks/useReading.ts`
 - Create: `hooks/useReading.test.tsx`
 
 **Interfaces:**
+
 - Consumes: all functions from Task 2's `lib/api/reading.ts`; types from Task 1.
 - Produces: `useActiveSessions()`, `useSessions(params?)`, `useStartSession()`, `useStopSession()`, `useUpdateSession()`, `useDeleteSession()`, `useReadingStats(period?)`, `useReadingStreak()`, `useReadingTimeline(fromDate, toDate)`. Query keys: `["reading", "active"]`, `["reading", "sessions", params]`, `["reading", "stats", period]`, `["reading", "streak"]`, `["reading", "timeline", fromDate, toDate]` — later tasks (components/page) key their `invalidateQueries` calls and `useQuery`/`isPending` reads off these exact keys.
 
@@ -609,10 +620,12 @@ git commit -m "feat(reading): add useReading TanStack Query hooks"
 ### Task 4: i18n strings for the reading domain
 
 **Files:**
+
 - Modify: `messages/en.json`
 - Modify: `messages/uk.json`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: a top-level `"reading"` namespace with keys every component task below reads via `useTranslations("reading.<subkey>")`. Exact key paths listed in Step 1 — later tasks must use these paths verbatim.
 
@@ -817,11 +830,13 @@ git commit -m "feat(reading): add reading domain i18n strings"
 ### Task 5: ActiveSessionCard component
 
 **Files:**
+
 - Create: `components/reading/active-session-card.tsx`
 - Create: `components/reading/active-session-card.stories.tsx`
 - Create: `components/reading/active-session-card.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ReadingSessionResponse` (Task 1); no hooks directly — takes `session` and an `onStop` callback as props (parent page wires the mutation).
 - Produces: `ActiveSessionCard({ session, onStop }: { session: ReadingSessionResponse; onStop: () => void })` — used by Task 10 (page).
 
@@ -976,11 +991,13 @@ git commit -m "feat(reading): add ActiveSessionCard component"
 ### Task 6: StartSessionForm component
 
 **Files:**
+
 - Create: `components/reading/start-session-form.tsx`
 - Create: `components/reading/start-session-form.stories.tsx`
 - Create: `components/reading/start-session-form.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useStartSession()` (Task 3); `useLibrary()` from `@/hooks/useStatuses` (existing Block 3 hook — returns `Page<BookStatusResponse>`, filter to entries where `release_id` is not null for the picker options); `PositionUnit` type (Task 1); `extractErrorMessage` from `@/lib/api/errors`.
 - Produces: `StartSessionForm({ releaseId, onSuccess }: { releaseId?: string; onSuccess: () => void })` — if `releaseId` is passed (e.g. from a future book-detail page), skip the picker and use it directly; otherwise render the picker from `useLibrary()`. Used by Task 10 (page).
 
@@ -1196,6 +1213,7 @@ git commit -m "feat(reading): add StartSessionForm component"
 ### Task 7: StopSessionForm + SessionHistoryList/SessionHistoryItem components
 
 **Files:**
+
 - Create: `components/reading/stop-session-form.tsx`
 - Create: `components/reading/stop-session-form.stories.tsx`
 - Create: `components/reading/stop-session-form.test.tsx`
@@ -1207,6 +1225,7 @@ git commit -m "feat(reading): add StartSessionForm component"
 - Create: `components/reading/session-history-list.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useStopSession()`, `useUpdateSession()`, `useDeleteSession()` (Task 3); `ReadingSessionResponse` (Task 1); shadcn `Dialog`/`AlertDialog`-style confirm pattern (this repo uses `Dialog` + a confirm button, per `components/statuses/return-confirm-dialog.tsx` — no separate `AlertDialog` primitive exists, reuse `Dialog`).
 - Produces: `StopSessionForm({ releaseId, onSuccess }: { releaseId: string; onSuccess: () => void })`, `SessionHistoryItem({ session, onEdit, onDelete }: { session: ReadingSessionResponse; onEdit: () => void; onDelete: () => void })`, `SessionHistoryList({ sessions, onEdit, onDelete }: { sessions: ReadingSessionResponse[]; onEdit: (session: ReadingSessionResponse) => void; onDelete: (session: ReadingSessionResponse) => void })`. All three consumed by Task 10 (page).
 
@@ -1635,6 +1654,7 @@ git commit -m "feat(reading): add StopSessionForm, SessionHistoryItem, SessionHi
 ### Task 8: EditSessionForm + delete-confirm dialog
 
 **Files:**
+
 - Create: `components/reading/edit-session-form.tsx`
 - Create: `components/reading/edit-session-form.stories.tsx`
 - Create: `components/reading/edit-session-form.test.tsx`
@@ -1643,6 +1663,7 @@ git commit -m "feat(reading): add StopSessionForm, SessionHistoryItem, SessionHi
 - Create: `components/reading/delete-session-dialog.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useUpdateSession()`, `useDeleteSession()` (Task 3); `ReadingSessionResponse`, `UpdateReadingSessionPayload` (Task 1).
 - Produces: `EditSessionForm({ session, onSuccess }: { session: ReadingSessionResponse; onSuccess: () => void })`, `DeleteSessionDialog({ session, open, onOpenChange }: { session: ReadingSessionResponse; open: boolean; onOpenChange: (open: boolean) => void })` — both consumed by Task 10 (page).
 
@@ -2011,6 +2032,7 @@ git commit -m "feat(reading): add EditSessionForm and DeleteSessionDialog compon
 ### Task 9: ReadingStatsSummary + ReadingStreakBadge components
 
 **Files:**
+
 - Create: `components/reading/reading-stats-summary.tsx`
 - Create: `components/reading/reading-stats-summary.stories.tsx`
 - Create: `components/reading/reading-stats-summary.test.tsx`
@@ -2019,6 +2041,7 @@ git commit -m "feat(reading): add EditSessionForm and DeleteSessionDialog compon
 - Create: `components/reading/reading-streak-badge.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useReadingStats(period)`, `useReadingStreak()` (Task 3); `ReadingStatsPeriod` (Task 1); `Skeleton` from `@/components/ui/skeleton`.
 - Produces: `ReadingStatsSummary({ period }: { period: ReadingStatsPeriod })`, `ReadingStreakBadge()` — both consumed by Task 10 (page). Both handle `isPending` (Skeleton), a true 200-zero-value empty state, and a distinct error state per the spec's error-handling rule.
 
@@ -2264,11 +2287,13 @@ git commit -m "feat(reading): add ReadingStatsSummary and ReadingStreakBadge com
 ### Task 10: ReadingTimelineChart component (heatmap + bar chart)
 
 **Files:**
+
 - Create: `components/reading/reading-timeline-chart.tsx`
 - Create: `components/reading/reading-timeline-chart.stories.tsx`
 - Create: `components/reading/reading-timeline-chart.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useReadingTimeline(fromDate, toDate)` (Task 3); `TimelineEntry` (Task 1); `Skeleton`.
 - Produces: `ReadingTimelineChart({ fromDate, toDate }: { fromDate: string; toDate: string })` — a calendar heatmap (single-hue sequential intensity, `--primary` at varying opacity — per `dataviz` skill, sequential = one hue light→dark, no legend needed since intensity is self-explanatory with a caption) plus a simple bar chart of `total_minutes` per day (single series → no legend, per `dataviz` skill's "single series needs no legend" rule) below it, both built as plain inline SVG/div elements (no new chart dependency, per spec's "do not over-design beyond these two chart types"). Consumed by Task 10 (page) — same task creates the page, so this is the last shared building block before wiring.
 
@@ -2469,11 +2494,13 @@ git commit -m "feat(reading): add ReadingTimelineChart component (heatmap + bar 
 ### Task 11: Reading dashboard page + header nav entry
 
 **Files:**
+
 - Create: `app/(app)/reading/page.tsx`
 - Modify: `components/shell/header.tsx`
 - Modify: `components/shell/header.test.tsx`
 
 **Interfaces:**
+
 - Consumes: every hook from Task 3 (`useActiveSessions`, `useSessions`, `useStopSession`); every component from Tasks 5-10 (`ActiveSessionCard`, `StartSessionForm`, `StopSessionForm`, `SessionHistoryList`, `EditSessionForm`, `DeleteSessionDialog`, `ReadingStatsSummary`, `ReadingStreakBadge`, `ReadingTimelineChart`); `Dialog`/`Tabs` from `components/ui`; `ReadingStatsPeriod` (Task 1).
 - Produces: the `/reading` route, and a `Reading` link in the header nav pointing at it. Terminal task — nothing later depends on this.
 

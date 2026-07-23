@@ -16,9 +16,7 @@ import {
 describe("reading API client", () => {
   it("getActiveSessions fetches /me/reading/active", async () => {
     server.use(
-      http.get("/api/me/reading/active", () =>
-        HttpResponse.json([{ id: "s1", ended_at: null }]),
-      ),
+      http.get("/api/me/reading/active", () => HttpResponse.json([{ id: "s1", ended_at: null }])),
     );
     const result = await getActiveSessions();
     expect(result[0].id).toBe("s1");
@@ -67,7 +65,9 @@ describe("reading API client", () => {
   });
 
   it("deleteSession deletes /me/reading/sessions/:id", async () => {
-    server.use(http.delete("/api/me/reading/sessions/s1", () => new HttpResponse(null, { status: 204 })));
+    server.use(
+      http.delete("/api/me/reading/sessions/s1", () => new HttpResponse(null, { status: 204 })),
+    );
     await expect(deleteSession("s1")).resolves.toBeUndefined();
   });
 
@@ -76,7 +76,12 @@ describe("reading API client", () => {
       http.get("/api/me/reading/stats", ({ request }) => {
         const url = new URL(request.url);
         expect(url.searchParams.get("period")).toBe("year");
-        return HttpResponse.json({ total_minutes: 10, total_sessions: 1, unique_books: 1, total_pages: 5 });
+        return HttpResponse.json({
+          total_minutes: 10,
+          total_sessions: 1,
+          unique_books: 1,
+          total_pages: 5,
+        });
       }),
     );
     const result = await getStats("year");

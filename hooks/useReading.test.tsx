@@ -113,7 +113,9 @@ describe("useReadingStreak", () => {
 describe("useReadingTimeline", () => {
   it("fetches timeline for a date range", async () => {
     server.use(http.get("/api/me/reading/timeline", () => HttpResponse.json({ items: [] })));
-    const { result } = renderHook(() => useReadingTimeline("2026-07-01", "2026-07-22"), { wrapper });
+    const { result } = renderHook(() => useReadingTimeline("2026-07-01", "2026-07-22"), {
+      wrapper,
+    });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.items).toEqual([]);
   });

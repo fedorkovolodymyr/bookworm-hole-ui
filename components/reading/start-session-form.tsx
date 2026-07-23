@@ -55,10 +55,7 @@ export function StartSessionForm({
       {!releaseId && (
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">{t("releaseLabel")}</label>
-          <Select
-            value={selectedReleaseId}
-            onValueChange={(v) => setSelectedReleaseId(v ?? "")}
-          >
+          <Select value={selectedReleaseId} onValueChange={(v) => setSelectedReleaseId(v ?? "")}>
             <SelectTrigger>
               <SelectValue placeholder={t("releasePlaceholder")} />
             </SelectTrigger>
@@ -101,10 +98,7 @@ export function StartSessionForm({
       {startSession.error && (
         <p className="text-destructive text-sm">{extractErrorMessage(startSession.error)}</p>
       )}
-      <Button
-        disabled={startSession.isPending || !selectedReleaseId}
-        onClick={handleSubmit}
-      >
+      <Button disabled={startSession.isPending || !selectedReleaseId} onClick={handleSubmit}>
         {startSession.isPending ? t("submitting") : t("submit")}
       </Button>
     </div>

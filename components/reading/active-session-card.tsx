@@ -20,9 +20,7 @@ export function ActiveSessionCard({
       <CardContent className="flex items-center justify-between gap-3">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">{session.release_id}</p>
-          <p className="text-muted-foreground text-xs">
-            {startedAt.toLocaleString()}
-          </p>
+          <p className="text-muted-foreground text-xs">{startedAt.toLocaleString()}</p>
         </div>
         <Button size="sm" onClick={onStop}>
           {t("stopAction")}

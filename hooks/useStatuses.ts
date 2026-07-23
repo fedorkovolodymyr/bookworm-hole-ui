@@ -30,10 +30,7 @@ export function useStatuses(status?: BookStatusKind) {
   });
 }
 
-export function useLibrary(
-  params: StatusViewParams = {},
-  options: { enabled?: boolean } = {},
-) {
+export function useLibrary(params: StatusViewParams = {}, options: { enabled?: boolean } = {}) {
   return useQuery({
     queryKey: ["statuses", "library", params],
     queryFn: () => getLibrary(params),
