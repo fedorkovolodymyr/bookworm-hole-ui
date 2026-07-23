@@ -534,3 +534,36 @@ export interface TimelineResponse {
 export interface ReadingSessionListParams {
   release_id?: string;
 }
+
+// --- Friends domain types ---
+
+export type FriendshipStatus = "pending" | "accepted" | "declined" | "blocked";
+
+export interface FriendResponse {
+  user_id: string;
+  username: string;
+  display_name: string;
+  avatar_url: string | null;
+  since: string;
+}
+
+export interface FriendRequestResponse {
+  id: string;
+  requester_id: string;
+  addressee_id: string;
+  status: FriendshipStatus;
+  created_at: string;
+  responded_at: string | null;
+}
+
+export interface SendFriendRequestPayload {
+  username: string;
+}
+
+export interface PublicUserProfileResponse {
+  username: string;
+  display_name: string;
+  bio: string | null;
+  avatar_url: string | null;
+  collections: Page<CollectionResponse>;
+}
