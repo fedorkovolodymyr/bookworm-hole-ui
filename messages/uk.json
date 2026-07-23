@@ -339,7 +339,8 @@
     "nav": {
       "browse": "Огляд",
       "collections": "Колекції",
-      "reading": "Читання"
+      "reading": "Читання",
+      "friends": "Друзі"
     },
     "userMenu": {
       "profile": "Профіль",
@@ -429,6 +430,62 @@
       "chartTitle": "Хвилин на день",
       "empty": "У цьому діапазоні ще немає активності.",
       "loadError": "Не вдалося завантажити активність."
+    },
+    "errors": {
+      "generic": "Щось пішло не так. Спробуйте ще раз."
+    }
+  },
+  "friends": {
+    "pageTitle": "Друзі",
+    "tabs": {
+      "friends": "Друзі",
+      "requests": "Запити",
+      "findPeople": "Знайти людей"
+    },
+    "list": {
+      "empty": "У вас поки немає друзів.",
+      "since": "Друзі з {date}",
+      "viewProfile": "Переглянути профіль",
+      "unfriendAction": "Видалити з друзів",
+      "blockAction": "Заблокувати"
+    },
+    "requests": {
+      "incomingTitle": "Вхідні",
+      "incomingEmpty": "Немає вхідних запитів у друзі.",
+      "outgoingTitle": "Вихідні",
+      "outgoingEmpty": "Немає вихідних запитів у друзі.",
+      "acceptAction": "Прийняти",
+      "declineAction": "Відхилити",
+      "pendingBadge": "Очікує"
+    },
+    "findForm": {
+      "label": "Ім'я користувача",
+      "placeholder": "Введіть точне ім'я користувача",
+      "submit": "Знайти",
+      "submitting": "Пошук...",
+      "notFound": "Користувача з таким ім'ям не знайдено.",
+      "sendRequestAction": "Надіслати запит у друзі",
+      "requestSent": "Запит у друзі надіслано."
+    },
+    "unfriendDialog": {
+      "title": "Видалити цю людину з друзів?",
+      "description": "Ви можете надіслати новий запит пізніше, якщо передумаєте.",
+      "confirm": "Видалити з друзів"
+    },
+    "blockDialog": {
+      "title": "Заблокувати цю людину?",
+      "description": "Заблоковані користувачі не зможуть надсилати вам запити у друзі.",
+      "confirm": "Заблокувати"
+    },
+    "profile": {
+      "notAvailable": "Цей профіль зараз недоступний.",
+      "friendActions": {
+        "unfriend": "Видалити з друзів",
+        "block": "Заблокувати",
+        "unblock": "Розблокувати"
+      },
+      "reviewsTitle": "Рецензії",
+      "reviewsEmpty": "Ще немає рецензій."
     },
     "errors": {
       "generic": "Щось пішло не так. Спробуйте ще раз."
