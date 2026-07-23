@@ -54,4 +54,37 @@ describe("Header", () => {
     expect(screen.getByRole("link", { name: "Reading" })).toHaveAttribute("href", "/reading");
     expect(screen.getByRole("link", { name: "Friends" })).toHaveAttribute("href", "/friends");
   });
+
+  it("renders a Chat nav link with an unread badge when there are unread threads", async () => {
+    const { server } = await import("@/tests/mocks/server");
+    const { http, HttpResponse } = await import("msw");
+    server.use(
+      http.get("/api/chat/threads/", () =>
+        HttpResponse.json([
+          {
+            id: "t1",
+            user_a_id: "1",
+            user_b_id: "u2",
+            created_at: "2026-01-01T00:00:00Z",
+            last_message_at: "2026-01-01T00:05:00Z",
+            last_message: {
+              id: "m1",
+              thread_id: "t1",
+              sender_id: "u2",
+              body: "hi",
+              attachment_book_id: null,
+              attachment_collection_id: null,
+              read_at: null,
+              created_at: "2026-01-01T00:05:00Z",
+            },
+          },
+        ]),
+      ),
+    );
+
+    renderHeader();
+    const chatLink = await screen.findByRole("link", { name: /Chat/ });
+    expect(chatLink).toHaveAttribute("href", "/chat");
+    expect(await screen.findByText("1")).toBeInTheDocument();
+  });
 });
