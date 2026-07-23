@@ -5,10 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { ReadingSessionResponse } from "@/lib/api/types";
 
-function formatDuration(startedAt: string, endedAt: string | null): string {
-  if (!endedAt) return "—";
-  const minutes = Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60000);
-  return `${minutes} min`;
+function durationMinutes(startedAt: string, endedAt: string | null): number | null {
+  if (!endedAt) return null;
+  return Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60000);
 }
 
 export function SessionHistoryItem({
@@ -21,6 +20,7 @@ export function SessionHistoryItem({
   onDelete: () => void;
 }) {
   const t = useTranslations("reading.history");
+  const minutes = durationMinutes(session.started_at, session.ended_at);
 
   return (
     <Card>
@@ -28,8 +28,10 @@ export function SessionHistoryItem({
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium">{session.release_id}</p>
           <p className="text-muted-foreground text-xs">
-            {formatDuration(session.started_at, session.ended_at)}
-            {session.pages_read !== null ? ` · ${session.pages_read} pages` : ""}
+            {minutes !== null ? t("minutesSuffix", { minutes }) : "—"}
+            {session.pages_read !== null
+              ? ` · ${t("pagesSuffix", { pages: session.pages_read })}`
+              : ""}
           </p>
           {session.notes && <p className="text-muted-foreground text-xs">{session.notes}</p>}
         </div>

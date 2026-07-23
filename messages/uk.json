@@ -385,7 +385,9 @@
       "deleteAction": "Видалити",
       "deleteConfirmTitle": "Видалити цю сесію?",
       "deleteConfirmDescription": "Цю дію не можна скасувати.",
-      "confirmDelete": "Видалити"
+      "confirmDelete": "Видалити",
+      "minutesSuffix": "{minutes} хв",
+      "pagesSuffix": "{pages} стор."
     },
     "editForm": {
       "title": "Редагувати сесію",

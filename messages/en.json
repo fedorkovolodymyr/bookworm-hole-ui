@@ -385,7 +385,9 @@
       "deleteAction": "Delete",
       "deleteConfirmTitle": "Delete this session?",
       "deleteConfirmDescription": "This can't be undone.",
-      "confirmDelete": "Delete"
+      "confirmDelete": "Delete",
+      "minutesSuffix": "{minutes} min",
+      "pagesSuffix": "{pages} pages"
     },
     "editForm": {
       "title": "Edit session",
