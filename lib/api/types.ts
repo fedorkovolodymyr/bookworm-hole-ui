@@ -449,17 +449,6 @@ export interface StatusViewParams {
 
 // --- Share domain types ---
 
-export interface ChatMessageResponse {
-  id: string;
-  thread_id: string;
-  sender_id: string;
-  body: string;
-  attachment_book_id: string | null;
-  attachment_collection_id: string | null;
-  read_at: string | null;
-  created_at: string;
-}
-
 export interface SharePayload {
   friend_id: string;
   message: string;
@@ -566,4 +555,71 @@ export interface PublicUserProfileResponse {
   bio: string | null;
   avatar_url: string | null;
   collections: Page<CollectionResponse>;
+}
+
+// --- Chat domain types ---
+
+export interface ChatThreadResponse {
+  id: string;
+  user_a_id: string;
+  user_b_id: string;
+  last_message_at: string | null;
+  created_at: string;
+}
+
+export interface ChatMessageResponse {
+  id: string;
+  thread_id: string;
+  sender_id: string;
+  body: string;
+  attachment_book_id: string | null;
+  attachment_collection_id: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface ChatThreadWithLastMessageResponse extends ChatThreadResponse {
+  last_message: ChatMessageResponse | null;
+}
+
+export interface StartChatThreadPayload {
+  recipient_id: string;
+}
+
+export interface SendChatMessagePayload {
+  body: string;
+  attachment_book_id?: string;
+  attachment_collection_id?: string;
+}
+
+export interface ListMessagesParams {
+  before?: string;
+  limit?: number;
+}
+
+// --- AI domain types ---
+
+export interface RecommendRequest {
+  user_id: string;
+  n?: number;
+}
+
+export interface RecommendResponse {
+  book_ids: string[];
+}
+
+export interface SummaryRequest {
+  text: string;
+}
+
+export interface SummaryResponse {
+  summary: string;
+}
+
+export interface TagSuggestRequest {
+  book_id: string;
+}
+
+export interface TagSuggestResponse {
+  tags: string[];
 }
