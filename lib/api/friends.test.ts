@@ -26,7 +26,14 @@ describe("friends API client", () => {
     server.use(
       http.post("/api/friends/requests", () =>
         HttpResponse.json(
-          { id: "f1", requester_id: "u1", addressee_id: "u2", status: "pending", created_at: "now", responded_at: null },
+          {
+            id: "f1",
+            requester_id: "u1",
+            addressee_id: "u2",
+            status: "pending",
+            created_at: "now",
+            responded_at: null,
+          },
           { status: 201 },
         ),
       ),
@@ -76,9 +83,7 @@ describe("friends API client", () => {
   });
 
   it("removeFriend deletes /friends/:userId", async () => {
-    server.use(
-      http.delete("/api/friends/u2", () => new HttpResponse(null, { status: 204 })),
-    );
+    server.use(http.delete("/api/friends/u2", () => new HttpResponse(null, { status: 204 })));
     await expect(removeFriend("u2")).resolves.toBeUndefined();
   });
 
@@ -93,9 +98,7 @@ describe("friends API client", () => {
   });
 
   it("unblockUser deletes /friends/:userId/block", async () => {
-    server.use(
-      http.delete("/api/friends/u2/block", () => new HttpResponse(null, { status: 204 })),
-    );
+    server.use(http.delete("/api/friends/u2/block", () => new HttpResponse(null, { status: 204 })));
     await expect(unblockUser("u2")).resolves.toBeUndefined();
   });
 });

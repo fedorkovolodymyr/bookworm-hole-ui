@@ -133,7 +133,14 @@ describe("friends API client", () => {
     server.use(
       http.post("/api/friends/requests", () =>
         HttpResponse.json(
-          { id: "f1", requester_id: "u1", addressee_id: "u2", status: "pending", created_at: "now", responded_at: null },
+          {
+            id: "f1",
+            requester_id: "u1",
+            addressee_id: "u2",
+            status: "pending",
+            created_at: "now",
+            responded_at: null,
+          },
           { status: 201 },
         ),
       ),
@@ -183,9 +190,7 @@ describe("friends API client", () => {
   });
 
   it("removeFriend deletes /friends/:userId", async () => {
-    server.use(
-      http.delete("/api/friends/u2", () => new HttpResponse(null, { status: 204 })),
-    );
+    server.use(http.delete("/api/friends/u2", () => new HttpResponse(null, { status: 204 })));
     await expect(removeFriend("u2")).resolves.toBeUndefined();
   });
 
@@ -200,9 +205,7 @@ describe("friends API client", () => {
   });
 
   it("unblockUser deletes /friends/:userId/block", async () => {
-    server.use(
-      http.delete("/api/friends/u2/block", () => new HttpResponse(null, { status: 204 })),
-    );
+    server.use(http.delete("/api/friends/u2/block", () => new HttpResponse(null, { status: 204 })));
     await expect(unblockUser("u2")).resolves.toBeUndefined();
   });
 });
@@ -924,6 +927,7 @@ Add the same key structure to `messages/uk.json` with Ukrainian copy:
 Then in **both** `messages/en.json` and `messages/uk.json`, add a `"friends"` key inside the existing `"shell": { "nav": { ... } }` object:
 
 `messages/en.json`, inside `shell.nav`:
+
 ```json
 "nav": {
   "browse": "Browse",
@@ -1497,7 +1501,13 @@ const request = {
 };
 
 export const Incoming: Story = {
-  args: { request, direction: "incoming", requesterLabel: "bob", onAccept: () => {}, onDecline: () => {} },
+  args: {
+    request,
+    direction: "incoming",
+    requesterLabel: "bob",
+    onAccept: () => {},
+    onDecline: () => {},
+  },
 };
 
 export const Outgoing: Story = {
@@ -2382,6 +2392,7 @@ Expected: passes; if not, run `pnpm prettier --write` on the changed files and r
 - [ ] **Step 6: Manual smoke test**
 
 Run: `pnpm dev`, sign in as a test user, navigate to `/friends`:
+
 - Friends tab shows the friend list (or empty state).
 - Requests tab shows incoming (with Accept/Decline) and outgoing (with Pending badge).
 - Find people tab: search a real username, confirm not-found and found states both render, send a friend request.
@@ -2415,8 +2426,16 @@ test("user A sends a friend request, user B accepts, both see each other as frie
   browser,
 }) => {
   const suffix = Date.now();
-  const userA = { email: `e2e-a-${suffix}@example.com`, username: `e2ea${suffix}`, password: "password123" };
-  const userB = { email: `e2e-b-${suffix}@example.com`, username: `e2eb${suffix}`, password: "password123" };
+  const userA = {
+    email: `e2e-a-${suffix}@example.com`,
+    username: `e2ea${suffix}`,
+    password: "password123",
+  };
+  const userB = {
+    email: `e2e-b-${suffix}@example.com`,
+    username: `e2eb${suffix}`,
+    password: "password123",
+  };
 
   const contextA = await browser.newContext();
   const pageA = await contextA.newPage();

@@ -14,7 +14,9 @@ export function PublicProfileCard({
       <CardContent className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Avatar>
-            {profile.avatar_url && <AvatarImage src={profile.avatar_url} alt={profile.display_name} />}
+            {profile.avatar_url && (
+              <AvatarImage src={profile.avatar_url} alt={profile.display_name} />
+            )}
             <AvatarFallback>{profile.display_name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-0.5">

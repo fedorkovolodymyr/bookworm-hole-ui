@@ -17,7 +17,9 @@ export function FindUserForm() {
   const profile = usePublicProfile(submittedUsername);
   const sendRequest = useSendFriendRequest();
 
-  const notFound = profile.isError && (profile.error as { response?: { status?: number } })?.response?.status === 404;
+  const notFound =
+    profile.isError &&
+    (profile.error as { response?: { status?: number } })?.response?.status === 404;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

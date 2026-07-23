@@ -24,7 +24,13 @@ describe("FriendsPage", () => {
     server.use(
       http.get("/api/friends/", () =>
         HttpResponse.json([
-          { user_id: "u1", username: "bob", display_name: "Bob", avatar_url: null, since: "2026-01-01T00:00:00Z" },
+          {
+            user_id: "u1",
+            username: "bob",
+            display_name: "Bob",
+            avatar_url: null,
+            since: "2026-01-01T00:00:00Z",
+          },
         ]),
       ),
       http.get("/api/friends/requests/incoming", () => HttpResponse.json([])),
@@ -39,7 +45,14 @@ describe("FriendsPage", () => {
       http.get("/api/friends/", () => HttpResponse.json([])),
       http.get("/api/friends/requests/incoming", () =>
         HttpResponse.json([
-          { id: "f1", requester_id: "u2", addressee_id: "u1", status: "pending", created_at: "now", responded_at: null },
+          {
+            id: "f1",
+            requester_id: "u2",
+            addressee_id: "u1",
+            status: "pending",
+            created_at: "now",
+            responded_at: null,
+          },
         ]),
       ),
       http.get("/api/friends/requests/outgoing", () => HttpResponse.json([])),

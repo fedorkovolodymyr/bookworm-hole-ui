@@ -19,7 +19,13 @@ const request = {
 };
 
 export const Incoming: Story = {
-  args: { request, direction: "incoming", requesterLabel: "bob", onAccept: () => {}, onDecline: () => {} },
+  args: {
+    request,
+    direction: "incoming",
+    requesterLabel: "bob",
+    onAccept: () => {},
+    onDecline: () => {},
+  },
 };
 
 export const Outgoing: Story = {

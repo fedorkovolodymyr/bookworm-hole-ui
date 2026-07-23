@@ -31,18 +31,14 @@ describe("useFriends", () => {
 
 describe("useIncomingRequests / useOutgoingRequests", () => {
   it("fetches incoming requests", async () => {
-    server.use(
-      http.get("/api/friends/requests/incoming", () => HttpResponse.json([{ id: "f1" }])),
-    );
+    server.use(http.get("/api/friends/requests/incoming", () => HttpResponse.json([{ id: "f1" }])));
     const { result } = renderHook(() => useIncomingRequests(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.[0].id).toBe("f1");
   });
 
   it("fetches outgoing requests", async () => {
-    server.use(
-      http.get("/api/friends/requests/outgoing", () => HttpResponse.json([{ id: "f2" }])),
-    );
+    server.use(http.get("/api/friends/requests/outgoing", () => HttpResponse.json([{ id: "f2" }])));
     const { result } = renderHook(() => useOutgoingRequests(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.[0].id).toBe("f2");
