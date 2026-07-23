@@ -1,17 +1,32 @@
 "use client";
 
+import * as React from "react";
 import { use } from "react";
 import { useTranslations } from "next-intl";
 import { useFriendCollections, useFriendLibrary } from "@/hooks/useFriendContent";
+import { useFriends } from "@/hooks/useFriends";
 import { CollectionCard } from "@/components/collections/collection-card";
 import { StatusListItem } from "@/components/statuses/status-list-item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { UnfriendDialog } from "@/components/friends/unfriend-dialog";
+import { BlockUserDialog } from "@/components/friends/block-user-dialog";
 
 export default function FriendShelfPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = use(params);
   const t = useTranslations("collections");
   const statusesT = useTranslations("statuses");
   const commonT = useTranslations("common");
+  const friendsT = useTranslations("friends.profile.friendActions");
+
+  const friends = useFriends();
+  const friend = friends.data?.find((f) => f.user_id === userId);
+
+  const [unfriendOpen, setUnfriendOpen] = React.useState(false);
+  const [blockOpen, setBlockOpen] = React.useState(false);
+
   const {
     data: collectionsPage,
     isPending: collectionsPending,
@@ -25,6 +40,33 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
 
   return (
     <div className="flex flex-col gap-8">
+      {friend && (
+        <Card>
+          <CardContent className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Avatar>
+                {friend.avatar_url && (
+                  <AvatarImage src={friend.avatar_url} alt={friend.display_name} />
+                )}
+                <AvatarFallback>{friend.display_name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col gap-0.5">
+                <p className="text-lg font-medium">{friend.display_name}</p>
+                <p className="text-muted-foreground text-sm">{friend.username}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setUnfriendOpen(true)}>
+                {friendsT("unfriend")}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setBlockOpen(true)}>
+                {friendsT("block")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{t("pageTitle")}</h2>
         {collectionsPending && <Skeleton className="h-40 w-full" />}
@@ -64,6 +106,9 @@ export default function FriendShelfPage({ params }: { params: Promise<{ userId: 
           </div>
         )}
       </section>
+
+      <UnfriendDialog userId={userId} open={unfriendOpen} onOpenChange={setUnfriendOpen} />
+      <BlockUserDialog userId={userId} open={blockOpen} onOpenChange={setBlockOpen} />
     </div>
   );
 }
