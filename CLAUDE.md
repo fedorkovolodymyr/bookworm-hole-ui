@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Git workflow
 
 - **Never merge/push directly to `main`.** All work lands via PR (`gh pr create`), reviewed and merged through GitHub, even for docs-only or small changes. Work on a feature branch (e.g. `block-N-<name>`), open a PR, merge there.
+- **No "🤖 Generated with Claude Code" footer or `Co-Authored-By: Claude` line in commit messages or PR descriptions.**
 
 ## Commands
 
