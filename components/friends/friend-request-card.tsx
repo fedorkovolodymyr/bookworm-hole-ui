@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import type { FriendRequestResponse } from "@/lib/api/types";
 
 export function FriendRequestCard({
-  request,
   direction,
   requesterLabel,
   onAccept,
