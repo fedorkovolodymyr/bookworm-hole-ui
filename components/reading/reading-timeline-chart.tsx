@@ -52,7 +52,12 @@ export function ReadingTimelineChart({ fromDate, toDate }: { fromDate: string; t
       </div>
       <div>
         <p className="text-muted-foreground mb-2 text-xs">{t("chartTitle")}</p>
-        <svg viewBox={`0 0 ${items.length * 12} 60`} className="h-16 w-full" role="img">
+        <svg
+          viewBox={`0 0 ${items.length * 12} 60`}
+          className="h-16 w-full"
+          role="img"
+          aria-label={t("chartTitle")}
+        >
           {items.map((item, index) => {
             const height = maxMinutes === 0 ? 0 : (item.total_minutes / maxMinutes) * 56;
             return (
