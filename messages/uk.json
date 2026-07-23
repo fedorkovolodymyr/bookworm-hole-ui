@@ -338,7 +338,8 @@
   "shell": {
     "nav": {
       "browse": "Огляд",
-      "collections": "Колекції"
+      "collections": "Колекції",
+      "reading": "Читання"
     },
     "userMenu": {
       "profile": "Профіль",
