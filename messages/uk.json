@@ -341,7 +341,8 @@
       "collections": "Колекції",
       "reading": "Читання",
       "friends": "Друзі",
-      "chat": "Чат"
+      "chat": "Чат",
+      "admin": "Адміністрування"
     },
     "userMenu": {
       "profile": "Профіль",
