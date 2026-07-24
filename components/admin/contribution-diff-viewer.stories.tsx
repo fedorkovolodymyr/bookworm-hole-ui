@@ -1,9 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { NextIntlClientProvider } from "next-intl";
 import { ContributionDiffViewer } from "./contribution-diff-viewer";
+import enMessages from "@/messages/en.json";
 
 const meta: Meta<typeof ContributionDiffViewer> = {
   title: "Admin/ContributionDiffViewer",
   component: ContributionDiffViewer,
+  decorators: [
+    (Story) => (
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <Story />
+      </NextIntlClientProvider>
+    ),
+  ],
 };
 export default meta;
 

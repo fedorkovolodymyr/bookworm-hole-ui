@@ -1,9 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { NextIntlClientProvider } from "next-intl";
 import { ContributionReviewList } from "./contribution-review-list";
+import enMessages from "@/messages/en.json";
 
 const meta: Meta<typeof ContributionReviewList> = {
   title: "Admin/ContributionReviewList",
   component: ContributionReviewList,
+  decorators: [
+    (Story) => (
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <Story />
+      </NextIntlClientProvider>
+    ),
+  ],
 };
 export default meta;
 
