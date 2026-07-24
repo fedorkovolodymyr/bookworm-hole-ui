@@ -1,10 +1,8 @@
 name: Release
 
 on:
-  workflow_run:
-    workflows: ["CI"]
+  push:
     branches: [main]
-    types: [completed]
 
 permissions:
   contents: write
@@ -13,7 +11,7 @@ permissions:
 
 jobs:
   release:
-    if: github.event.workflow_run.conclusion == 'success'
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,3 +27,39 @@ jobs:
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: dawidd6/action-download-artifact@v6
+        id: coverage-artifact
+        with:
+          workflow: ci.yml
+          commit: ${{ github.sha }}
+          name: coverage-baseline
+          path: coverage
+          if_no_artifact_found: warn
+      - if: steps.coverage-artifact.outputs.found_artifact == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-baseline
+          path: coverage/coverage-summary.json
+          retention-days: 30
+      - name: Compute coverage badge color
+        if: steps.coverage-artifact.outputs.found_artifact == 'true'
+        id: coverage-badge
+        run: |
+          PCT=$(node -p "Math.round(require('./coverage/coverage-summary.json').total.lines.pct)")
+          if [ "$PCT" -ge 90 ]; then COLOR=brightgreen
+          elif [ "$PCT" -ge 75 ]; then COLOR=green
+          elif [ "$PCT" -ge 50 ]; then COLOR=yellow
+          else COLOR=red
+          fi
+          echo "pct=$PCT" >> "$GITHUB_OUTPUT"
+          echo "color=$COLOR" >> "$GITHUB_OUTPUT"
+      - name: Publish coverage badge
+        if: steps.coverage-artifact.outputs.found_artifact == 'true'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: __REPLACE_WITH_GIST_ID__
+          filename: bookworm-hole-ui-coverage.json
+          label: coverage
+          message: ${{ steps.coverage-badge.outputs.pct }}%
+          color: ${{ steps.coverage-badge.outputs.color }}
