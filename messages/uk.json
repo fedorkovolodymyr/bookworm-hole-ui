@@ -210,7 +210,9 @@
       "deleteBook": "Видалити",
       "confirmDelete": "Видалити цю книгу назавжди?",
       "addRelease": "Додати видання",
-      "backToList": "Назад до списку"
+      "backToList": "Назад до списку",
+      "bookNotFound": "Книгу не знайдено.",
+      "editions": "Видання"
     }
   },
   "history": {
