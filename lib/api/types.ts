@@ -623,3 +623,95 @@ export interface TagSuggestRequest {
 export interface TagSuggestResponse {
   tags: string[];
 }
+
+// --- Admin domain types ---
+
+export interface AdminUserResponse {
+  id: string;
+  email: string;
+  username: string;
+  display_name: string;
+  is_active: boolean;
+  is_admin: boolean;
+}
+
+export interface AdminUserListParams {
+  skip?: number;
+  limit?: number;
+  email?: string;
+  username?: string;
+  is_active?: boolean;
+  is_admin?: boolean;
+}
+
+export type AuditAction =
+  | "approve_contribution"
+  | "reject_contribution"
+  | "claim_contribution"
+  | "activate_user"
+  | "deactivate_user"
+  | "promote_user"
+  | "demote_user";
+
+export type AuditTargetType = "contribution" | "user";
+
+export interface AuditLogResponse {
+  id: string;
+  actor_id: string;
+  action: AuditAction;
+  target_type: AuditTargetType;
+  target_id: string;
+  audit_metadata: Record<string, unknown>;
+  ip_address: string | null;
+  created_at: string;
+}
+
+export interface AdminAuditLogListParams {
+  skip?: number;
+  limit?: number;
+  actor_id?: string;
+  action?: AuditAction;
+  target_type?: AuditTargetType;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface AdminContributionResponse {
+  id: string;
+  user_id: string;
+  kind: ContributionKind;
+  target_id: string | null;
+  payload: Record<string, unknown>;
+  status: ContributionStatus;
+  reviewer_id: string | null;
+  review_notes: string | null;
+  created_at: string;
+  updated_at: string;
+  warnings: string[];
+}
+
+export interface ContributionDiffResponse {
+  proposed: Record<string, unknown>;
+  current: Record<string, unknown> | null;
+  warnings: string[];
+}
+
+export interface RejectContributionPayload {
+  notes: string;
+}
+
+export interface PasswordResetTokenResponse {
+  reset_token: string;
+}
+
+export type CatalogImportProfile = "books" | "comics" | "manga";
+
+export interface CatalogImportRequest {
+  profile: CatalogImportProfile;
+}
+
+export interface CatalogImportJobStatusResponse {
+  job_id: string;
+  status: string;
+  result?: Record<string, number> | null;
+}
