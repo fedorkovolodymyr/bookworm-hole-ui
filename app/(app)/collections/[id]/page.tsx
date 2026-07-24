@@ -4,23 +4,14 @@
 import * as React from "react";
 import { use } from "react";
 import { useTranslations } from "next-intl";
-import {
-  DndContext,
-  closestCenter,
-  useDraggable,
-  useDroppable,
-  useSensor,
-  useSensors,
-  PointerSensor,
-  KeyboardSensor,
-  type DragEndEvent,
-} from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   useCollection,
   useDeleteCollection,
   useRemoveCollectionItem,
-  useReorderCollectionItems,
 } from "@/hooks/useCollections";
+import { useCollectionReorder } from "@/hooks/useCollectionReorder";
+import { DraggableCollectionItem } from "@/components/collections/draggable-collection-item";
 import { CollectionItemCard } from "@/components/collections/collection-item-card";
 import { CollectionForm } from "@/components/collections/collection-form";
 import { ShareDialog } from "@/components/share/share-dialog";
@@ -36,52 +27,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import type { CollectionItemResponse } from "@/lib/api/types";
-import { cn } from "@/lib/utils";
-
-/**
- * Only @dnd-kit/core is installed (no @dnd-kit/sortable), and
- * CollectionItemCard doesn't wire itself up as draggable/droppable. This
- * wrapper makes each row both a drag source and a drop target so DndContext
- * has something to fire DragEnd events against; CollectionItemCard's
- * move-up/move-down buttons remain the primary accessible/keyboard path and
- * work independently of this wrapper.
- */
-function DraggableCollectionItem({
-  item,
-  children,
-}: {
-  item: CollectionItemResponse;
-  children: React.ReactNode;
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setDraggableRef,
-    isDragging,
-  } = useDraggable({
-    id: item.id,
-  });
-  const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: item.id });
-
-  return (
-    <div
-      ref={(node) => {
-        setDraggableRef(node);
-        setDroppableRef(node);
-      }}
-      {...attributes}
-      {...listeners}
-      className={cn(
-        "touch-none",
-        isDragging && "opacity-50",
-        isOver && "ring-primary rounded-xl ring-2",
-      )}
-    >
-      {children}
-    </div>
-  );
-}
 
 export default function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -90,62 +35,13 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
   const { data: collection, isPending, isError } = useCollection(id);
   const [editOpen, setEditOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
-  const [orderedItems, setOrderedItems] = React.useState<CollectionItemResponse[]>([]);
-  // Tracks which server-provided items array `orderedItems` was last synced
-  // from, so local optimistic reorders aren't clobbered on every render but
-  // still pick up fresh data after refetches/invalidations. Adjusting state
-  // during render (rather than in a useEffect) avoids the extra render pass
-  // an effect-based sync would cause — see
-  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
-  const [syncedItems, setSyncedItems] = React.useState<CollectionItemResponse[] | undefined>(
-    undefined,
-  );
 
   const removeItem = useRemoveCollectionItem(id);
-  const reorderItems = useReorderCollectionItems(id);
   const deleteCollection = useDeleteCollection();
-
-  // Require a small pointer-move before a drag activates so plain clicks on
-  // the move-up/move-down/remove buttons inside each row still register as
-  // clicks rather than being swallowed by the drag sensor.
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor),
+  const { orderedItems, sensors, moveItem, handleDragEnd } = useCollectionReorder(
+    id,
+    collection?.items.items,
   );
-
-  if (collection && collection.items.items !== syncedItems) {
-    setSyncedItems(collection.items.items);
-    setOrderedItems(collection.items.items);
-  }
-
-  function commitOrder(next: CollectionItemResponse[]) {
-    const previous = orderedItems;
-    setOrderedItems(next);
-    reorderItems.mutate(
-      next.map((item) => item.id),
-      { onError: () => setOrderedItems(previous) },
-    );
-  }
-
-  function moveItem(index: number, direction: -1 | 1) {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= orderedItems.length) return;
-    const next = [...orderedItems];
-    [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-    commitOrder(next);
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = orderedItems.findIndex((item) => item.id === active.id);
-    const newIndex = orderedItems.findIndex((item) => item.id === over.id);
-    if (oldIndex === -1 || newIndex === -1) return;
-    const next = [...orderedItems];
-    const [moved] = next.splice(oldIndex, 1);
-    next.splice(newIndex, 0, moved);
-    commitOrder(next);
-  }
 
   if (isPending) {
     return <Skeleton className="h-64 w-full" />;

@@ -210,7 +210,9 @@
       "deleteBook": "Delete",
       "confirmDelete": "Delete this book permanently?",
       "addRelease": "Add edition",
-      "backToList": "Back to list"
+      "backToList": "Back to list",
+      "bookNotFound": "Book not found.",
+      "editions": "Editions"
     }
   },
   "history": {

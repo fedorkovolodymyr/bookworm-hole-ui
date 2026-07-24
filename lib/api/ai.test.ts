@@ -13,8 +13,8 @@ describe("ai API client", () => {
 
   it("recommendBooks posts to /ai/recommend and returns book_ids", async () => {
     vi.mocked(apiClient.post).mockResolvedValue({ data: { book_ids: ["b1", "b2"] } });
-    const result = await recommendBooks({ user_id: "u1", n: 5 });
-    expect(apiClient.post).toHaveBeenCalledWith("/ai/recommend", { user_id: "u1", n: 5 });
+    const result = await recommendBooks({ n: 5 });
+    expect(apiClient.post).toHaveBeenCalledWith("/ai/recommend", { n: 5 });
     expect(result.book_ids).toEqual(["b1", "b2"]);
   });
 
@@ -25,9 +25,7 @@ describe("ai API client", () => {
         data: { detail: "AI recommendation feature is not implemented yet" },
       },
     });
-    await expect(recommendBooks({ user_id: "u1" })).rejects.toBeInstanceOf(
-      AiFeatureUnavailableError,
-    );
+    await expect(recommendBooks({})).rejects.toBeInstanceOf(AiFeatureUnavailableError);
   });
 
   it("generateSummary posts to /ai/summary", async () => {
