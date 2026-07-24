@@ -62,3 +62,21 @@ export const SignedIn: Story = {
     }),
   ],
 };
+
+export const AdminUser: Story = {
+  decorators: [
+    withQueryClient({
+      id: "1",
+      email: "admin@b.com",
+      username: "admin",
+      display_name: "Admin",
+      bio: null,
+      avatar_url: null,
+      locale: "en",
+      timezone: "UTC",
+      is_active: true,
+      is_admin: true,
+      deletion_scheduled_at: null,
+    }),
+  ],
+};

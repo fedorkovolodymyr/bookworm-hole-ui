@@ -341,7 +341,8 @@
       "collections": "Collections",
       "reading": "Reading",
       "friends": "Friends",
-      "chat": "Chat"
+      "chat": "Chat",
+      "admin": "Admin"
     },
     "userMenu": {
       "profile": "Profile",

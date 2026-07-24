@@ -59,6 +59,14 @@ export function Header() {
             </span>
           )}
         </Link>
+        {me?.is_admin && (
+          <Link
+            href="/admin/users"
+            className="text-muted-foreground hover:text-foreground text-sm"
+          >
+            {tShell("nav.admin")}
+          </Link>
+        )}
       </nav>
       <div className="flex items-center gap-2">
         <LocaleSwitcher />
