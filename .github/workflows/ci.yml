@@ -20,5 +20,43 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm format:check
-      - run: pnpm test
+      - run: pnpm test:coverage
       - run: pnpm build
+      - if: github.event_name == 'pull_request'
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: ci.yml
+          branch: main
+          name: coverage-baseline
+          path: baseline-coverage
+          if_no_artifact_found: warn
+      - if: github.event_name == 'pull_request'
+        run: node scripts/check-coverage-regression.mjs baseline-coverage/coverage-summary.json coverage/coverage-summary.json
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-baseline
+          path: coverage/coverage-summary.json
+          retention-days: 30
+      - name: Compute coverage badge color
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: coverage-badge
+        run: |
+          PCT=$(node -p "Math.round(require('./coverage/coverage-summary.json').total.lines.pct)")
+          if [ "$PCT" -ge 90 ]; then COLOR=brightgreen
+          elif [ "$PCT" -ge 75 ]; then COLOR=green
+          elif [ "$PCT" -ge 50 ]; then COLOR=yellow
+          else COLOR=red
+          fi
+          echo "pct=$PCT" >> "$GITHUB_OUTPUT"
+          echo "color=$COLOR" >> "$GITHUB_OUTPUT"
+      - name: Publish coverage badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: __REPLACE_WITH_GIST_ID__
+          filename: bookworm-hole-ui-coverage.json
+          label: coverage
+          message: ${{ steps.coverage-badge.outputs.pct }}%
+          color: ${{ steps.coverage-badge.outputs.color }}
