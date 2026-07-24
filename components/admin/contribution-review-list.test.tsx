@@ -12,7 +12,7 @@ const contributions: AdminContributionResponse[] = [
   {
     id: "c1",
     user_id: "u1",
-    kind: "book_create",
+    kind: "new_book",
     target_id: null,
     payload: {},
     status: "submitted",
@@ -44,7 +44,7 @@ describe("ContributionReviewList", () => {
     renderWithIntl(
       <ContributionReviewList contributions={contributions} onSelect={vi.fn()} />,
     );
-    expect(screen.getByText("book_create")).toBeInTheDocument();
+    expect(screen.getByText("new_book")).toBeInTheDocument();
     expect(screen.getByText("Submitted")).toBeInTheDocument();
   });
 
