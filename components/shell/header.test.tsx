@@ -87,4 +87,36 @@ describe("Header", () => {
     expect(chatLink).toHaveAttribute("href", "/chat");
     expect(await screen.findByText("1")).toBeInTheDocument();
   });
+
+  it("does not show the Admin link for a non-admin user", async () => {
+    renderHeader();
+    await screen.findByRole("button", { name: /Alice/ });
+    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+  });
+
+  it("shows the Admin link for an admin user", async () => {
+    const { server } = await import("@/tests/mocks/server");
+    const { http, HttpResponse } = await import("msw");
+    server.use(
+      http.get("/api/users/me", () =>
+        HttpResponse.json({
+          id: "1",
+          email: "a@b.com",
+          username: "alice",
+          display_name: "Alice",
+          bio: null,
+          avatar_url: null,
+          locale: "en",
+          timezone: "UTC",
+          is_active: true,
+          is_admin: true,
+          deletion_scheduled_at: null,
+        }),
+      ),
+    );
+
+    renderHeader();
+    const adminLink = await screen.findByRole("link", { name: "Admin" });
+    expect(adminLink).toHaveAttribute("href", "/admin/users");
+  });
 });
