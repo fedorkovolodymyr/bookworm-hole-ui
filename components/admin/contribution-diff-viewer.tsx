@@ -23,19 +23,12 @@ export function ContributionDiffViewer({ diff }: { diff: ContributionDiffRespons
 
   return (
     <div className="flex flex-col gap-3">
-      {diff.current === null && (
-        <p className="text-muted-foreground text-sm">{t("noCurrent")}</p>
-      )}
+      {diff.current === null && <p className="text-muted-foreground text-sm">{t("noCurrent")}</p>}
       {diffKeys(diff.proposed, diff.current).map((key) => (
-        <div
-          key={key}
-          className="border-border flex flex-col gap-1 border-b pb-3 last:border-b-0"
-        >
+        <div key={key} className="border-border flex flex-col gap-1 border-b pb-3 last:border-b-0">
           <span className="font-mono text-sm font-medium">{key}</span>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <p className="text-destructive line-through">
-              {formatValue(diff.current?.[key])}
-            </p>
+            <p className="text-destructive line-through">{formatValue(diff.current?.[key])}</p>
             <p className="text-foreground">{formatValue(diff.proposed[key])}</p>
           </div>
         </div>

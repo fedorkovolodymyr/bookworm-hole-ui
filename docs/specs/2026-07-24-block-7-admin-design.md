@@ -18,22 +18,22 @@ it's the same auth boundary and admin persona — see decision below.
 All endpoints confirmed live via a running local API instance (registered a
 throwaway user, inspected the OpenAPI schema and a real issued JWT).
 
-| Endpoint                                             | Method | Request                                                  | Response                                                                |
-| ----------------------------------------------------- | ------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `/api/v1/admin/users/`                                 | GET    | query `skip?, limit?, email?, username?, is_active?, is_admin?` | `Page<AdminUserResponse>`                                                       |
-| `/api/v1/admin/users/{user_id}/activate`               | POST   | —                                                                 | `AdminUserResponse`                                                             |
-| `/api/v1/admin/users/{user_id}/deactivate`             | POST   | —                                                                 | `AdminUserResponse`                                                             |
-| `/api/v1/admin/users/{user_id}/promote`                | POST   | —                                                                 | `AdminUserResponse`                                                             |
-| `/api/v1/admin/users/{user_id}/demote`                 | POST   | —                                                                 | `AdminUserResponse`                                                             |
-| `/api/v1/admin/users/{user_id}/password-reset`         | POST   | —                                                                 | `PasswordResetTokenResponse {reset_token}`                                      |
-| `/api/v1/admin/audit-logs/`                            | GET    | query `skip?, limit?, actor_id?, action?, target_type?, start_date?, end_date?` | `Page<AuditLogResponse>`                                    |
-| `/api/v1/admin/contributions/`                         | GET    | query `status? (default "submitted"), skip?, limit?`             | `Page<AdminContributionResponse>`                                               |
-| `/api/v1/admin/contributions/{contribution_id}/claim`  | POST   | —                                                                 | `AdminContributionResponse`, `409` if already claimed                          |
-| `/api/v1/admin/contributions/{contribution_id}/diff`   | GET    | —                                                                 | `ContributionDiffResponse {proposed, current, warnings}`                       |
-| `/api/v1/admin/contributions/{contribution_id}/approve`| POST   | —                                                                 | `AdminContributionResponse`, `409` on invalid state transition                 |
-| `/api/v1/admin/contributions/{contribution_id}/reject` | POST   | `RejectContributionSchema {notes: string}`                       | `AdminContributionResponse`, `409` on invalid state transition                 |
-| `/api/v1/admin/catalog-imports`                        | POST   | `CatalogImportRequest {profile: "books"\|"comics"\|"manga"}`      | `CatalogImportJobStatusResponse {job_id, status, result?}`                     |
-| `/api/v1/admin/catalog-imports/{job_id}`               | GET    | —                                                                 | `CatalogImportJobStatusResponse`                                                |
+| Endpoint                                                | Method | Request                                                                         | Response                                                       |
+| ------------------------------------------------------- | ------ | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `/api/v1/admin/users/`                                  | GET    | query `skip?, limit?, email?, username?, is_active?, is_admin?`                 | `Page<AdminUserResponse>`                                      |
+| `/api/v1/admin/users/{user_id}/activate`                | POST   | —                                                                               | `AdminUserResponse`                                            |
+| `/api/v1/admin/users/{user_id}/deactivate`              | POST   | —                                                                               | `AdminUserResponse`                                            |
+| `/api/v1/admin/users/{user_id}/promote`                 | POST   | —                                                                               | `AdminUserResponse`                                            |
+| `/api/v1/admin/users/{user_id}/demote`                  | POST   | —                                                                               | `AdminUserResponse`                                            |
+| `/api/v1/admin/users/{user_id}/password-reset`          | POST   | —                                                                               | `PasswordResetTokenResponse {reset_token}`                     |
+| `/api/v1/admin/audit-logs/`                             | GET    | query `skip?, limit?, actor_id?, action?, target_type?, start_date?, end_date?` | `Page<AuditLogResponse>`                                       |
+| `/api/v1/admin/contributions/`                          | GET    | query `status? (default "submitted"), skip?, limit?`                            | `Page<AdminContributionResponse>`                              |
+| `/api/v1/admin/contributions/{contribution_id}/claim`   | POST   | —                                                                               | `AdminContributionResponse`, `409` if already claimed          |
+| `/api/v1/admin/contributions/{contribution_id}/diff`    | GET    | —                                                                               | `ContributionDiffResponse {proposed, current, warnings}`       |
+| `/api/v1/admin/contributions/{contribution_id}/approve` | POST   | —                                                                               | `AdminContributionResponse`, `409` on invalid state transition |
+| `/api/v1/admin/contributions/{contribution_id}/reject`  | POST   | `RejectContributionSchema {notes: string}`                                      | `AdminContributionResponse`, `409` on invalid state transition |
+| `/api/v1/admin/catalog-imports`                         | POST   | `CatalogImportRequest {profile: "books"\|"comics"\|"manga"}`                    | `CatalogImportJobStatusResponse {job_id, status, result?}`     |
+| `/api/v1/admin/catalog-imports/{job_id}`                | GET    | —                                                                               | `CatalogImportJobStatusResponse`                               |
 
 All list/mutation endpoints: `401` if unauthenticated, `403` if authenticated
 but not admin.
@@ -97,6 +97,7 @@ claim (confirmed by decoding a real issued token:
 extra network round-trip.
 
 `middleware.ts`:
+
 - `config.matcher: ["/admin/:path*"]`
 - Reads `access_token` cookie. If absent, redirect to `/login`.
 - Base64-decodes the JWT payload (no signature verification — this is a UX

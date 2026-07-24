@@ -37,9 +37,7 @@ describe("ContributionDiffViewer", () => {
 
   it("renders warnings when present", () => {
     renderWithIntl(
-      <ContributionDiffViewer
-        diff={{ proposed: {}, current: null, warnings: ["Missing ISBN"] }}
-      />,
+      <ContributionDiffViewer diff={{ proposed: {}, current: null, warnings: ["Missing ISBN"] }} />,
     );
     expect(screen.getByText("Missing ISBN")).toBeInTheDocument();
   });

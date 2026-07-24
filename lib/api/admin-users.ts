@@ -33,9 +33,7 @@ export async function demoteUser(userId: string): Promise<AdminUserResponse> {
   return data;
 }
 
-export async function resetUserPassword(
-  userId: string,
-): Promise<PasswordResetTokenResponse> {
+export async function resetUserPassword(userId: string): Promise<PasswordResetTokenResponse> {
   const { data } = await apiClient.post(`/admin/users/${userId}/password-reset`);
   return data;
 }

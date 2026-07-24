@@ -3,11 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { CatalogImportJobStatusResponse } from "@/lib/api/types";
 
-export function CatalogImportStatus({
-  status,
-}: {
-  status: CatalogImportJobStatusResponse;
-}) {
+export function CatalogImportStatus({ status }: { status: CatalogImportJobStatusResponse }) {
   const t = useTranslations("admin.catalogImports");
 
   return (

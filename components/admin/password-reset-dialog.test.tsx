@@ -25,9 +25,7 @@ describe("PasswordResetDialog", () => {
   });
 
   it("shows a loading state while the reset is pending", () => {
-    renderWithIntl(
-      <PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />,
-    );
+    renderWithIntl(<PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />);
     expect(screen.getByText("Password reset token")).toBeInTheDocument();
   });
 
@@ -38,9 +36,7 @@ describe("PasswordResetDialog", () => {
       isPending: false,
     } as never);
 
-    renderWithIntl(
-      <PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />,
-    );
+    renderWithIntl(<PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />);
     expect(screen.getByText("tok-abc-123")).toBeInTheDocument();
   });
 });

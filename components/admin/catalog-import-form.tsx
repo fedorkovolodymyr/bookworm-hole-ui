@@ -43,10 +43,7 @@ export function CatalogImportForm({ onStarted }: { onStarted: (jobId: string) =>
       <Button
         disabled={startImport.isPending}
         onClick={() =>
-          startImport.mutate(
-            { profile },
-            { onSuccess: (status) => onStarted(status.job_id) },
-          )
+          startImport.mutate({ profile }, { onSuccess: (status) => onStarted(status.job_id) })
         }
       >
         {startImport.isPending ? t("starting") : t("start")}

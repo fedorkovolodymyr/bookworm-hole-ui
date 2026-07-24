@@ -1,8 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  fetchCatalogImportStatus,
-  startCatalogImport,
-} from "@/lib/api/admin-catalog-imports";
+import { fetchCatalogImportStatus, startCatalogImport } from "@/lib/api/admin-catalog-imports";
 import type { CatalogImportJobStatusResponse, CatalogImportRequest } from "@/lib/api/types";
 
 const TERMINAL_STATUSES = ["completed", "failed", "errored"];

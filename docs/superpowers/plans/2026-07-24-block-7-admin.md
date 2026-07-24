@@ -114,29 +114,32 @@ e2e/admin.spec.ts                   # CREATE (Task 27)
 ### Task 1: Admin types in `lib/api/types.ts`
 
 **Files:**
+
 - Modify: `lib/api/types.ts` (append near end of file)
 
 **Interfaces:**
+
 - Consumes: existing `Page<T>` generic (already defined at line 82),
   existing `ContributionStatus`, `ContributionKind` (already defined from
   Block 3 — grep the file for `ContributionKind` before writing this task
   if the exact literal union isn't obvious from this plan; it's already
   present, do not redefine it).
 - Produces (used by Tasks 2-9, 12-25):
+
   ```ts
-  AdminUserResponse
-  AuditAction
-  AuditTargetType
-  AuditLogResponse
-  AdminContributionResponse
-  ContributionDiffResponse
-  RejectContributionPayload
-  PasswordResetTokenResponse
-  CatalogImportProfile
-  CatalogImportRequest
-  CatalogImportJobStatusResponse
-  AdminUserListParams
-  AdminAuditLogListParams
+  AdminUserResponse;
+  AuditAction;
+  AuditTargetType;
+  AuditLogResponse;
+  AdminContributionResponse;
+  ContributionDiffResponse;
+  RejectContributionPayload;
+  PasswordResetTokenResponse;
+  CatalogImportProfile;
+  CatalogImportRequest;
+  CatalogImportJobStatusResponse;
+  AdminUserListParams;
+  AdminAuditLogListParams;
   ```
 
 - [ ] **Step 1: Append the following to `lib/api/types.ts`**
@@ -254,10 +257,12 @@ git commit -m "feat(admin): add admin domain types"
 ### Task 2: `lib/api/admin-users.ts`
 
 **Files:**
+
 - Create: `lib/api/admin-users.ts`
 - Test: `lib/api/admin-users.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient` from `./client`; `AdminUserResponse`,
   `AdminUserListParams`, `Page`, `PasswordResetTokenResponse` from `./types`
   (Task 1).
@@ -396,9 +401,7 @@ export async function demoteUser(userId: string): Promise<AdminUserResponse> {
   return data;
 }
 
-export async function resetUserPassword(
-  userId: string,
-): Promise<PasswordResetTokenResponse> {
+export async function resetUserPassword(userId: string): Promise<PasswordResetTokenResponse> {
   const { data } = await apiClient.post(`/admin/users/${userId}/password-reset`);
   return data;
 }
@@ -421,10 +424,12 @@ git commit -m "feat(admin): add admin users API client"
 ### Task 3: `lib/api/admin-audit-logs.ts`
 
 **Files:**
+
 - Create: `lib/api/admin-audit-logs.ts`
 - Test: `lib/api/admin-audit-logs.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`; `AdminAuditLogListParams`, `AuditLogResponse`,
   `Page` from `./types` (Task 1).
 - Produces: `fetchAuditLogs` — consumed by Task 7.
@@ -506,10 +511,12 @@ git commit -m "feat(admin): add admin audit logs API client"
 ### Task 4: `lib/api/admin-contributions.ts`
 
 **Files:**
+
 - Create: `lib/api/admin-contributions.ts`
 - Test: `lib/api/admin-contributions.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`; `AdminContributionResponse`,
   `ContributionDiffResponse`, `ContributionStatus`, `RejectContributionPayload`,
   `Page` from `./types`.
@@ -647,10 +654,7 @@ export async function rejectContribution(
   contributionId: string,
   payload: RejectContributionPayload,
 ): Promise<AdminContributionResponse> {
-  const { data } = await apiClient.post(
-    `/admin/contributions/${contributionId}/reject`,
-    payload,
-  );
+  const { data } = await apiClient.post(`/admin/contributions/${contributionId}/reject`, payload);
   return data;
 }
 ```
@@ -672,10 +676,12 @@ git commit -m "feat(admin): add admin contributions API client"
 ### Task 5: `lib/api/admin-catalog-imports.ts`
 
 **Files:**
+
 - Create: `lib/api/admin-catalog-imports.ts`
 - Test: `lib/api/admin-catalog-imports.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apiClient`; `CatalogImportRequest`,
   `CatalogImportJobStatusResponse` from `./types`.
 - Produces: `startCatalogImport`, `fetchCatalogImportStatus` — consumed by
@@ -767,10 +773,12 @@ git commit -m "feat(admin): add admin catalog imports API client"
 ### Task 6: `hooks/useAdminUsers.ts`
 
 **Files:**
+
 - Create: `hooks/useAdminUsers.ts`
 - Test: `hooks/useAdminUsers.test.tsx`
 
 **Interfaces:**
+
 - Consumes: all functions from `lib/api/admin-users.ts` (Task 2);
   `AdminUserListParams` from `lib/api/types.ts`.
 - Produces: `useAdminUsers(params)`, `useActivateUser()`,
@@ -996,10 +1004,12 @@ git commit -m "feat(admin): add useAdminUsers hooks"
 ### Task 7: `hooks/useAdminAuditLogs.ts`
 
 **Files:**
+
 - Create: `hooks/useAdminAuditLogs.ts`
 - Test: `hooks/useAdminAuditLogs.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `fetchAuditLogs` from `lib/api/admin-audit-logs.ts` (Task 3);
   `AdminAuditLogListParams` from `lib/api/types.ts`.
 - Produces: `useAdminAuditLogs(params)` — consumed by Task 14/23.
@@ -1084,10 +1094,12 @@ git commit -m "feat(admin): add useAdminAuditLogs hook"
 ### Task 8: `hooks/useAdminContributions.ts`
 
 **Files:**
+
 - Create: `hooks/useAdminContributions.ts`
 - Test: `hooks/useAdminContributions.test.tsx`
 
 **Interfaces:**
+
 - Consumes: all functions from `lib/api/admin-contributions.ts` (Task 4);
   `ContributionStatus`, `RejectContributionPayload` from `lib/api/types.ts`.
 - Produces: `useAdminContributions(status)`, `useClaimContribution()`,
@@ -1285,10 +1297,12 @@ git commit -m "feat(admin): add useAdminContributions hooks"
 ### Task 9: `hooks/useAdminCatalogImports.ts`
 
 **Files:**
+
 - Create: `hooks/useAdminCatalogImports.ts`
 - Test: `hooks/useAdminCatalogImports.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `startCatalogImport`, `fetchCatalogImportStatus` from
   `lib/api/admin-catalog-imports.ts` (Task 5); `CatalogImportRequest` from
   `lib/api/types.ts`.
@@ -1382,10 +1396,7 @@ Expected: FAIL — `Cannot find module './useAdminCatalogImports'`
 ```ts
 // hooks/useAdminCatalogImports.ts
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  fetchCatalogImportStatus,
-  startCatalogImport,
-} from "@/lib/api/admin-catalog-imports";
+import { fetchCatalogImportStatus, startCatalogImport } from "@/lib/api/admin-catalog-imports";
 import type { CatalogImportJobStatusResponse, CatalogImportRequest } from "@/lib/api/types";
 
 const TERMINAL_STATUSES = ["completed", "failed", "errored"];
@@ -1451,10 +1462,12 @@ No files created, no commit made for this task — it is a no-op by design.
 ### Task 11: i18n strings
 
 **Files:**
+
 - Modify: `messages/en.json`
 - Modify: `messages/uk.json`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: `admin.*` namespace, consumed by every component task
   (12-20) and every page task (21-25) via `useTranslations("admin...")`.
@@ -1753,11 +1766,13 @@ git commit -m "feat(admin): add admin i18n strings"
 ### Task 12: `components/admin/user-table.tsx`
 
 **Files:**
+
 - Create: `components/admin/user-table.tsx`
 - Create: `components/admin/user-table.stories.tsx`
 - Create: `components/admin/user-table.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AdminUserResponse` from `lib/api/types.ts`; `useActivateUser`,
   `useDeactivateUser`, `usePromoteUser`, `useDemoteUser` from
   `hooks/useAdminUsers.ts` (Task 6); `PasswordResetDialog` from Task 13
@@ -2011,11 +2026,13 @@ git commit -m "feat(admin): add UserTable component"
 ### Task 13: `components/admin/password-reset-dialog.tsx`
 
 **Files:**
+
 - Create: `components/admin/password-reset-dialog.tsx`
 - Create: `components/admin/password-reset-dialog.stories.tsx`
 - Create: `components/admin/password-reset-dialog.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useResetUserPassword` from `hooks/useAdminUsers.ts` (Task 6);
   `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`,
   `DialogDescription`, `DialogFooter` from `components/ui/dialog.tsx`.
@@ -2061,9 +2078,7 @@ describe("PasswordResetDialog", () => {
   });
 
   it("shows a loading state while the reset is pending", () => {
-    renderWithIntl(
-      <PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />,
-    );
+    renderWithIntl(<PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />);
     expect(screen.getByText("Password reset token")).toBeInTheDocument();
   });
 
@@ -2074,9 +2089,7 @@ describe("PasswordResetDialog", () => {
       isPending: false,
     } as never);
 
-    renderWithIntl(
-      <PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />,
-    );
+    renderWithIntl(<PasswordResetDialog userId="u1" open={true} onOpenChange={vi.fn()} />);
     expect(screen.getByText("tok-abc-123")).toBeInTheDocument();
   });
 });
@@ -2192,11 +2205,13 @@ git commit -m "feat(admin): add PasswordResetDialog component"
 ### Task 14: `components/admin/audit-log-table.tsx`
 
 **Files:**
+
 - Create: `components/admin/audit-log-table.tsx`
 - Create: `components/admin/audit-log-table.stories.tsx`
 - Create: `components/admin/audit-log-table.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AuditLogResponse` from `lib/api/types.ts`.
 - Produces: `AuditLogTable` component with props
   `{ logs: AuditLogResponse[] }` — consumed by Task 23. Read-only, no
@@ -2351,11 +2366,13 @@ git commit -m "feat(admin): add AuditLogTable component"
 ### Task 15: `components/admin/audit-log-filters.tsx`
 
 **Files:**
+
 - Create: `components/admin/audit-log-filters.tsx`
 - Create: `components/admin/audit-log-filters.stories.tsx`
 - Create: `components/admin/audit-log-filters.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AdminAuditLogListParams`, `AuditAction`, `AuditTargetType`
   from `lib/api/types.ts`; `Select`/`SelectTrigger`/`SelectContent`/
   `SelectItem` from `components/ui/select.tsx`; `Input` from
@@ -2573,11 +2590,13 @@ git commit -m "feat(admin): add AuditLogFilters component"
 ### Task 16: `components/admin/contribution-review-list.tsx`
 
 **Files:**
+
 - Create: `components/admin/contribution-review-list.tsx`
 - Create: `components/admin/contribution-review-list.stories.tsx`
 - Create: `components/admin/contribution-review-list.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `AdminContributionResponse` from `lib/api/types.ts`;
   `useClaimContribution` from `hooks/useAdminContributions.ts` (Task 8).
 - Produces: `ContributionReviewList` component with props
@@ -2628,9 +2647,7 @@ describe("ContributionReviewList", () => {
   beforeEachClaimMock();
 
   it("renders a card per contribution", () => {
-    renderWithIntl(
-      <ContributionReviewList contributions={contributions} onSelect={vi.fn()} />,
-    );
+    renderWithIntl(<ContributionReviewList contributions={contributions} onSelect={vi.fn()} />);
     expect(screen.getByText("new_book")).toBeInTheDocument();
     expect(screen.getByText("Submitted")).toBeInTheDocument();
   });
@@ -2642,9 +2659,7 @@ describe("ContributionReviewList", () => {
 
   it("calls onSelect when 'View diff' is clicked", () => {
     const onSelect = vi.fn();
-    renderWithIntl(
-      <ContributionReviewList contributions={contributions} onSelect={onSelect} />,
-    );
+    renderWithIntl(<ContributionReviewList contributions={contributions} onSelect={onSelect} />);
     fireEvent.click(screen.getByRole("button", { name: "View diff" }));
     expect(onSelect).toHaveBeenCalledWith("c1");
   });
@@ -2784,11 +2799,13 @@ git commit -m "feat(admin): add ContributionReviewList component"
 ### Task 17: `components/admin/contribution-diff-viewer.tsx`
 
 **Files:**
+
 - Create: `components/admin/contribution-diff-viewer.tsx`
 - Create: `components/admin/contribution-diff-viewer.stories.tsx`
 - Create: `components/admin/contribution-diff-viewer.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ContributionDiffResponse` from `lib/api/types.ts`. Reuses the
   same diff-row computation approach as
   `components/catalog/history/version-diff-viewer.tsx` (already read
@@ -2841,9 +2858,7 @@ describe("ContributionDiffViewer", () => {
 
   it("renders warnings when present", () => {
     renderWithIntl(
-      <ContributionDiffViewer
-        diff={{ proposed: {}, current: null, warnings: ["Missing ISBN"] }}
-      />,
+      <ContributionDiffViewer diff={{ proposed: {}, current: null, warnings: ["Missing ISBN"] }} />,
     );
     expect(screen.getByText("Missing ISBN")).toBeInTheDocument();
   });
@@ -2884,19 +2899,12 @@ export function ContributionDiffViewer({ diff }: { diff: ContributionDiffRespons
 
   return (
     <div className="flex flex-col gap-3">
-      {diff.current === null && (
-        <p className="text-muted-foreground text-sm">{t("noCurrent")}</p>
-      )}
+      {diff.current === null && <p className="text-muted-foreground text-sm">{t("noCurrent")}</p>}
       {diffKeys(diff.proposed, diff.current).map((key) => (
-        <div
-          key={key}
-          className="border-border flex flex-col gap-1 border-b pb-3 last:border-b-0"
-        >
+        <div key={key} className="border-border flex flex-col gap-1 border-b pb-3 last:border-b-0">
           <span className="font-mono text-sm font-medium">{key}</span>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <p className="text-destructive line-through">
-              {formatValue(diff.current?.[key])}
-            </p>
+            <p className="text-destructive line-through">{formatValue(diff.current?.[key])}</p>
             <p className="text-foreground">{formatValue(diff.proposed[key])}</p>
           </div>
         </div>
@@ -2965,11 +2973,13 @@ git commit -m "feat(admin): add ContributionDiffViewer component"
 ### Task 18: `components/admin/reject-contribution-dialog.tsx`
 
 **Files:**
+
 - Create: `components/admin/reject-contribution-dialog.tsx`
 - Create: `components/admin/reject-contribution-dialog.stories.tsx`
 - Create: `components/admin/reject-contribution-dialog.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useRejectContribution` from `hooks/useAdminContributions.ts`
   (Task 8); `Dialog`/`DialogContent`/etc from `components/ui/dialog.tsx`;
   `Textarea` from `components/ui/textarea.tsx`.
@@ -3161,11 +3171,13 @@ git commit -m "feat(admin): add RejectContributionDialog component"
 ### Task 19: `components/admin/catalog-import-form.tsx`
 
 **Files:**
+
 - Create: `components/admin/catalog-import-form.tsx`
 - Create: `components/admin/catalog-import-form.stories.tsx`
 - Create: `components/admin/catalog-import-form.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useStartCatalogImport` from `hooks/useAdminCatalogImports.ts`
   (Task 9); `CatalogImportProfile` from `lib/api/types.ts`;
   `Select`/`SelectTrigger`/`SelectValue`/`SelectContent`/`SelectItem` from
@@ -3266,10 +3278,7 @@ export function CatalogImportForm({ onStarted }: { onStarted: (jobId: string) =>
       <Button
         disabled={startImport.isPending}
         onClick={() =>
-          startImport.mutate(
-            { profile },
-            { onSuccess: (status) => onStarted(status.job_id) },
-          )
+          startImport.mutate({ profile }, { onSuccess: (status) => onStarted(status.job_id) })
         }
       >
         {startImport.isPending ? t("starting") : t("start")}
@@ -3316,11 +3325,13 @@ git commit -m "feat(admin): add CatalogImportForm component"
 ### Task 20: `components/admin/catalog-import-status.tsx`
 
 **Files:**
+
 - Create: `components/admin/catalog-import-status.tsx`
 - Create: `components/admin/catalog-import-status.stories.tsx`
 - Create: `components/admin/catalog-import-status.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `CatalogImportJobStatusResponse` from `lib/api/types.ts`.
   Pure display component — the polling itself is the caller's
   responsibility via `useCatalogImportStatus` (Task 9), this component
@@ -3348,9 +3359,7 @@ function renderWithIntl(ui: React.ReactElement) {
 
 describe("CatalogImportStatus", () => {
   it("renders the job id and status", () => {
-    renderWithIntl(
-      <CatalogImportStatus status={{ job_id: "job1", status: "pending" }} />,
-    );
+    renderWithIntl(<CatalogImportStatus status={{ job_id: "job1", status: "pending" }} />);
     expect(screen.getByText("job1")).toBeInTheDocument();
     expect(screen.getByText("pending")).toBeInTheDocument();
   });
@@ -3380,11 +3389,7 @@ Expected: FAIL — `Cannot find module './catalog-import-status'`
 import { useTranslations } from "next-intl";
 import type { CatalogImportJobStatusResponse } from "@/lib/api/types";
 
-export function CatalogImportStatus({
-  status,
-}: {
-  status: CatalogImportJobStatusResponse;
-}) {
+export function CatalogImportStatus({ status }: { status: CatalogImportJobStatusResponse }) {
   const t = useTranslations("admin.catalogImports");
 
   return (
@@ -3453,9 +3458,11 @@ git commit -m "feat(admin): add CatalogImportStatus component"
 ### Task 21: `app/(app)/admin/layout.tsx` (REVISED — see Task 10 note)
 
 **Files:**
+
 - Create: `app/(app)/admin/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `admin.nav.*` i18n keys (Task 11); the same
   `createServerApiClient` (from `lib/api/server-client.ts`) and
   `UserProfileResponse` type that `app/(app)/admin/catalog/layout.tsx`
@@ -3520,11 +3527,11 @@ Expected: a function taking an optional access token argument (as used
 above) — match its exact signature, don't guess.
 
 - [ ] **Step 2: Write `app/(app)/admin/layout.tsx`**, a server component
-  combining the same real is_admin check as the reference above with a
-  client-side tab nav. Since Next.js layouts are async server components
-  by default but the tab nav needs `usePathname()` (client-only), split
-  into a server-component layout that renders a small client-component
-  nav:
+      combining the same real is_admin check as the reference above with a
+      client-side tab nav. Since Next.js layouts are async server components
+      by default but the tab nav needs `usePathname()` (client-only), split
+      into a server-component layout that renders a small client-component
+      nav:
 
 ```tsx
 // app/(app)/admin/layout.tsx
@@ -3610,9 +3617,9 @@ export function AdminNav() {
 ```
 
 - [ ] **Step 4: Write a Storybook story and test for `AdminNav`**
-  (matching this repo's per-component convention — every component in
-  `components/admin/` gets a `.stories.tsx` and `.test.tsx`, and this
-  layout task introduces one, so it isn't exempt):
+      (matching this repo's per-component convention — every component in
+      `components/admin/` gets a `.stories.tsx` and `.test.tsx`, and this
+      layout task introduces one, so it isn't exempt):
 
 ```tsx
 // components/admin/admin-nav.test.tsx
@@ -3683,9 +3690,11 @@ git commit -m "feat(admin): add admin section layout with real is_admin backstop
 ### Task 22: `app/(app)/admin/users/page.tsx`
 
 **Files:**
+
 - Create: `app/(app)/admin/users/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useAdminUsers` from `hooks/useAdminUsers.ts` (Task 6);
   `UserTable` (Task 12); `PasswordResetDialog` (Task 13);
   `AdminUserListParams` from `lib/api/types.ts`.
@@ -3808,9 +3817,11 @@ git commit -m "feat(admin): add admin users page"
 ### Task 23: `app/(app)/admin/audit-logs/page.tsx`
 
 **Files:**
+
 - Create: `app/(app)/admin/audit-logs/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useAdminAuditLogs` from `hooks/useAdminAuditLogs.ts` (Task
   7); `AuditLogTable` (Task 14); `AuditLogFilters` (Task 15).
 - Produces: the `/admin/audit-logs` route. Nothing depends on this file.
@@ -3893,9 +3904,11 @@ git commit -m "feat(admin): add admin audit logs page"
 ### Task 24: `app/(app)/admin/contributions/page.tsx`
 
 **Files:**
+
 - Create: `app/(app)/admin/contributions/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useAdminContributions`, `useContributionDiff`,
   `useApproveContribution` from `hooks/useAdminContributions.ts` (Task 8);
   `ContributionReviewList` (Task 16); `ContributionDiffViewer` (Task 17);
@@ -3987,10 +4000,7 @@ export default function AdminContributionsPage() {
       </div>
       {isPending && <Skeleton className="h-40 w-full" />}
       {!isPending && (
-        <ContributionReviewList
-          contributions={data?.items ?? []}
-          onSelect={setSelectedId}
-        />
+        <ContributionReviewList contributions={data?.items ?? []} onSelect={setSelectedId} />
       )}
 
       <Dialog
@@ -4054,9 +4064,11 @@ git commit -m "feat(admin): add admin contributions moderation page"
 ### Task 25: `app/(app)/admin/catalog-imports/page.tsx`
 
 **Files:**
+
 - Create: `app/(app)/admin/catalog-imports/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useCatalogImportStatus` from
   `hooks/useAdminCatalogImports.ts` (Task 9); `CatalogImportForm` (Task
   19); `CatalogImportStatus` (Task 20).
@@ -4107,11 +4119,13 @@ git commit -m "feat(admin): add admin catalog imports page"
 ### Task 26: Header admin nav link
 
 **Files:**
+
 - Modify: `components/shell/header.tsx`
 - Modify: `components/shell/header.test.tsx`
 - Modify: `components/shell/header.stories.tsx`
 
 **Interfaces:**
+
 - Consumes: `me?.is_admin` (already available from `useMe()`, already
   called in this file).
 - Produces: nothing new for other tasks — this is the final integration
@@ -4127,11 +4141,13 @@ In `components/shell/header.tsx`, inside the `<nav>` block (right after
 the existing Chat `<Link>`), add:
 
 ```tsx
-        {me?.is_admin && (
-          <Link href="/admin/users" className="text-muted-foreground hover:text-foreground text-sm">
-            {tShell("nav.admin")}
-          </Link>
-        )}
+{
+  me?.is_admin && (
+    <Link href="/admin/users" className="text-muted-foreground hover:text-foreground text-sm">
+      {tShell("nav.admin")}
+    </Link>
+  );
+}
 ```
 
 - [ ] **Step 3: Add `"admin": "Admin"` to `shell.nav` in both locale files**
@@ -4148,18 +4164,18 @@ after reading it in Step 1 — the shape below assumes it already mocks
 `useMe` the same way `header.stories.tsx:60` does with `is_admin: false`):
 
 ```tsx
-  it("does not show the Admin link for a non-admin user", () => {
-    // uses the file's existing non-admin mock setup
-    renderHeader();
-    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
-  });
+it("does not show the Admin link for a non-admin user", () => {
+  // uses the file's existing non-admin mock setup
+  renderHeader();
+  expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+});
 
-  it("shows the Admin link for an admin user", () => {
-    // override the file's existing mock to set is_admin: true, matching
-    // however this file already overrides useMe's return value per-test
-    renderHeader({ isAdmin: true });
-    expect(screen.getByText("Admin")).toBeInTheDocument();
-  });
+it("shows the Admin link for an admin user", () => {
+  // override the file's existing mock to set is_admin: true, matching
+  // however this file already overrides useMe's return value per-test
+  renderHeader({ isAdmin: true });
+  expect(screen.getByText("Admin")).toBeInTheDocument();
+});
 ```
 
 Adjust `renderHeader(...)` to whatever helper/pattern the existing file
@@ -4190,12 +4206,14 @@ git commit -m "feat(admin): add Admin nav link to header for admin users"
 ### Task 27: e2e admin happy-path test
 
 **Files:**
+
 - Create: `e2e/admin.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `test`, `expect` from `./fixtures` (existing pattern).
 
-There is no way to create or promote the *first* admin user through this
+There is no way to create or promote the _first_ admin user through this
 UI or the documented API surface (promoting requires an existing admin —
 confirmed: no bootstrap/seed endpoint exists in the live OpenAPI schema).
 This test therefore needs a pre-existing admin fixture account, supplied
