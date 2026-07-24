@@ -22,7 +22,7 @@ const contributions = [
   {
     id: "c1",
     user_id: "u1",
-    kind: "book_create" as const,
+    kind: "new_book" as const,
     target_id: null,
     payload: {},
     status: "submitted" as const,
