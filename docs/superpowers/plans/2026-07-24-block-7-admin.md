@@ -9,15 +9,27 @@
 
 **Goal:** Ship the Block 7 Admin UI — user management, audit log viewer,
 contribution moderation queue, and catalog import trigger — gated behind
-an `is_admin` middleware check, per `docs/specs/2026-07-24-block-7-admin-design.md`.
+an `is_admin` check, per `docs/specs/2026-07-24-block-7-admin-design.md`.
 
 **Architecture:** Standard per-domain layering already used by every prior
 block: `lib/api/admin-*.ts` (typed axios clients) → `hooks/useAdmin*.ts`
 (TanStack Query) → `components/admin/*` (Storybook + Vitest covered) →
-`app/(app)/admin/**/page.tsx`. One new cross-cutting piece: `middleware.ts`,
-which decodes the `access_token` JWT payload (no signature check — UX gate
-only, API is the real authority) and redirects non-admins away from
-`/admin/*`.
+`app/(app)/admin/**/page.tsx`.
+
+> **UPDATE (discovered mid-execution, see Task 10 below):** the admin
+> gating this plan originally scoped as a new `middleware.ts` (Task 10)
+> **already exists** on this branch as `proxy.ts` (Next.js renamed the
+> middleware convention), added in prior commits `4980669`, `748c012`,
+> `bc0339a`, `086c3d4`, `04f4d09` — before this plan was written. It
+> already protects `/admin/:path*` with the same edge-JWT-decode approach
+> this plan called for, PLUS a real server-side backstop
+> (`app/(app)/admin/catalog/layout.tsx` calls `GET /users/me` with the
+> live token and redirects non-admins). Task 10 is **struck** — do not
+> create `middleware.ts`. Task 21 (the new `app/(app)/admin/layout.tsx`)
+> is revised to reuse that same real server-side check pattern instead of
+> being a client-only tab nav, so `/admin/users`, `/admin/audit-logs`,
+> `/admin/contributions`, `/admin/catalog-imports` get the identical real
+> backstop `/admin/catalog/*` already has.
 
 **Tech Stack:** Next.js App Router, TypeScript, TanStack Query, axios,
 next-intl, Vitest + React Testing Library, Storybook, Playwright.
@@ -68,7 +80,8 @@ hooks/
   useAdminContributions.ts       # CREATE (Task 8)
   useAdminCatalogImports.ts      # CREATE (Task 9)
 
-middleware.ts                   # CREATE (Task 10)
+(Task 10 struck — `proxy.ts` already gates `/admin/:path*`, added before
+this plan; see the note above Task 10 below.)
 
 messages/en.json, messages/uk.json   # MODIFY — admin.* strings (Task 11)
 
@@ -82,9 +95,10 @@ components/admin/
   reject-contribution-dialog.tsx + stories + test # Task 18
   catalog-import-form.tsx + stories + test      # Task 19
   catalog-import-status.tsx + stories + test    # Task 20
+  admin-nav.tsx + stories + test                # Task 21 (part of revised layout task)
 
 app/(app)/admin/
-  layout.tsx                    # Task 21
+  layout.tsx                    # Task 21 (revised — real is_admin server check + tab nav)
   users/page.tsx                 # Task 22
   audit-logs/page.tsx             # Task 23
   contributions/page.tsx           # Task 24
@@ -93,7 +107,6 @@ app/(app)/admin/
 components/shell/header.tsx        # MODIFY — admin nav link (Task 26)
 
 e2e/admin.spec.ts                   # CREATE (Task 27)
-middleware.test.ts                  # CREATE (Task 10, bundled)
 ```
 
 ---
@@ -1412,146 +1425,26 @@ git commit -m "feat(admin): add useAdminCatalogImports hooks"
 
 ---
 
-### Task 10: `middleware.ts` admin route gate
+### Task 10: ~~`middleware.ts` admin route gate~~ — STRUCK, already exists as `proxy.ts`
 
-**Files:**
-- Create: `middleware.ts` (repo root, alongside `app/`, `lib/`, `hooks/` —
-  this is where Next.js requires it)
-- Test: `middleware.test.ts` (repo root)
+**Do not execute this task.** Discovered mid-plan-execution: this branch
+already has `proxy.ts` (repo root) + `proxy.test.ts`, added in commits
+`4980669`, `748c012`, `bc0339a`, `086c3d4`, `04f4d09` — predating this
+plan. Next.js renamed the middleware convention from `middleware.ts` to
+`proxy.ts`; this repo already migrated. `proxy.ts`'s `config.matcher`
+already includes `/admin/:path*`, already decodes the `access_token` JWT's
+`is_admin` claim for a fast edge redirect, and `proxy.test.ts` already has
+10 passing tests covering the no-cookie, non-admin, and admin cases this
+task would have duplicated.
 
-**Interfaces:**
-- Consumes: nothing from earlier tasks — reads the raw `access_token`
-  cookie value directly via `NextRequest.cookies`.
-- Produces: default export middleware function + `config.matcher`; no
-  other task depends on this file's internals, only on its existence for
-  the gate to work when Tasks 21-25's pages are hit directly.
+It also goes further than this task specified: it's explicitly documented
+as a **UX-only fast path**, with the **real** authorization backstop living
+in `app/(app)/admin/catalog/layout.tsx`, which calls `GET /users/me` with
+the live bearer token and trusts only the API's verified response. Task 21
+below is revised to give `/admin/users`, `/admin/audit-logs`,
+`/admin/contributions`, `/admin/catalog-imports` that same real backstop.
 
-This task also needs to first check whether `next-intl`'s routing set up
-in `i18n/routing.ts` already requires its own `middleware.ts` (locale
-routing typically does). Read `i18n/routing.ts` and search for any
-existing reference to a middleware requirement before writing this task —
-if next-intl's `createMiddleware` is expected to run too, this file must
-compose both, matching whatever locale-prefix behavior currently works
-without a `middleware.ts` file at all (if there currently isn't one and
-locale routing still works, next-intl isn't using a routing middleware in
-this app, and this file only needs the admin gate).
-
-- [ ] **Step 1: Confirm no locale middleware is required**
-
-Run: `grep -rn "createMiddleware\|next-intl/middleware" --include="*.ts" --include="*.tsx" .`
-Expected: no matches outside `node_modules` — confirms this repo's i18n
-setup doesn't rely on middleware, so this file is admin-gate-only.
-
-- [ ] **Step 2: Write the test file**
-
-```ts
-// middleware.test.ts
-import { describe, expect, it, vi } from "vitest";
-import { NextRequest } from "next/server";
-import middleware from "./middleware";
-
-function makeRequest(path: string, accessToken?: string): NextRequest {
-  const request = new NextRequest(new URL(path, "http://localhost:3000"));
-  if (accessToken) {
-    request.cookies.set("access_token", accessToken);
-  }
-  return request;
-}
-
-function encodeJwt(payload: object): string {
-  const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString(
-    "base64url",
-  );
-  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
-  return `${header}.${body}.fakesignature`;
-}
-
-describe("admin middleware", () => {
-  it("redirects to /login when there is no access_token cookie", () => {
-    const response = middleware(makeRequest("/admin/users"));
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toContain("/login");
-  });
-
-  it("redirects to / when the token's is_admin claim is false", () => {
-    const token = encodeJwt({ sub: "u1", is_admin: false });
-    const response = middleware(makeRequest("/admin/users", token));
-    expect(response.status).toBe(307);
-    expect(new URL(response.headers.get("location") as string).pathname).toBe("/");
-  });
-
-  it("allows the request through when is_admin is true", () => {
-    const token = encodeJwt({ sub: "u1", is_admin: true });
-    const response = middleware(makeRequest("/admin/users", token));
-    expect(response.status).toBe(200);
-  });
-
-  it("redirects to /login when the token payload can't be decoded", () => {
-    const response = middleware(makeRequest("/admin/users", "not-a-real-jwt"));
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toContain("/login");
-  });
-});
-```
-
-- [ ] **Step 3: Run test to verify it fails**
-
-Run: `pnpm vitest run middleware.test.ts`
-Expected: FAIL — `Cannot find module './middleware'`
-
-- [ ] **Step 4: Write the implementation**
-
-```ts
-// middleware.ts
-import { NextRequest, NextResponse } from "next/server";
-
-function readIsAdminClaim(token: string): boolean | undefined {
-  try {
-    const [, payloadSegment] = token.split(".");
-    const json = Buffer.from(payloadSegment, "base64url").toString("utf-8");
-    const payload = JSON.parse(json) as { is_admin?: unknown };
-    return typeof payload.is_admin === "boolean" ? payload.is_admin : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-export default function middleware(request: NextRequest): NextResponse {
-  const token = request.cookies.get("access_token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  const isAdmin = readIsAdminClaim(token);
-
-  if (isAdmin === undefined) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (!isAdmin) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: ["/admin/:path*"],
-};
-```
-
-- [ ] **Step 5: Run test to verify it passes**
-
-Run: `pnpm vitest run middleware.test.ts`
-Expected: PASS (4 tests)
-
-- [ ] **Step 6: Commit**
-
-```bash
-git add middleware.ts middleware.test.ts
-git commit -m "feat(admin): add middleware gating /admin routes by is_admin claim"
-```
+No files created, no commit made for this task — it is a no-op by design.
 
 ---
 
@@ -3557,48 +3450,232 @@ git commit -m "feat(admin): add CatalogImportStatus component"
 
 ---
 
-### Task 21: `app/(app)/admin/layout.tsx`
+### Task 21: `app/(app)/admin/layout.tsx` (REVISED — see Task 10 note)
 
 **Files:**
 - Create: `app/(app)/admin/layout.tsx`
 
 **Interfaces:**
-- Consumes: nothing from earlier tasks except the `admin.nav.*` i18n keys
-  (Task 11).
-- Produces: shared tab nav wrapping all `/admin/*` pages, consumed
-  implicitly by Tasks 22-25 (they render inside this layout, no import
-  needed).
+- Consumes: `admin.nav.*` i18n keys (Task 11); the same
+  `createServerApiClient` (from `lib/api/server-client.ts`) and
+  `UserProfileResponse` type that `app/(app)/admin/catalog/layout.tsx`
+  already uses for its real is_admin backstop.
+- Produces: shared server-side auth check + tab nav wrapping all
+  `/admin/*` pages, consumed implicitly by Tasks 22-25 (they render
+  inside this layout, no import needed).
 
-Look at `app/(app)/admin/catalog/layout.tsx` first — it already exists
-(seen in the earlier `find` output) and is the closest existing example
-of a tab-nav layout wrapping a set of admin-catalog pages in this exact
-directory tree. Match its structure (likely `Tabs`/`TabsList`/`TabsTrigger`
-from `components/ui/tabs.tsx`, or a plain `Link` nav — read the file to
-see which) rather than inventing a new nav pattern.
+**IMPORTANT — this task's design changed from the original plan.**
+`proxy.ts` (see the note after Task 9 / struck Task 10) only provides a
+fast, non-authoritative edge redirect for `/admin/*`. The **real**
+authorization check for `/admin/catalog/*` lives in
+`app/(app)/admin/catalog/layout.tsx`, which calls `GET /users/me` with
+the live bearer token. `/admin/users`, `/admin/audit-logs`,
+`/admin/contributions`, `/admin/catalog-imports` need that same real
+backstop — this task's layout must provide it, not just a client-side
+tab nav. Read `app/(app)/admin/catalog/layout.tsx` in full (already
+quoted below for reference) and reuse its exact pattern.
 
-- [ ] **Step 1: Read the existing sibling layout for the pattern to match**
+Since this new layout sits one level above `admin/catalog/`, `/admin/catalog/*`
+requests will pass through both this layout's check and the existing
+catalog layout's check. That's a harmless redundant `/users/me` call, not
+a bug — do not attempt to remove or refactor the existing
+`admin/catalog/layout.tsx` check as part of this task; leave it untouched.
 
-Run: `cat "app/(app)/admin/catalog/layout.tsx"`
+Reference — `app/(app)/admin/catalog/layout.tsx` (existing, do not modify):
 
-- [ ] **Step 2: Write `app/(app)/admin/layout.tsx` following that same
-  pattern**, with four links/tabs: Users (`/admin/users`), Audit Logs
-  (`/admin/audit-logs`), Contributions (`/admin/contributions`), Catalog
-  Imports (`/admin/catalog-imports`), each label pulled from
-  `useTranslations("admin.nav")` (`t("users")`, `t("auditLogs")`,
-  `t("contributions")`, `t("catalogImports")`), with the layout's own
-  title from `t("title")`. If the sibling layout uses `usePathname()` to
-  determine the active tab, do the same here for consistency.
+```tsx
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { createServerApiClient } from "@/lib/api/server-client";
+import type { UserProfileResponse } from "@/lib/api/types";
 
-- [ ] **Step 3: Verify it builds**
+export default async function AdminCatalogLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+
+  if (!accessToken) {
+    redirect("/login?from=/admin/catalog");
+  }
+
+  let profile: UserProfileResponse;
+  try {
+    const client = createServerApiClient(accessToken);
+    ({ data: profile } = await client.get<UserProfileResponse>("/users/me"));
+  } catch {
+    redirect("/login?from=/admin/catalog");
+  }
+
+  if (!profile.is_admin) {
+    redirect("/");
+  }
+
+  return <div className="flex flex-col gap-6">{children}</div>;
+}
+```
+
+- [ ] **Step 1: Confirm `createServerApiClient`'s exact signature**
+
+Run: `grep -n "export function createServerApiClient" -A5 lib/api/server-client.ts`
+Expected: a function taking an optional access token argument (as used
+above) — match its exact signature, don't guess.
+
+- [ ] **Step 2: Write `app/(app)/admin/layout.tsx`**, a server component
+  combining the same real is_admin check as the reference above with a
+  client-side tab nav. Since Next.js layouts are async server components
+  by default but the tab nav needs `usePathname()` (client-only), split
+  into a server-component layout that renders a small client-component
+  nav:
+
+```tsx
+// app/(app)/admin/layout.tsx
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { createServerApiClient } from "@/lib/api/server-client";
+import type { UserProfileResponse } from "@/lib/api/types";
+import { AdminNav } from "@/components/admin/admin-nav";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+
+  if (!accessToken) {
+    redirect("/login?from=/admin");
+  }
+
+  let profile: UserProfileResponse;
+  try {
+    const client = createServerApiClient(accessToken);
+    ({ data: profile } = await client.get<UserProfileResponse>("/users/me"));
+  } catch {
+    redirect("/login?from=/admin");
+  }
+
+  if (!profile.is_admin) {
+    redirect("/");
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <AdminNav />
+      {children}
+    </div>
+  );
+}
+```
+
+- [ ] **Step 3: Write the client-side nav component**
+
+```tsx
+// components/admin/admin-nav.tsx
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+
+const TABS = [
+  { href: "/admin/users", key: "users" },
+  { href: "/admin/audit-logs", key: "auditLogs" },
+  { href: "/admin/contributions", key: "contributions" },
+  { href: "/admin/catalog-imports", key: "catalogImports" },
+] as const;
+
+export function AdminNav() {
+  const t = useTranslations("admin.nav");
+  const pathname = usePathname();
+
+  return (
+    <nav className="flex flex-col gap-3">
+      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <div className="border-border flex gap-4 border-b">
+        {TABS.map((tab) => (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className={cn(
+              "border-b-2 border-transparent px-1 pb-2 text-sm",
+              pathname.startsWith(tab.href)
+                ? "border-primary text-foreground font-medium"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {t(tab.key)}
+          </Link>
+        ))}
+      </div>
+    </nav>
+  );
+}
+```
+
+- [ ] **Step 4: Write a Storybook story and test for `AdminNav`**
+  (matching this repo's per-component convention — every component in
+  `components/admin/` gets a `.stories.tsx` and `.test.tsx`, and this
+  layout task introduces one, so it isn't exempt):
+
+```tsx
+// components/admin/admin-nav.test.tsx
+import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import en from "@/messages/en.json";
+import { AdminNav } from "./admin-nav";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/admin/users",
+}));
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>,
+  );
+}
+
+describe("AdminNav", () => {
+  it("renders all four tab links", () => {
+    renderWithIntl(<AdminNav />);
+    expect(screen.getByRole("link", { name: "Users" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Audit logs" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Contributions" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Catalog imports" })).toBeInTheDocument();
+  });
+});
+```
+
+```tsx
+// components/admin/admin-nav.stories.tsx
+import type { Meta, StoryObj } from "@storybook/react";
+import { AdminNav } from "./admin-nav";
+
+const meta: Meta<typeof AdminNav> = {
+  title: "Admin/AdminNav",
+  component: AdminNav,
+};
+export default meta;
+
+type Story = StoryObj<typeof AdminNav>;
+
+export const Default: Story = {};
+```
+
+- [ ] **Step 5: Run the new test**
+
+Run: `pnpm vitest run components/admin/admin-nav.test.tsx`
+Expected: PASS (1 test)
+
+- [ ] **Step 6: Verify the layout builds**
 
 Run: `pnpm exec tsc --noEmit`
-Expected: no new errors from this file.
+Expected: no new errors from these files.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
-git add "app/(app)/admin/layout.tsx"
-git commit -m "feat(admin): add admin section layout with tab nav"
+git add "app/(app)/admin/layout.tsx" components/admin/admin-nav.tsx components/admin/admin-nav.test.tsx components/admin/admin-nav.stories.tsx
+git commit -m "feat(admin): add admin section layout with real is_admin backstop and tab nav"
 ```
 
 ---
@@ -4226,7 +4303,9 @@ fix, not a Haiku retry).
 - Contributions (list/claim/diff/approve/reject): Tasks 1, 4, 8, 16, 17,
   18, 24 ✓
 - Catalog imports (trigger/poll): Tasks 1, 5, 9, 19, 20, 25 ✓
-- Admin gating middleware: Task 10 ✓
+- Admin gating: already existed pre-plan as `proxy.ts` + `admin/catalog/layout.tsx`
+  backstop (Task 10 struck); extended to the rest of `/admin/*` by
+  Task 21's revised layout ✓
 - Header nav integration: Task 26 ✓
 - i18n (en + uk): Task 11 (+ Task 26 for the nav string) ✓
 - e2e coverage: Task 27 (documented limitation: needs a seeded admin
