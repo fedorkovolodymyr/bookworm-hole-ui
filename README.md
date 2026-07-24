@@ -1,5 +1,8 @@
 # Bookworm Hole UI
 
+[![CI](https://github.com/fedorkovolodymyr/bookworm-hole-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/fedorkovolodymyr/bookworm-hole-ui/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fedorkovolodymyr/__REPLACE_WITH_GIST_ID__/raw/bookworm-hole-ui-coverage.json)](https://github.com/fedorkovolodymyr/bookworm-hole-ui/actions/workflows/ci.yml)
+
 Frontend for [`bookworm-hole-api`](https://github.com/fedorkovolodymyr/bookworm-hole-api), built with Next.js (App Router). Delivered in progressive blocks, each covering one API domain end-to-end. See [`docs/specs/2026-07-13-ui-repo-design.md`](docs/specs/2026-07-13-ui-repo-design.md) for the full design and block plan.
 
 ## Stack

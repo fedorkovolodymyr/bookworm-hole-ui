@@ -28,6 +28,28 @@ jobs:
           name: coverage-baseline
           path: coverage/coverage-summary.json
           retention-days: 30
+      - name: Compute coverage badge color
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: coverage-badge
+        run: |
+          PCT=$(node -p "Math.round(require('./coverage/coverage-summary.json').total.lines.pct)")
+          if [ "$PCT" -ge 90 ]; then COLOR=brightgreen
+          elif [ "$PCT" -ge 75 ]; then COLOR=green
+          elif [ "$PCT" -ge 50 ]; then COLOR=yellow
+          else COLOR=red
+          fi
+          echo "pct=$PCT" >> "$GITHUB_OUTPUT"
+          echo "color=$COLOR" >> "$GITHUB_OUTPUT"
+      - name: Publish coverage badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: __REPLACE_WITH_GIST_ID__
+          filename: bookworm-hole-ui-coverage.json
+          label: coverage
+          message: ${{ steps.coverage-badge.outputs.pct }}%
+          color: ${{ steps.coverage-badge.outputs.color }}
 
   coverage-gate:
     if: github.event_name == 'pull_request'
