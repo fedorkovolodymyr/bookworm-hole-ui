@@ -24,15 +24,15 @@ that needs an API-side change.
 One subagent per API domain, each given its matching `lib/api/<domain>*.ts`
 file(s) and the matching `app/routers/<domain>.py` file(s):
 
-| Domain | UI file(s) | API router(s) |
-|---|---|---|
-| auth/users | `auth.ts`, `users.ts` | `auth.py`, `users.py` |
-| books/releases/contributors | `books.ts`, `books-admin.ts`, `releases.ts`, `releases-admin.ts`, `contributors.ts`, `contributors-admin.ts`, `contributions.ts`, `external.ts` | `books.py`, `releases.py`, `contributors.py`, `contributions.py`, `external.py` |
-| collections/reviews/statuses/share | `collections.ts`, `reviews.ts`, `statuses.ts`, `share.ts` | `collections.py`, `reviews.py`, `statuses.py`, `status_views.py`, `share.py` |
-| reading | `reading.ts` | `reading_sessions.py`, `reading_stats.py` |
-| friends | `friends.ts`, `friends-content.ts` | `friends.py` |
-| ai/chat | `ai.ts`, `chat.ts` | `ai.py`, `chat.py` |
-| admin | `admin-users.ts`, `admin-audit-logs.ts`, `admin-contributions.ts`, `admin-catalog-imports.ts` | `admin_users.py`, `admin_audit_logs.py`, `admin_contributions.py`, `admin_catalog_imports.py` |
+| Domain                             | UI file(s)                                                                                                                                      | API router(s)                                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| auth/users                         | `auth.ts`, `users.ts`                                                                                                                           | `auth.py`, `users.py`                                                                         |
+| books/releases/contributors        | `books.ts`, `books-admin.ts`, `releases.ts`, `releases-admin.ts`, `contributors.ts`, `contributors-admin.ts`, `contributions.ts`, `external.ts` | `books.py`, `releases.py`, `contributors.py`, `contributions.py`, `external.py`               |
+| collections/reviews/statuses/share | `collections.ts`, `reviews.ts`, `statuses.ts`, `share.ts`                                                                                       | `collections.py`, `reviews.py`, `statuses.py`, `status_views.py`, `share.py`                  |
+| reading                            | `reading.ts`                                                                                                                                    | `reading_sessions.py`, `reading_stats.py`                                                     |
+| friends                            | `friends.ts`, `friends-content.ts`                                                                                                              | `friends.py`                                                                                  |
+| ai/chat                            | `ai.ts`, `chat.ts`                                                                                                                              | `ai.py`, `chat.py`                                                                            |
+| admin                              | `admin-users.ts`, `admin-audit-logs.ts`, `admin-contributions.ts`, `admin-catalog-imports.ts`                                                   | `admin_users.py`, `admin_audit_logs.py`, `admin_contributions.py`, `admin_catalog_imports.py` |
 
 Each subagent reports, per endpoint it examined:
 
