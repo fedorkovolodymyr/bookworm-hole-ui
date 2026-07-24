@@ -532,5 +532,135 @@
       "submitting": "Пропонування тегів...",
       "empty": "Поки немає запропонованих тегів."
     }
+  },
+  "admin": {
+    "nav": {
+      "title": "Адміністрування",
+      "users": "Користувачі",
+      "auditLogs": "Журнал аудиту",
+      "contributions": "Внески",
+      "catalogImports": "Імпорт каталогу"
+    },
+    "users": {
+      "pageTitle": "Керування користувачами",
+      "filters": {
+        "emailLabel": "Email",
+        "emailPlaceholder": "Фільтр за email",
+        "usernameLabel": "Ім'я користувача",
+        "usernamePlaceholder": "Фільтр за ім'ям користувача",
+        "statusLabel": "Статус",
+        "statusAll": "Усі",
+        "statusActive": "Активні",
+        "statusInactive": "Неактивні",
+        "roleLabel": "Роль",
+        "roleAll": "Усі",
+        "roleAdmin": "Адміністратор",
+        "roleUser": "Користувач"
+      },
+      "table": {
+        "email": "Email",
+        "username": "Ім'я користувача",
+        "displayName": "Відображуване ім'я",
+        "status": "Статус",
+        "role": "Роль",
+        "actions": "Дії",
+        "activeBadge": "Активний",
+        "inactiveBadge": "Неактивний",
+        "adminBadge": "Адміністратор"
+      },
+      "actions": {
+        "activate": "Активувати",
+        "deactivate": "Деактивувати",
+        "promote": "Підвищити до адміністратора",
+        "demote": "Понизити до користувача",
+        "resetPassword": "Скинути пароль"
+      },
+      "empty": "Користувачів не знайдено."
+    },
+    "passwordResetDialog": {
+      "title": "Токен скидання пароля",
+      "description": "Поділіться цим одноразовим токеном із користувачем, щоб він міг встановити новий пароль. Він більше не показуватиметься.",
+      "copy": "Копіювати",
+      "copied": "Скопійовано!",
+      "close": "Закрити"
+    },
+    "auditLogs": {
+      "pageTitle": "Журнал аудиту",
+      "filters": {
+        "actorIdLabel": "ID виконавця",
+        "actorIdPlaceholder": "Фільтр за UUID виконавця",
+        "actionLabel": "Дія",
+        "actionAll": "Усі дії",
+        "targetTypeLabel": "Тип цілі",
+        "targetTypeAll": "Усі цілі",
+        "startDateLabel": "Від",
+        "endDateLabel": "До"
+      },
+      "table": {
+        "actor": "Виконавець",
+        "action": "Дія",
+        "targetType": "Тип цілі",
+        "targetId": "ID цілі",
+        "createdAt": "Коли"
+      },
+      "action": {
+        "approve_contribution": "Схвалено внесок",
+        "reject_contribution": "Відхилено внесок",
+        "claim_contribution": "Взято внесок у роботу",
+        "activate_user": "Активовано користувача",
+        "deactivate_user": "Деактивовано користувача",
+        "promote_user": "Підвищено користувача",
+        "demote_user": "Понижено користувача"
+      },
+      "targetType": {
+        "contribution": "Внесок",
+        "user": "Користувач"
+      },
+      "empty": "Записів журналу аудиту не знайдено."
+    },
+    "contributions": {
+      "pageTitle": "Модерація внесків",
+      "statusFilterLabel": "Статус",
+      "empty": "Немає внесків у цьому статусі.",
+      "claim": "Взяти в роботу",
+      "viewDiff": "Переглянути зміни",
+      "approve": "Схвалити",
+      "reject": "Відхилити",
+      "reviewNotes": "Примітки рецензента",
+      "warnings": "Попередження",
+      "status": {
+        "draft": "Чернетка",
+        "submitted": "Подано",
+        "under_review": "На розгляді",
+        "approved": "Схвалено",
+        "rejected": "Відхилено",
+        "merged": "Об'єднано"
+      }
+    },
+    "diffViewer": {
+      "proposed": "Запропоновано",
+      "current": "Поточне",
+      "noCurrent": "Немає існуючого запису — це нова сутність.",
+      "warningsTitle": "Попередження"
+    },
+    "rejectDialog": {
+      "title": "Відхилити внесок",
+      "description": "Поясніть, чому цей внесок відхиляється. Автор побачить ці примітки.",
+      "notesLabel": "Примітки",
+      "notesPlaceholder": "Причина відхилення",
+      "confirm": "Відхилити"
+    },
+    "catalogImports": {
+      "pageTitle": "Імпорт каталогу",
+      "profileLabel": "Профіль",
+      "profileBooks": "Книги",
+      "profileComics": "Комікси",
+      "profileManga": "Манґа",
+      "start": "Почати імпорт",
+      "starting": "Починається...",
+      "statusLabel": "Статус",
+      "jobId": "ID завдання",
+      "result": "Результат"
+    }
   }
 }

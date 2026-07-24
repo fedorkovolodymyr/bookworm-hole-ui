@@ -532,5 +532,135 @@
       "submitting": "Suggesting tags...",
       "empty": "No tags suggested yet."
     }
+  },
+  "admin": {
+    "nav": {
+      "title": "Admin",
+      "users": "Users",
+      "auditLogs": "Audit logs",
+      "contributions": "Contributions",
+      "catalogImports": "Catalog imports"
+    },
+    "users": {
+      "pageTitle": "User management",
+      "filters": {
+        "emailLabel": "Email",
+        "emailPlaceholder": "Filter by email",
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "Filter by username",
+        "statusLabel": "Status",
+        "statusAll": "All",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "roleLabel": "Role",
+        "roleAll": "All",
+        "roleAdmin": "Admin",
+        "roleUser": "User"
+      },
+      "table": {
+        "email": "Email",
+        "username": "Username",
+        "displayName": "Display name",
+        "status": "Status",
+        "role": "Role",
+        "actions": "Actions",
+        "activeBadge": "Active",
+        "inactiveBadge": "Inactive",
+        "adminBadge": "Admin"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "promote": "Promote to admin",
+        "demote": "Demote to user",
+        "resetPassword": "Reset password"
+      },
+      "empty": "No users found."
+    },
+    "passwordResetDialog": {
+      "title": "Password reset token",
+      "description": "Share this one-time token with the user so they can set a new password. It will not be shown again.",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "close": "Close"
+    },
+    "auditLogs": {
+      "pageTitle": "Audit logs",
+      "filters": {
+        "actorIdLabel": "Actor ID",
+        "actorIdPlaceholder": "Filter by actor UUID",
+        "actionLabel": "Action",
+        "actionAll": "All actions",
+        "targetTypeLabel": "Target type",
+        "targetTypeAll": "All targets",
+        "startDateLabel": "From",
+        "endDateLabel": "To"
+      },
+      "table": {
+        "actor": "Actor",
+        "action": "Action",
+        "targetType": "Target type",
+        "targetId": "Target ID",
+        "createdAt": "When"
+      },
+      "action": {
+        "approve_contribution": "Approved contribution",
+        "reject_contribution": "Rejected contribution",
+        "claim_contribution": "Claimed contribution",
+        "activate_user": "Activated user",
+        "deactivate_user": "Deactivated user",
+        "promote_user": "Promoted user",
+        "demote_user": "Demoted user"
+      },
+      "targetType": {
+        "contribution": "Contribution",
+        "user": "User"
+      },
+      "empty": "No audit log entries found."
+    },
+    "contributions": {
+      "pageTitle": "Contribution moderation",
+      "statusFilterLabel": "Status",
+      "empty": "No contributions in this status.",
+      "claim": "Claim",
+      "viewDiff": "View diff",
+      "approve": "Approve",
+      "reject": "Reject",
+      "reviewNotes": "Review notes",
+      "warnings": "Warnings",
+      "status": {
+        "draft": "Draft",
+        "submitted": "Submitted",
+        "under_review": "Under review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "merged": "Merged"
+      }
+    },
+    "diffViewer": {
+      "proposed": "Proposed",
+      "current": "Current",
+      "noCurrent": "No existing record — this is a new entity.",
+      "warningsTitle": "Warnings"
+    },
+    "rejectDialog": {
+      "title": "Reject contribution",
+      "description": "Explain why this contribution is being rejected. The contributor will see these notes.",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Reason for rejection",
+      "confirm": "Reject"
+    },
+    "catalogImports": {
+      "pageTitle": "Catalog imports",
+      "profileLabel": "Profile",
+      "profileBooks": "Books",
+      "profileComics": "Comics",
+      "profileManga": "Manga",
+      "start": "Start import",
+      "starting": "Starting...",
+      "statusLabel": "Status",
+      "jobId": "Job ID",
+      "result": "Result"
+    }
   }
 }
