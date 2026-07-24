@@ -41,9 +41,7 @@ describe("ContributionReviewList", () => {
   });
 
   it("renders a card per contribution", () => {
-    renderWithIntl(
-      <ContributionReviewList contributions={contributions} onSelect={vi.fn()} />,
-    );
+    renderWithIntl(<ContributionReviewList contributions={contributions} onSelect={vi.fn()} />);
     expect(screen.getByText("new_book")).toBeInTheDocument();
     expect(screen.getByText("Submitted")).toBeInTheDocument();
   });
@@ -55,9 +53,7 @@ describe("ContributionReviewList", () => {
 
   it("calls onSelect when 'View diff' is clicked", () => {
     const onSelect = vi.fn();
-    renderWithIntl(
-      <ContributionReviewList contributions={contributions} onSelect={onSelect} />,
-    );
+    renderWithIntl(<ContributionReviewList contributions={contributions} onSelect={onSelect} />);
     fireEvent.click(screen.getByRole("button", { name: "View diff" }));
     expect(onSelect).toHaveBeenCalledWith("c1");
   });

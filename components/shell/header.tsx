@@ -60,10 +60,7 @@ export function Header() {
           )}
         </Link>
         {me?.is_admin && (
-          <Link
-            href="/admin/users"
-            className="text-muted-foreground hover:text-foreground text-sm"
-          >
+          <Link href="/admin/users" className="text-muted-foreground hover:text-foreground text-sm">
             {tShell("nav.admin")}
           </Link>
         )}

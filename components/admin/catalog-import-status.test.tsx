@@ -14,9 +14,7 @@ function renderWithIntl(ui: React.ReactElement) {
 
 describe("CatalogImportStatus", () => {
   it("renders the job id and status", () => {
-    renderWithIntl(
-      <CatalogImportStatus status={{ job_id: "job1", status: "pending" }} />,
-    );
+    renderWithIntl(<CatalogImportStatus status={{ job_id: "job1", status: "pending" }} />);
     expect(screen.getByText("job1")).toBeInTheDocument();
     expect(screen.getByText("pending")).toBeInTheDocument();
   });

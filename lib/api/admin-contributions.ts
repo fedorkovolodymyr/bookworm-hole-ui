@@ -39,9 +39,6 @@ export async function rejectContribution(
   contributionId: string,
   payload: RejectContributionPayload,
 ): Promise<AdminContributionResponse> {
-  const { data } = await apiClient.post(
-    `/admin/contributions/${contributionId}/reject`,
-    payload,
-  );
+  const { data } = await apiClient.post(`/admin/contributions/${contributionId}/reject`, payload);
   return data;
 }
