@@ -1,9 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { NextIntlClientProvider } from "next-intl";
 import { UserTable } from "./user-table";
+import enMessages from "@/messages/en.json";
 
 const meta: Meta<typeof UserTable> = {
   title: "Admin/UserTable",
   component: UserTable,
+  decorators: [
+    (Story) => (
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <Story />
+      </NextIntlClientProvider>
+    ),
+  ],
 };
 export default meta;
 
