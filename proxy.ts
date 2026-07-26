@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS = ["/profile", "/admin", "/collections", "/library"];
+const PROTECTED_PATHS = [
+  "/profile",
+  "/admin",
+  "/collections",
+  "/library",
+  "/reading",
+  "/chat",
+  "/ai",
+  "/friends",
+  "/contributions",
+];
 
 /**
  * Decode (NOT verify) a JWT's payload segment. JWTs are base64url-encoded
@@ -77,5 +87,15 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/admin/:path*", "/collections/:path*", "/library/:path*"],
+  matcher: [
+    "/profile/:path*",
+    "/admin/:path*",
+    "/collections/:path*",
+    "/library/:path*",
+    "/reading/:path*",
+    "/chat/:path*",
+    "/ai/:path*",
+    "/friends/:path*",
+    "/contributions/:path*",
+  ],
 };

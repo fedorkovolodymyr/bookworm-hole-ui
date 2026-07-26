@@ -21,9 +21,9 @@ describe("useAi hooks", () => {
   it("useRecommendations calls recommendBooks", async () => {
     vi.mocked(aiApi.recommendBooks).mockResolvedValue({ book_ids: ["b1"] });
     const { result } = renderHook(() => useRecommendations(), { wrapper });
-    result.current.mutate({ user_id: "u1", n: 5 });
+    result.current.mutate({ n: 5 });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(aiApi.recommendBooks).toHaveBeenCalledWith({ user_id: "u1", n: 5 });
+    expect(aiApi.recommendBooks).toHaveBeenCalledWith({ n: 5 });
   });
 
   it("useSummary surfaces AiFeatureUnavailableError", async () => {

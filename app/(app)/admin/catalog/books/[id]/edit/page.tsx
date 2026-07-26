@@ -9,7 +9,7 @@ import { BookForm } from "@/components/catalog/admin/book-form";
 import { ReleaseForm } from "@/components/catalog/admin/release-form";
 import { MergeBooksDialog } from "@/components/catalog/admin/merge-books-dialog";
 import { AttachContributorDialog } from "@/components/catalog/admin/attach-contributor-dialog";
-import { ReleaseCard } from "@/components/catalog/release-card";
+import { ReleaseGrid } from "@/components/catalog/release-grid";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -30,7 +30,7 @@ export default function AdminBookEditPage({ params }: { params: Promise<{ id: st
     return <Skeleton className="h-64 w-full" />;
   }
   if (isError || !book) {
-    return <p className="text-muted-foreground">Book not found.</p>;
+    return <p className="text-muted-foreground">{t("bookNotFound")}</p>;
   }
 
   return (
@@ -67,7 +67,7 @@ export default function AdminBookEditPage({ params }: { params: Promise<{ id: st
       </div>
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium">Editions</h2>
+          <h2 className="text-lg font-medium">{t("editions")}</h2>
           <Dialog open={addReleaseOpen} onOpenChange={setAddReleaseOpen}>
             <DialogTrigger render={<Button size="sm" variant="outline" />}>
               {t("addRelease")}
@@ -86,11 +86,7 @@ export default function AdminBookEditPage({ params }: { params: Promise<{ id: st
             </DialogContent>
           </Dialog>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {book.releases.map((release) => (
-            <ReleaseCard key={release.id} release={release} />
-          ))}
-        </div>
+        <ReleaseGrid releases={book.releases} />
       </section>
     </div>
   );

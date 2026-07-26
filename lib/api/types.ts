@@ -600,7 +600,6 @@ export interface ListMessagesParams {
 // --- AI domain types ---
 
 export interface RecommendRequest {
-  user_id: string;
   n?: number;
 }
 

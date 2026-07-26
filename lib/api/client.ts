@@ -6,6 +6,7 @@ import { NO_REFRESH_TOKEN_DETAIL } from "@/lib/auth/constants";
 export const apiClient = axios.create({
   baseURL: "/api",
   withCredentials: true,
+  timeout: 15000,
 });
 
 const MUTATING_METHODS = new Set(["post", "put", "patch", "delete"]);

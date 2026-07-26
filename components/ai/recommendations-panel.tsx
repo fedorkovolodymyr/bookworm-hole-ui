@@ -3,14 +3,12 @@
 import { useTranslations } from "next-intl";
 import { useRecommendations } from "@/hooks/useAi";
 import { AiFeatureUnavailableError } from "@/lib/api/ai";
-import { useMe } from "@/hooks/useMe";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export function RecommendationsPanel() {
   const t = useTranslations("ai.recommendations");
   const tAi = useTranslations("ai");
-  const { data: me } = useMe();
   const recommend = useRecommendations();
 
   const isUnavailable = recommend.error instanceof AiFeatureUnavailableError;
@@ -22,8 +20,8 @@ export function RecommendationsPanel() {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <Button
-          onClick={() => me && recommend.mutate({ user_id: me.id, n: 10 })}
-          disabled={!me || recommend.isPending || isUnavailable}
+          onClick={() => recommend.mutate({ n: 10 })}
+          disabled={recommend.isPending || isUnavailable}
         >
           {recommend.isPending ? t("submitting") : t("submit")}
         </Button>

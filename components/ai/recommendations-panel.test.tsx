@@ -4,12 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import en from "@/messages/en.json";
 import * as aiHooks from "@/hooks/useAi";
-import * as meHooks from "@/hooks/useMe";
 import { AiFeatureUnavailableError } from "@/lib/api/ai";
 import { RecommendationsPanel } from "./recommendations-panel";
 
 vi.mock("@/hooks/useAi");
-vi.mock("@/hooks/useMe");
 
 function renderWithIntl(ui: React.ReactElement) {
   return render(
@@ -22,7 +20,6 @@ function renderWithIntl(ui: React.ReactElement) {
 describe("RecommendationsPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(meHooks.useMe).mockReturnValue({ data: { id: "u1" } } as never);
   });
 
   it("shows coming-soon state on AiFeatureUnavailableError", () => {
@@ -36,7 +33,7 @@ describe("RecommendationsPanel", () => {
     expect(screen.getByText("Coming soon")).toBeInTheDocument();
   });
 
-  it("calls recommend with the current user's id on submit", async () => {
+  it("calls recommend on submit", async () => {
     const mutate = vi.fn();
     vi.mocked(aiHooks.useRecommendations).mockReturnValue({
       mutate,
@@ -46,7 +43,7 @@ describe("RecommendationsPanel", () => {
     } as never);
     renderWithIntl(<RecommendationsPanel />);
     await userEvent.click(screen.getByRole("button", { name: "Get recommendations" }));
-    expect(mutate).toHaveBeenCalledWith({ user_id: "u1", n: 10 });
+    expect(mutate).toHaveBeenCalledWith({ n: 10 });
   });
 
   it("renders returned book ids", () => {

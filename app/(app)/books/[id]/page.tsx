@@ -5,7 +5,7 @@ import { use } from "react";
 import { useTranslations } from "next-intl";
 import { useBook, useBookReviews } from "@/hooks/useBooks";
 import { useMe } from "@/hooks/useMe";
-import { ReleaseCard } from "@/components/catalog/release-card";
+import { ReleaseGrid } from "@/components/catalog/release-grid";
 import { ReviewList } from "@/components/reviews/review-list";
 import { ReviewForm } from "@/components/reviews/review-form";
 import { SuggestEditDialog } from "@/components/catalog/suggest-edit-dialog";
@@ -70,11 +70,7 @@ export default function BookDetailPage({ params }: { params: Promise<{ id: strin
       </div>
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">{t("releasesTitle")}</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {book.releases.map((release) => (
-            <ReleaseCard key={release.id} release={release} />
-          ))}
-        </div>
+        <ReleaseGrid releases={book.releases} />
       </section>
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
